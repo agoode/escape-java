@@ -96,8 +96,8 @@ public class TestSolutions {
                         System.out.print(" " + ls);
                         System.out.flush();
 
-                        DrawnLevel d = new DrawnLevel(l);
-                        int result = sol.verify(d);
+//                        DrawnLevel d = new DrawnLevel(l);
+                        int result = sol.verify(l);
 
                         int pad = maxLevelString - ls.length() + 5;
                         while (pad-- > 0) {
@@ -111,7 +111,7 @@ public class TestSolutions {
                         } else {
                             System.out.println("BAD at " + result);
                         }
-                        d.dispose();
+//                        d.dispose();
                     }
                 }
             }
