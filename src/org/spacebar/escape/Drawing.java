@@ -12,9 +12,10 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import org.spacebar.escape.util.Characters;
-import org.spacebar.escape.util.IntTriple;
-import org.spacebar.escape.util.StyleStack;
+import org.spacebar.escape.common.Characters;
+import org.spacebar.escape.common.IntTriple;
+import org.spacebar.escape.common.Level;
+import org.spacebar.escape.common.StyleStack;
 
 /**
  * @author adam
@@ -158,16 +159,16 @@ public class Drawing {
         //        System.out.println("zoom: " + zoom);
 
         Rectangle clip = g2.getClipBounds();
-
         ROW: for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
             COL: for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
                 int dx = i * tileSize;
                 int dy = j * tileSize;
 
-                if (clip != null && !clip.intersects(dx, dy, tileSize, tileSize)) {
+                if (clip != null
+                        && !clip.intersects(dx, dy, tileSize, tileSize)) {
                     continue COL;
                 }
-                
+
                 int tile;
                 if (showBizarro) {
                     tile = theLevel.oTileAt(i + xScroll, j + yScroll);
@@ -255,7 +256,7 @@ public class Drawing {
                 int sy = s.getColor() * (Characters.FONT_HEIGHT);
 
                 g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, s.getAlphaValue()));
+                        AlphaComposite.SRC_OVER, s.getAlphaValue() / 255f));
                 g2.drawImage(font, dx, dy, dx + Characters.FONT_WIDTH, dy
                         + Characters.FONT_HEIGHT, sx, sy, sx
                         + Characters.FONT_WIDTH, sy + Characters.FONT_HEIGHT,

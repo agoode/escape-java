@@ -6,6 +6,8 @@
  */
 package org.spacebar.escape;
 
+import org.spacebar.escape.common.Effects;
+
 
 /**
  * @author adam

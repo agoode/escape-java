@@ -12,18 +12,16 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 
-import org.spacebar.escape.util.BitInputStream;
-import org.spacebar.escape.util.Characters;
+import org.spacebar.escape.common.BitInputStream;
+import org.spacebar.escape.common.Characters;
+import org.spacebar.escape.common.Effects;
+import org.spacebar.escape.common.Level;
 
 /**
  * @author adam
@@ -59,7 +57,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
                                 "Quit", Characters.PICS + Characters.SKULLICON)) {
                             initLevel();
                         } else {
-                            exitPlayCanvas();
+                            theWayOut.invoke();
                         }
                     }
                 }.start();
@@ -103,11 +101,12 @@ public class PlayCanvas extends DoubleBufferCanvas {
                         Message.quick(PlayCanvas.this, "You solved it!!",
                                 -Characters.FONT_HEIGHT * 8, "Continue", null,
                                 Characters.PICS + Characters.THUMBICON);
-                        exitPlayCanvas();
+                        theWayOut.invoke();
                     }
                 }.start();
+            } else {
+                bufferRepaint();
             }
-            bufferRepaint();
         }
     }
 
@@ -163,7 +162,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
     //    IntTriple laser;
 
-    final File levelFile;
+    final byte[] origLevel;
 
     int scale = 0;
 
@@ -185,8 +184,10 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
     int solutionCount;
 
-    public PlayCanvas(File file) {
-        levelFile = file;
+    public PlayCanvas(byte theLevel[], Continuation c) {
+        super(c);
+        origLevel = new byte[theLevel.length];
+        System.arraycopy(theLevel, 0, origLevel, 0, theLevel.length);
         initLevel();
 
         playerDir = Level.DIR_DOWN;
@@ -246,15 +247,12 @@ public class PlayCanvas extends DoubleBufferCanvas {
      */
     void initLevel() {
         try {
-            theLevel = new Level(new BitInputStream(new FileInputStream(
-                    levelFile)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            theLevel = new Level(new BitInputStream(new ByteArrayInputStream(
+                    origLevel)));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        //        done = false;
         showBizarro = false;
         solution = null;
         solutionCount = 0;
@@ -461,18 +459,8 @@ public class PlayCanvas extends DoubleBufferCanvas {
         // quit
         addAction("ESCAPE", "exit", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                exitPlayCanvas();
+                theWayOut.invoke();
             }
         });
-    }
-
-    void exitPlayCanvas() {
-        System.exit(0);
-    }
-
-    private void addAction(String keyStroke, String name, Action a) {
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(keyStroke), name);
-        getActionMap().put(name, a);
     }
 }

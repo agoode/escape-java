@@ -16,7 +16,7 @@ import javax.sound.sampled.*;
  * @author adam
  */
 public class ResourceUtils {
-//    private final static Mixer mixer = AudioSystem.getMixer(null);
+    //    private final static Mixer mixer = AudioSystem.getMixer(null);
 
     public static InputStream getLocalResourceAsStream(String name) {
         return ResourceUtils.class.getResourceAsStream("resources/" + name);
@@ -29,15 +29,16 @@ public class ResourceUtils {
         Clip clip = null;
         try {
             AudioInputStream a = loadAudio(name);
-            DataLine.Info dlInfo = new DataLine.Info(Clip.class, a.getFormat(), 10);
+            DataLine.Info dlInfo = new DataLine.Info(Clip.class, a.getFormat(),
+                    10);
 
-//            clip = (Clip) mixer.getLine(dlInfo);
+            //            clip = (Clip) mixer.getLine(dlInfo);
             clip = (Clip) AudioSystem.getLine(dlInfo);
 
             System.out.print(" " + clip.getLineInfo() + "...");
             System.out.flush();
             clip.open(a);
-            
+
             System.out.println(" success!");
         } catch (LineUnavailableException e) {
             e.printStackTrace();
@@ -60,7 +61,7 @@ public class ResourceUtils {
         }
         return a;
     }
-    
+
     public static BufferedImage[] loadScaledImages(String name, int smaller,
             int bigger) {
         BufferedImage smallerImgs[] = new BufferedImage[smaller + 1];
@@ -127,7 +128,7 @@ public class ResourceUtils {
         g.drawImage(img, 0, 0, null);
         g.dispose();
 
-//        System.out.println(img2);
+        //        System.out.println(img2);
 
         return img2;
     }

@@ -1,8 +1,5 @@
 /*
  * Created on Dec 14, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package org.spacebar.escape;
 
@@ -12,18 +9,16 @@ import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-/**
- * @author adam
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
- */
+import org.spacebar.escape.common.Misc;
+
 public class EscapeMain extends Frame {
 
     public final static int STARTW = 800;
@@ -42,7 +37,24 @@ public class EscapeMain extends Frame {
             e.printStackTrace();
         }
 
-        final PlayCanvas pc = new PlayCanvas(f);
+        // used to get out of the canvas
+        Continuation c = new Continuation() {
+            public void invoke() {
+                System.exit(0);
+            }
+        };
+
+        FileInputStream fis;
+        byte[] level = null;
+        try {
+            fis = new FileInputStream(f);
+            level = Misc.getByteArrayFromInputStream(fis);
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        final PlayCanvas pc = new PlayCanvas(level, c);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 // simulate press of ESCAPE

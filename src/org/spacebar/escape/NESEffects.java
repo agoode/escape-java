@@ -9,6 +9,8 @@ package org.spacebar.escape;
 import javax.sound.sampled.*;
 import javax.sound.sampled.DataLine.Info;
 
+import org.spacebar.escape.common.Effects;
+
 /**
  * @author adam
  * 

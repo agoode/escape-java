@@ -1,8 +1,5 @@
 /*
  * Created on Dec 26, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package org.spacebar.escape;
 
@@ -10,14 +7,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.VolatileImage;
 
+import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 
-/**
- * @author adam
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
- */
 abstract public class DoubleBufferCanvas extends JComponent {
 
     private VolatileImage backBuffer;
@@ -26,10 +19,14 @@ abstract public class DoubleBufferCanvas extends JComponent {
 
     private boolean paintingActive = true;
 
-    DoubleBufferCanvas() {
+    protected Continuation theWayOut;
+    
+    DoubleBufferCanvas(Continuation c) {
         super();
         setDoubleBuffered(false);
         setOpaque(true);
+        
+        theWayOut = c;
     }
 
     abstract protected void bufferPaint(Graphics2D g);
@@ -117,6 +114,15 @@ abstract public class DoubleBufferCanvas extends JComponent {
         paintingActive = b;
         if (!paintingActive) {
             backBuffer = null;
+        } else {
+            repaint();
         }
+        System.out.println("paintingActive:" + paintingActive);
+    }
+
+    protected void addAction(String keyStroke, String name, Action a) {
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(keyStroke), name);
+        getActionMap().put(name, a);
     }
 }

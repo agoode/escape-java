@@ -15,7 +15,7 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.*;
 
-import org.spacebar.escape.util.Characters;
+import org.spacebar.escape.common.Characters;
 
 /**
  * @author adam
