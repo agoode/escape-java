@@ -44,12 +44,18 @@ public class EscapeLevelView extends JComponent {
     private final static BufferedImage font = ResourceUtils
             .loadImage("font.png");
 
+    static {
+        System.out.println("tiles: " + tiles);
+        System.out.println("guy: " + guy);
+        System.out.println("font: " + font);
+    }
+    
     final static Effects effects;
     static {
-        Effects e1 = new NESEffects();
+//        Effects e1 = new NESEffects();
         Effects e2 = new TextEffects();
         CompoundEffects e = new CompoundEffects();
-        //        e.add(e1);
+//        e.add(e1);
         e.add(e2);
         effects = e;
     }
@@ -103,6 +109,7 @@ public class EscapeLevelView extends JComponent {
 
     public EscapeLevelView(File f) {
         super();
+
         setOpaque(true);
 
         levelFile = f;
@@ -181,22 +188,23 @@ public class EscapeLevelView extends JComponent {
     }
 
     protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-
-        if (backBuffer == null
-                || (backBuffer.getHeight() != getHeight() && backBuffer
-                        .getWidth() != getWidth())) {
-            backBuffer = (BufferedImage) createImage(getWidth(), getHeight());
-            Graphics2D backG = backBuffer.createGraphics();
-            bufferPaint(backG);
-            backG.dispose();
+        if (backBuffer == null || backBuffer.getHeight() != getHeight()
+                || backBuffer.getWidth() != getWidth()) {
+            initBackBuffer();
+            bufferPaint();
         }
-
-        // blit
-        g2.drawImage(backBuffer, 0, 0, this);
+        g.drawImage(backBuffer, 0, 0, this);
     }
 
-    private void bufferPaint(Graphics2D g2) {
+    private void initBackBuffer() {
+        System.out.println("initializing back buffer");
+        backBuffer = (BufferedImage) createImage(getWidth(), getHeight());
+        System.out.println("backBuffer: " + backBuffer);
+    }
+
+    private void bufferPaint() {
+        Graphics2D g2 = backBuffer.createGraphics();
+
         AffineTransform trans = g2.getTransform();
 
         g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
@@ -209,6 +217,8 @@ public class EscapeLevelView extends JComponent {
         g2.translate(FONT_X_MARGIN, FONT_Y_MARGIN);
         paintTitle(g2);
         g2.setTransform(trans);
+
+        g2.dispose();
     }
 
     private void paintTitle(Graphics2D g2) {
@@ -326,17 +336,15 @@ public class EscapeLevelView extends JComponent {
     }
 
     void repairDamage() {
-//        for (int j = 0; j < theLevel.getHeight(); j++) {
-//            for (int i = 0; i < theLevel.getWidth(); i++) {
-//                if (theLevel.isDirty(i, j)) {
-//                    repaint(getTileBounds(i, j));
-//                }
-//            }
-//        }
-//        //        RepaintManager.currentManager(this).paintDirtyRegions();
-        Graphics2D g2 = backBuffer.createGraphics();
-        bufferPaint(g2);
-        g2.dispose();
+        //        for (int j = 0; j < theLevel.getHeight(); j++) {
+        //            for (int i = 0; i < theLevel.getWidth(); i++) {
+        //                if (theLevel.isDirty(i, j)) {
+        //                    repaint(getTileBounds(i, j));
+        //                }
+        //            }
+        //        }
+        //        // RepaintManager.currentManager(this).paintDirtyRegions();
+        bufferPaint();
         repaint();
         theLevel.clearDirty();
     }

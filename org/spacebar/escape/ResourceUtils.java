@@ -4,6 +4,7 @@
  */
 package org.spacebar.escape;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,8 +33,8 @@ public class ResourceUtils {
             AudioInputStream a = AudioSystem.getAudioInputStream(in);
             DataLine.Info dlInfo = new DataLine.Info(Clip.class, a.getFormat());
 
-//            clip = (Clip) mixer.getLine(dlInfo);
-            clip = (Clip) AudioSystem.getLine(dlInfo);
+            clip = (Clip) mixer.getLine(dlInfo);
+            //            clip = (Clip) AudioSystem.getLine(dlInfo);
             System.out.print(" " + clip.getLineInfo() + "...");
             System.out.flush();
             clip.open(a);
@@ -58,6 +59,18 @@ public class ResourceUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return img;
+
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        GraphicsConfiguration gc = gd.getDefaultConfiguration();
+        BufferedImage img2 = gc.createCompatibleImage(img.getWidth(), img
+                .getHeight(), Transparency.TRANSLUCENT);
+
+        Graphics2D g = img2.createGraphics();
+        g.drawImage(img, 0, 0, null);
+        g.dispose();
+
+        return img2;
     }
 }
