@@ -640,7 +640,7 @@ public class Level {
      * @param d
      * @param e
      * @param newP
-     * @return
+     * @return true if move was made, false otherwise
      */
     private boolean maybeDoMove(Entity ent, int d, Effects e, final IntPair newP) {
         final int target;
