@@ -8,6 +8,17 @@ import org.spacebar.escape.common.Misc;
 public class MD5 {
     final byte data[];
 
+    public MD5(String s) {
+        if (s.length() != 32) {
+            throw new IllegalArgumentException("String must be exactly 32 characters");
+        }
+        data = new byte[16];
+        for (int i = 0; i < data.length; i++) {
+            String str = s.substring(2 * i, 2 * i + 1);
+            data[i] = Byte.parseByte(str, 16);
+        }
+    }
+    
     public MD5(byte data[]) {
         this.data = new byte[16];
         if (data.length != this.data.length) {

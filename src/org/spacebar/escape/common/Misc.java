@@ -6,10 +6,7 @@
  */
 package org.spacebar.escape.common;
 
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * @author adam
@@ -73,5 +70,21 @@ public class Misc {
         }
         
         return b;
+    }
+    
+    public static String getLine(InputStream in) throws IOException {
+        StringBuffer sb = new StringBuffer();
+
+        char c;
+        while ((c = (char) in.read()) != -1) {
+            if (c == '\r') {
+                continue;
+            } else if (c == '\n') {
+                break;
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 }
