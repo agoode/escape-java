@@ -464,7 +464,13 @@ public class Level {
             return laser;
         }
 
-        // easiest way is to look for lasers from the current dude.
+        // bots kill
+        if (isBotAt(player.getX(), player.getY())) {
+            laser = new IntTriple(player.getX(), player.getY(), Entity.DIR_NONE);
+            return laser;
+        }
+        
+        // otherwise, look for lasers from the current dude
         for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
             int lx = player.getX(), ly = player.getY();
 
@@ -487,6 +493,9 @@ public class Level {
                         && tt != T_TRAP2 && tt != T_TRAP1 && tt != T_PANEL
                         && tt != T_BPANEL && tt != T_GPANEL && tt != T_RPANEL
                         && tt != T_BLACK && tt != T_HOLE)
+                    break;
+                // all robots also block lasers
+                if (isBotAt(lx, ly))
                     break;
             }
         }
@@ -1438,16 +1447,18 @@ public class Level {
 
         // load bots if in file
         int bots;
+        int botI[] = null;
+        int botT[] = null;
         try {
             bots = getIntFromStream(in);
+            botI = RunLengthEncoding.decode(in, bots);
+            botT = RunLengthEncoding.decode(in, bots);
         } catch (EOFException e) {
             bots = 0;
         }
 
         this.bots = new Bot[bots];
 
-        int botI[] = RunLengthEncoding.decode(in, bots);
-        int botT[] = RunLengthEncoding.decode(in, bots);
         for (int i = 0; i < this.bots.length; i++) {
             int x = botI[i] % width;
             int y = botI[i] / width;
