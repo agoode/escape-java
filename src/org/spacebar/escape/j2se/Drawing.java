@@ -30,12 +30,39 @@ public class Drawing {
 
     private final static int TILE_SIZE = 32;
 
-    private final static BufferedImage[] player = ResourceUtil
-            .loadScaledImages("player.png", SCALE_DOWN_FACTORS,
-                    SCALE_UP_FACTORS);
+    private final static int PLAYER_FRAMES = 5;
 
-    private final static BufferedImage[] tiles = ResourceUtil
-            .loadScaledImages("tiles.png", SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
+    private final static BufferedImage[] player;
+    static {
+        String names[] = { "animation/walk_forward_0.png",
+                "animation/walk_forward_a.png",
+                "animation/walk_forward_a2.png",
+                "animation/walk_forward_b.png",
+                "animation/walk_forward_b2.png",
+
+                "animation/walk_right_0.png", "animation/walk_right_a.png",
+                "animation/walk_right_a2.png", "animation/walk_right_b.png",
+                "animation/walk_right_b2.png",
+
+                "animation/walk_left_0.png", "animation/walk_left_a.png",
+                "animation/walk_left_a2.png", "animation/walk_left_b.png",
+                "animation/walk_left_b2.png",
+
+                "animation/walk_backward_0.png",
+                "animation/walk_backward_a.png",
+                "animation/walk_backward_a2.png",
+                "animation/walk_backward_b.png",
+                "animation/walk_backward_b2.png" };
+
+        // load the animations for the player
+        BufferedImage playerAnim = ResourceUtil.stitchHoriz(names);
+
+        player = ResourceUtil.createScaledImages(playerAnim,
+                SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
+    }
+
+    private final static BufferedImage[] tiles = ResourceUtil.loadScaledImages(
+            "tiles.png", SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
 
     private final static int TILES_ACROSS = 16;
 
@@ -185,33 +212,31 @@ public class Drawing {
             int yScroll, int playerDir, int scale) {
         int zoom = getZoomIndex(scale);
         int tileSize = getTileSize(scale);
+        int height = player[zoom].getHeight();
 
         int dx = (theLevel.getPlayerX() - xScroll) * tileSize;
-        int dy = (theLevel.getPlayerY() - yScroll) * tileSize;
+        int dy = (theLevel.getPlayerY() - yScroll) * tileSize
+                - (height - tileSize);
 
-        int sx, sy;
+        int sx;
         switch (playerDir) {
-        case Level.DIR_LEFT:
+        case Level.DIR_DOWN:
             sx = 0;
-            sy = 0;
-            break;
-        case Level.DIR_UP:
-            sx = tileSize;
-            sy = 0;
             break;
         case Level.DIR_RIGHT:
-            sx = tileSize;
-            sy = tileSize;
+            sx = PLAYER_FRAMES * tileSize;
             break;
-        case Level.DIR_DOWN:
+        case Level.DIR_LEFT:
+            sx = 2 * PLAYER_FRAMES * tileSize;
+            break;
+        case Level.DIR_UP:
         default:
-            sx = 0;
-            sy = tileSize;
+            sx = 3 * PLAYER_FRAMES * tileSize;
             break;
         }
 
-        g2.drawImage(player[zoom], dx, dy, dx + tileSize, dy + tileSize, sx,
-                sy, sx + tileSize, sy + tileSize, null);
+        g2.drawImage(player[zoom], dx, dy, dx + tileSize, dy + height, sx, 0,
+                sx + tileSize, height, null);
     }
 
     static private void paintTile(Graphics2D g2, int zoom, int tileSize,

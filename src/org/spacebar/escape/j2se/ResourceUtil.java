@@ -64,10 +64,21 @@ public class ResourceUtil {
 
     public static BufferedImage[] loadScaledImages(String name, int smaller,
             int bigger) {
-        BufferedImage smallerImgs[] = new BufferedImage[smaller + 1];
         final BufferedImage origImg = loadImage(name);
 
-        smallerImgs[0] = origImg;
+        return createScaledImages(origImg, smaller, bigger);
+    }
+
+    /**
+     * @param original
+     * @param smaller
+     * @param bigger
+     * @return
+     */
+    static BufferedImage[] createScaledImages(BufferedImage original,
+            int smaller, int bigger) {
+        BufferedImage smallerImgs[] = new BufferedImage[smaller + 1];
+        smallerImgs[0] = original;
         for (int i = 1; i < smaller + 1; i++) {
             final BufferedImage img = smallerImgs[i - 1];
             int w = img.getWidth() >> 1;
@@ -88,15 +99,15 @@ public class ResourceUtil {
         for (int i = 0; i < bigger; i++) {
             int scale = i + 1;
 
-            int w = origImg.getWidth() << scale;
-            int h = origImg.getHeight() << scale;
+            int w = original.getWidth() << scale;
+            int h = original.getHeight() << scale;
 
-            biggerImgs[i] = createCompatibleImage(w, h, origImg.getColorModel()
-                    .getTransparency());
+            biggerImgs[i] = createCompatibleImage(w, h, original
+                    .getColorModel().getTransparency());
 
             Graphics2D g = biggerImgs[i].createGraphics();
             g.scale(1 << scale, 1 << scale);
-            g.drawImage(origImg, 0, 0, null);
+            g.drawImage(original, 0, 0, null);
             g.dispose();
         }
 
@@ -131,6 +142,44 @@ public class ResourceUtil {
         //        System.out.println(img2);
 
         return img2;
+    }
+
+    public static BufferedImage stitchHoriz(String names[]) {
+        BufferedImage imgs[] = new BufferedImage[names.length];
+        for (int i = 0; i < imgs.length; i++) {
+            imgs[i] = loadImage(names[i]);
+        }
+        return stitchHoriz(imgs);
+    }
+    
+    public static BufferedImage stitchHoriz(BufferedImage imgs[]) {
+        int height = 0;
+        int maxWidth = 0;
+        int transparency = 0; // can be 1, 2, 3 for opaque, bitmap, transparent
+
+        // get max height and width and transparency
+        for (int i = 0; i < imgs.length; i++) {
+            height = Math.max(height, imgs[i].getHeight());
+            maxWidth = Math.max(maxWidth, imgs[i].getWidth());
+            transparency = Math.max(transparency, imgs[i].getTransparency());
+        }
+
+        BufferedImage newImg = createCompatibleImage(maxWidth * imgs.length, height,
+                transparency);
+        System.out.println(newImg);
+        System.out.println(transparency);
+        Graphics2D g2 = newImg.createGraphics();
+        int dx = 0;
+        for (int i = 0; i < imgs.length; i++) {
+            // bottom aligned
+            int h = imgs[i].getHeight();
+            int dy = height - h;
+
+            g2.drawImage(imgs[i], dx, dy, null);
+            dx += 32; // XXX
+        }
+        g2.dispose();
+        return newImg;
     }
 
     private static BufferedImage createCompatibleImage(int width, int height,
