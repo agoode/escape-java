@@ -1063,6 +1063,9 @@ public class Level {
      * @return
      */
     private boolean doBrokenMove(Effects e, IntPair newP) {
+        if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+            return false;
+        }
         setTile(newP.x, newP.y, T_FLOOR);
         if (e != null) {
             e.doBroken();
