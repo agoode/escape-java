@@ -46,7 +46,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
                 // append to solution
                 solution.addToSolution(dir);
             }
-            if ((theLevel.isDead()) != null) {
+            if (theLevel.isDead()) {
                 effects.doLaser();
                 status = Characters.RED + "You died!" + Characters.POP;
 

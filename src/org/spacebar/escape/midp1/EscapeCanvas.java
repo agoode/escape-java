@@ -262,7 +262,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     }
 
     private void drawLaser(Graphics g) {
-        IntTriple laser = theLevel.isDead();
+        IntTriple laser = theLevel.getLaser();
         if (laser == null) {
             return;
         }
@@ -394,7 +394,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         theLevel.move(dir, null);
         updateScroll();
 
-        if (theLevel.isDead() != null) {
+        if (theLevel.isDead()) {
             done = true;
             display.callSerially(new Runnable() {
                 public void run() {

@@ -1,10 +1,12 @@
 package org.spacebar.escape.j2se;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import org.spacebar.escape.common.BitInputStream;
-import org.spacebar.escape.common.Level;
 import org.spacebar.escape.common.Misc;
 import org.spacebar.escape.common.Level.Solution;
 import org.spacebar.escape.common.hash.MD5;
@@ -30,8 +32,16 @@ public class PlayerInfo {
 
     String name;
 
-    Hashtable solutions = new Hashtable();
+    Map solutions = new HashMap();
 
+    
+    /**
+     * @return Returns the solutions.
+     */
+    public Map getSolutions() {
+        return solutions;
+    }
+    
     public PlayerInfo(BitInputStream in) throws IOException {
         // read magic
         String magic = Misc.getStringFromData(in, 4);
@@ -149,15 +159,14 @@ public class PlayerInfo {
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
-        Enumeration e = solutions.keys();
-        while (e.hasMoreElements()) {
-            MD5 md5 = (MD5) e.nextElement();
+        for (Iterator iter = solutions.keySet().iterator(); iter.hasNext();) {
+            MD5 md5 = (MD5) iter.next();
 
             sb.append(md5 + " -> ");
 
-            Vector v = (Vector) solutions.get(md5);
+            List v = (List) solutions.get(md5);
             for (int i = 0; i < v.size(); i++) {
-                Solution s = (Solution) v.elementAt(i);
+                Solution s = (Solution) v.get(i);
                 sb.append(s.toString() + " ");
             }
             sb.append("\n");
@@ -166,9 +175,9 @@ public class PlayerInfo {
     }
 
     private void addSolution(MD5 md5, Solution s, boolean append) {
-        Vector v = (Vector) solutions.get(md5);
+        List v = (List) solutions.get(md5);
         if (v == null) {
-            v = new Vector();
+            v = new ArrayList();
             solutions.put(md5, v);
         }
 
@@ -178,6 +187,6 @@ public class PlayerInfo {
         }
 
         // add the item to the front
-        v.insertElementAt(s, 0);
+        v.add(0, s);
     }
 }

@@ -8,6 +8,7 @@ import java.util.*;
 import org.spacebar.escape.common.BitInputStream;
 import org.spacebar.escape.common.Level;
 import org.spacebar.escape.common.Misc;
+import org.spacebar.escape.common.Level.Solution;
 import org.spacebar.escape.common.hash.MD5;
 import org.spacebar.escape.j2se.PlayerInfo;
 
@@ -42,7 +43,40 @@ public class TestSolutions {
             System.out.print("Loading  [");
             System.out.flush();
             getAllStuff(f, levels, players);
-            System.out.println(" ]  " + levels.size() + " levels, " + players.size() + " players");
+            System.out.println(" ]  " + levels.size() + " levels, "
+                    + players.size() + " players");
+
+            // for each solution in each player, verify
+            for (Iterator iter = players.iterator(); iter.hasNext();) {
+                PlayerInfo pi = (PlayerInfo) iter.next();
+                Map s = pi.getSolutions();
+                for (Iterator iterator = s.keySet().iterator(); iterator
+                        .hasNext();) {
+                    MD5 md5 = (MD5) iterator.next();
+                    Level l = (Level) levels.get(md5);
+
+                    if (l == null) {
+                        System.out.println(md5 + " doesn't have a level");
+                        continue;   // solution for unknown level?
+                    }
+                    
+                    List sols = (List) s.get(md5);
+
+                    for (Iterator iterator2 = sols.iterator(); iterator2
+                            .hasNext();) {
+                        Solution sol = (Solution) iterator2.next();
+
+                        System.out.print(l);
+                        System.out.flush();
+                        if (sol.verify(l)) {
+                            System.out.println(" OK");
+                        } else {
+                            System.out.println(" BAD");
+//                            System.exit(1);
+                        }
+                    }
+                }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,8 +113,11 @@ public class TestSolutions {
             System.out.print(" " + f.getName());
             System.out.flush();
 
-            PlayerInfo p = new PlayerInfo(new BitInputStream(new FileInputStream(f)));
+            PlayerInfo p = new PlayerInfo(new BitInputStream(
+                    new FileInputStream(f)));
             players.add(p);
+            
+//            System.out.println(p);
         }
     }
 }

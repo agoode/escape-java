@@ -142,6 +142,33 @@ public class Level {
 
             solution[size - 1] = (byte) dir;
         }
+        
+        public boolean verify(Level l) {
+            Level l2 = new Level(l);
+            for (int i = 0; i < size; i++) {
+                int d = solution[i];
+                
+                // bad move is bad
+                if (!l2.move(d)) {
+//                    System.out.println("bad move");
+                    return false;
+                }
+                
+                // death is bad
+                if (l2.isDead()) {
+//                    System.out.println("bad dead");
+                    return false;
+                }
+                
+                // early winning is bad
+                if (l2.isWon() && !(i != size - 1)) {
+//                    System.out.println("early win");
+                    return false;
+                }
+//                System.out.println(d);
+            }
+            return (l2.isWon() && !l2.isDead());
+        }
     }
     
     public static class MetaData {
@@ -474,11 +501,11 @@ public class Level {
     }
 
     // Return true if a laser can 'see' the player.
-    public IntTriple isDead() {
+    public boolean isDead() {
         // bots kill, without laser
         if (isBotAt(player.getX(), player.getY())) {
             laser = null;
-            return new IntTriple(player.getX(), player.getY(), Entity.DIR_NONE);
+            return true;
         }
 
         // otherwise, look for lasers from the current dude
@@ -496,7 +523,7 @@ public class Level {
                     int d = Entity.dirReverse(dd);
 
                     laser = new IntTriple(tileX, tileY, d);
-                    return laser;
+                    return true;
                 }
                 int tt = tileAt(lx, ly);
                 if (tt != T_FLOOR && tt != T_ELECTRIC && tt != T_ROUGH
@@ -511,7 +538,7 @@ public class Level {
             }
         }
         laser = null;
-        return null;
+        return false;
     }
 
     private void swapO(int idx) {
