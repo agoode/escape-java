@@ -1,10 +1,5 @@
-package org.spacebar.escape.common;
+package org.spacebar.escape.common.hash;
 
-import java.io.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 public class FNV32 {
     /*
@@ -91,23 +86,5 @@ public class FNV32 {
         fnv32((byte) (dword & 0xFF));
         dword >>= 8;
         fnv32((byte) (dword & 0xFF));
-    }
-
-    public static void main(String[] args) {
-        File f = new File(args[0]);
-        FNV32 h = new FNV32();
-
-        try {
-            InputStream in = new FileInputStream(f);
-            int item;
-            while ((item = in.read()) != -1) {
-                h.fnv32((byte) item);
-            }
-            System.out.println("0x" + Integer.toHexString(h.hval));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

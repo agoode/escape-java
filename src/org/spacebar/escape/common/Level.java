@@ -2,6 +2,8 @@ package org.spacebar.escape.common;
 
 import java.io.*;
 
+import org.spacebar.escape.common.hash.FNV32;
+
 public class Level {
 
     public static class MetaData {
