@@ -144,30 +144,29 @@ public class Level {
         }
         
         public boolean verify(Level l) {
-            Level l2 = new Level(l);
             for (int i = 0; i < size; i++) {
                 int d = solution[i];
                 
                 // bad move is bad
-                if (!l2.move(d)) {
+                if (!l.move(d)) {
 //                    System.out.println("bad move");
                     return false;
                 }
                 
                 // death is bad
-                if (l2.isDead()) {
+                if (l.isDead()) {
 //                    System.out.println("bad dead");
                     return false;
                 }
                 
                 // early winning is bad
-                if (l2.isWon() && !(i != size - 1)) {
+                if (l.isWon() && i != (size - 1)) {
 //                    System.out.println("early win");
                     return false;
                 }
 //                System.out.println(d);
             }
-            return (l2.isWon() && !l2.isDead());
+            return (l.isWon() && !l.isDead());
         }
     }
     
@@ -1589,7 +1588,10 @@ public class Level {
         System.arraycopy(l.flags, 0, flags, 0, flags.length);
         
         bots = new Bot[l.bots.length];
-        System.arraycopy(l.bots, 0, bots, 0, bots.length);
+        for (int i = 0; i < l.bots.length; i++) {
+            Bot b = l.bots[i];
+            bots[i] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType());
+       }
         
         dirty = new DirtyList();
     }

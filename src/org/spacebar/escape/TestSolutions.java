@@ -10,6 +10,7 @@ import org.spacebar.escape.common.Level;
 import org.spacebar.escape.common.Misc;
 import org.spacebar.escape.common.Level.Solution;
 import org.spacebar.escape.common.hash.MD5;
+import org.spacebar.escape.j2se.DrawnLevel;
 import org.spacebar.escape.j2se.PlayerInfo;
 
 public class TestSolutions {
@@ -68,12 +69,15 @@ public class TestSolutions {
 
                         System.out.print(l);
                         System.out.flush();
-                        if (sol.verify(l)) {
+                        
+                        DrawnLevel d = new DrawnLevel(l);
+                        boolean result = sol.verify(d);
+                        if (result) {
                             System.out.println(" OK");
                         } else {
                             System.out.println(" BAD");
-//                            System.exit(1);
                         }
+                        d.dispose();
                     }
                 }
             }

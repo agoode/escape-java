@@ -23,11 +23,14 @@ abstract public class DoubleBufferCanvas extends JComponent {
 
     protected Continuation theWayOut;
     
-    DoubleBufferCanvas(Continuation c) {
+    DoubleBufferCanvas() {
         super();
         setDoubleBuffered(false);
         setOpaque(true);
-        
+    };
+      
+    DoubleBufferCanvas(Continuation c) {
+        this();
         theWayOut = c;
     }
 

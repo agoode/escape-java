@@ -10,15 +10,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import org.spacebar.escape.common.BitInputStream;
 import org.spacebar.escape.common.Continuation;
-import org.spacebar.escape.common.Misc;
+import org.spacebar.escape.common.Level;
 import org.spacebar.escape.j2se.PlayCanvas;
 import org.spacebar.escape.j2se.ResourceUtil;
 
@@ -48,10 +45,10 @@ public class EscapeMain extends Frame {
         };
 
         FileInputStream fis;
-        byte[] level = null;
+        Level level = null;
         try {
             fis = new FileInputStream(f);
-            level = Misc.getByteArrayFromInputStream(fis);
+            level = new Level(new BitInputStream(fis));
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
         } catch (IOException e) {
