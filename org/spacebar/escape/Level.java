@@ -18,9 +18,9 @@ public class Level {
 
     public final static int DIR_DOWN = 2;
 
-    public final static int DIR_RIGHT = 3;
+    public final static int DIR_LEFT = 3;
 
-    public final static int DIR_LEFT = 4;
+    public final static int DIR_RIGHT = 4;
 
     public final static int LAST_DIR = 4;
 
@@ -216,6 +216,21 @@ public class Level {
         return width;
     }
 
+    // dirty?
+    public boolean isDirty(int x, int y) {
+        return dirty[index(x, y)];
+    }
+
+    public void clearDirty() {
+        for (int i = 0; i < dirty.length; i++) {
+            dirty[i] = false;
+        }
+    }
+    
+    private void setDirty(int x, int y) {
+        dirty[index(x, y)] = true;
+    }
+    
     // static functions
     static int turnLeft(int d) {
         switch (d) {
@@ -336,7 +351,10 @@ public class Level {
 
     // has a panel (under a pushable block)? etc.
     private final int flags[];
-
+    
+    // dirty list
+    private final boolean dirty[];
+    
     // the meat
     void warp(int targX, int targY) {
         checkStepOff(guyX, guyY);
@@ -371,8 +389,13 @@ public class Level {
         return oTiles[y * width + x];
     }
 
+    void setTile(int i, int t) {
+        tiles[i] = t;
+        dirty[i] = true;
+    }
+    
     void setTile(int x, int y, int t) {
-        tiles[y * width + x] = t;
+        setTile(y * width + x, t);
     }
 
     void oSetTile(int x, int y, int t) {
@@ -465,7 +488,7 @@ public class Level {
 
     private void swapO(int idx) {
         int tmp = tiles[idx];
-        tiles[idx] = oTiles[idx];
+        setTile(idx, oTiles[idx]);
         oTiles[idx] = tmp;
 
         /* swap haspanel/opanel and their refinements as well */
@@ -533,9 +556,9 @@ public class Level {
     private void swapTiles(int t1, int t2) {
         for (int i = 0; i < width * height; i++) {
             if (tiles[i] == t1)
-                tiles[i] = t2;
+                setTile(i, t2);
             else if (tiles[i] == t2)
-                tiles[i] = t1;
+                setTile(i, t1);
         }
     }
 
@@ -546,9 +569,11 @@ public class Level {
     }
 
     boolean move(int d, Effects e) {
+        setDirty(guyX, guyY);
         boolean result = realMove(d, e);
         
         if (result) {
+            setDirty(guyX, guyY);
             e.doStep();
         } else {
             e.doNoStep();
@@ -589,7 +614,7 @@ public class Level {
                 e.doElectricOff();
                 for (int i = 0; i < width * height; i++) {
                     if (tiles[i] == T_ELECTRIC)
-                        tiles[i] = T_FLOOR;
+                        setTile(i, T_FLOOR);
                 }
                 setTile(newP.getX(), newP.getY(), T_OFF);
                 return true;
@@ -980,6 +1005,7 @@ public class Level {
         oTiles = RunLengthEncoding.decode(in, width * height);
         dests = RunLengthEncoding.decode(in, width * height);
         flags = RunLengthEncoding.decode(in, width * height);
+        dirty = new boolean[width * height];
     }
 
     public void print(PrintStream p) {
