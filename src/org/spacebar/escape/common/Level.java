@@ -628,755 +628,862 @@ public class Level {
     }
 
     private boolean realMove(Entity ent, int d, Effects e) {
-        int target;
-        IntPair newP;
+        final IntPair newP;
         if ((newP = travel(ent.getX(), ent.getY(), d)) != null) {
-            switch (target = tileAt(newP.x, newP.y)) {
+            return maybeDoMove(ent, d, e, newP);
+        } else
+            return false;  // no move for sure
+    }
 
-            /* these aren't pressed by the player so act like floor */
-            case T_BPANEL:
-            case T_GPANEL:
-            case T_RPANEL:
+    /**
+     * @param ent
+     * @param d
+     * @param e
+     * @param newP
+     * @return
+     */
+    private boolean maybeDoMove(Entity ent, int d, Effects e, final IntPair newP) {
+        final int target;
+        switch (target = tileAt(newP.x, newP.y)) {
 
-            /* these are only affected when we step *off* */
-            case T_TRAP2:
-            case T_TRAP1:
+        /* these aren't pressed by the player so act like floor */
+        case T_BPANEL:
+        case T_GPANEL:
+        case T_RPANEL:
 
-            case T_FLOOR:
-            case T_ROUGH:
-            case T_BDOWN:
-            case T_RDOWN:
-            case T_GDOWN:
-            case T_PANEL:
-                // sometimes we will push
-                Entity pushee = null;
-                Bot b;
-                if (player.isAt(newP.x, newP.y)) { // ent is not player!
-                    // if player is on bot, no pushing either of them
-                    if (getBotAt(newP.x, newP.y) != null) {
-                        return false;
-                    }
+        /* these are only affected when we step *off* */
+        case T_TRAP2:
+        case T_TRAP1:
 
-                    if (ent.canPushPlayer()) {
-                        pushee = player;
-                    } else if (ent.crushesPlayer()) {
-                        pushee = null; // CRUSH! not push
-                    } else {
-                        return false;
-                    }
-                } else if ((b = getBotAt(newP.x, newP.y)) != null) {
-                    if (ent.canPushBots()) {
-                        pushee = b;
-                    } else if (ent.walksIntoBots()) {
-                        pushee = null; // WALK! not push
-                    } else {
-                        return false;
-                    }
-                }
+        case T_FLOOR:
+        case T_ROUGH:
+        case T_BDOWN:
+        case T_RDOWN:
+        case T_GDOWN:
+        case T_PANEL:
+            return doFloorMove(ent, d, target, newP);
 
-                if (pushee != null) {
-                    // we are pushing, do some sort of recursive push
-                    IntPair far = travel(newP.x, newP.y, d);
-                    if (far != null) {
-                        int fTarget = tileAt(far.x, far.y);
-                        switch (fTarget) {
-                        case T_ELECTRIC:
-                            // only bots can go into electric
-                            if (pushee == player) {
-                                return false;
-                            }
-                            break;
-                        case T_TRAP2:
-                        case T_TRAP1:
-                        case T_FLOOR:
-                        case T_ROUGH:
-                        case T_RDOWN:
-                        case T_GDOWN:
-                        case T_BDOWN:
-                        case T_PANEL:
-                        case T_RPANEL:
-                        case T_GPANEL:
-                        case T_BPANEL:
-                            break;
-                        default:
-                            return false;
-                        }
+        case T_EXIT:
+            return doExitMove(ent, newP);
 
-                        // can't push 2 entities
-                        if (isBotAt(far.x, far.y)) {
-                            return false;
-                        }
-                        if (player.isAt(far.x, far.y)) {
-                            return false;
-                        }
+        case T_ON:
+            return doElectricOffMove(e, newP);
 
-                        // push
-                        pushee.setX(far.x);
-                        pushee.setY(far.y);
+        case T_0:
+        case T_1:
+            return doToggleMove(e, target, newP);
 
-                        // zapping
-                        if (fTarget == T_ELECTRIC && pushee != player) {
-                            ((Bot) pushee).delete();
-                        }
+        case T_BSPHERE:
+        case T_RSPHERE:
+        case T_GSPHERE:
+        case T_SPHERE:
+        case T_GOLD:
+            return doSphereGoldMove(d, e, target, newP);
 
-                        // panels
-                        if (fTarget == T_PANEL) {
-                            swapO(destAt(far.x, far.y));
-                        }
+        case T_TRANSPORT:
+            return doTransportMove(ent, e, newP);
 
-                        // handle leaving current (pushed) position
-                        if (target == T_PANEL) {
-                            // do nothing, or else get a double flip
-                            // since pusher is going on here now
-                        } else {
-                            checkStepOff(newP.x, newP.y);
-                        }
+        case T_BUTTON:
+            return doButtonMove(e, newP);
 
-                        // handle leaving pusher position
-                        checkStepOff(ent.getX(), ent.getY());
+        case T_BROKEN:
+            return doBrokenMove(e, newP);
 
-                        // then move
-                        ent.setX(newP.x);
-                        ent.setY(newP.y);
+        case T_GREEN:
+            return doGreenBlockMove(ent, d, newP);
 
-                        // done?
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    checkBotDeath(newP.x, newP.y, ent); // might have stepped
-                    // onto bot
+        // steel
+        case T_STEEL:
+        case T_RSTEEL:
+        case T_GSTEEL:
+        case T_BSTEEL:
+            return doSteelMove(ent, d, newP);
 
-                    // panels again
-                    checkStepOff(ent.getX(), ent.getY());
-                    if (target == T_PANEL) {
-                        swapO(destAt(newP.x, newP.y));
-                    }
+        // simple pushable blocks use this case
+        case T_RED:
+        case T_NS:
+        case T_NE:
+        case T_NW:
+        case T_SE:
+        case T_SW:
+        case T_WE:
 
-                    ent.setX(newP.x);
-                    ent.setY(newP.y);
+        case T_LR:
+        case T_UD:
 
-                    return true;
-                }
+        case T_GREY: 
+            return doSimpleBlockMove(ent, d, e, target, newP);
 
-            case T_EXIT:
-                // bots don't exit
-                if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
-                    return false;
-                }
+        case T_ELECTRIC:
+            return doZapMove(ent, newP);
 
-                checkStepOff(ent.getX(), ent.getY());
-                ent.setX(newP.x);
-                ent.setY(newP.y);
-                return true;
+        case T_BLUE:
+        case T_HOLE:
+        case T_LASER:
+        case T_STOP:
+        case T_RIGHT:
+        case T_LEFT:
+        case T_UP:
+        case T_DOWN:
+        case T_BLIGHT:
+        case T_RLIGHT:
+        case T_GLIGHT:
+        case T_RUP:
+        case T_BUP:
+        case T_GUP:
+        case T_OFF:
+        case T_BLACK:
+        default:
+            return false;
+        }
+    }
 
-            case T_ON: {
+    /**
+     * @param d
+     * @param e
+     * @param newP
+     * @return
+     */
+    private boolean doSphereGoldMove(int d, Effects e, int target,
+            IntPair newP) {
+        /*
+         * spheres allow pushing in a line: ->OOOO becomes OOO ---->O
+         * 
+         * so keep travelling while the tile in the destination direction is a
+         * sphere of any sort.
+         */
+        IntPair t;
+
+        while (isSphere(tileAt(newP.x, newP.y))
+                && !(player.isAt(newP.x, newP.y) || isBotAt(newP.x,
+                        newP.y))
+                && (t = travel(newP.x, newP.y, d)) != null
+                && isSphere(tileAt(t.x, t.y))) {
+            newP = t;
+            target = tileAt(t.x, t.y);
+        }
+
+        // can't push if entity there
+        if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+            //                    return false;
+        }
+
+        int goldX = newP.x, goldY = newP.y;
+
+        /* remove gold block */
+        if ((flagAt(goldX, goldY) & TF_HASPANEL) != 0) {
+            setTile(goldX, goldY, realPanel(flagAt(goldX, goldY)));
+        } else {
+            setTile(goldX, goldY, T_FLOOR);
+        }
+
+        IntPair tGold;
+        while ((tGold = travel(goldX, goldY, d)) != null) {
+
+            int next = tileAt(tGold.x, tGold.y);
+            if (!(next == T_ELECTRIC || next == T_PANEL || next == T_BPANEL
+                    || next == T_RPANEL || next == T_GPANEL || next == T_FLOOR
+                    || isBotAt(tGold.x, tGold.y) || player.isAt(tGold.x,
+                    tGold.y))) {
+                break;
+            }
+
+            goldX = tGold.x;
+            goldY = tGold.y;
+
+            if (next == T_ELECTRIC)
+                break;
+        }
+
+        /* goldx is dest, newx is source */
+        if (goldX != newP.x || goldY != newP.y) {
+
+            int landOn = tileAt(goldX, goldY);
+            boolean doSwap = false;
+
+            /* untrigger from source */
+            if ((flagAt(newP.x, newP.y) & TF_HASPANEL) != 0) {
+                int pan = realPanel(flagAt(newP.x, newP.y));
+                /* any */
+                if (pan == T_PANEL ||
+                /* colors */
+                (target == T_GSPHERE && pan == T_GPANEL)
+                        || (target == T_RSPHERE && pan == T_RPANEL)
+                        || (target == T_BSPHERE && pan == T_BPANEL))
+                    doSwap = true;
+            }
+
+            /*
+             * only the correct color sphere can trigger the colored panels
+             */
+            boolean doSwapT = triggers(target, landOn);
+
+            setTile(goldX, goldY, target);
+
+            boolean zapped = false;
+            if (landOn == T_ELECTRIC) {
+                /*
+                 * gold zapped. however, if the electric was the newTarget of a
+                 * panel that we just left, the electric has been swapped into
+                 * the o world (along with the gold). So swap there.
+                 */
                 if (e != null) {
-                    e.doElectricOff();
+                    e.doZap();
                 }
-                for (int i = (width * height) - 1; i >= 0; i--) {
-                    if (tiles[i] == T_ELECTRIC)
-                        setTile(i, T_FLOOR);
-                }
-                setTile(newP.x, newP.y, T_OFF);
-                return true;
-            }
-            case T_0:
-            case T_1: {
-                int opp = (target == T_0 ? T_1 : T_0);
+                setTile(goldX, goldY, T_ELECTRIC);
 
-                swapTiles(T_UD, T_LR);
-
-                if (e != null) {
-                    e.doSwap();
-                }
-                setTile(newP.x, newP.y, opp);
-
-                return true;
+                zapped = true;
             }
 
-            case T_BSPHERE:
-            case T_RSPHERE:
-            case T_GSPHERE:
-            case T_SPHERE:
-            case T_GOLD: {
-
-                /*
-                 * spheres allow pushing in a line: ->OOOO becomes OOO ---->O
-                 * 
-                 * so keep travelling while the tile in the destination
-                 * direction is a sphere of any sort.
-                 */
-                IntPair t;
-                while (isSphere(tileAt(newP.x, newP.y))
-                        && !(player.isAt(newP.x, newP.y) || isBotAt(newP.x,
-                                newP.y))
-                        && (t = travel(newP.x, newP.y, d)) != null
-                        && isSphere(tileAt(t.x, t.y))) {
-                    newP = t;
-                    target = tileAt(t.x, t.y);
-                }
-
-                // can't push if entity there
-                if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
-                    return false;
-                }
-
-                int goldX = newP.x, goldY = newP.y;
-
-                /* remove gold block */
-                if ((flagAt(goldX, goldY) & TF_HASPANEL) != 0) {
-                    setTile(goldX, goldY, realPanel(flagAt(goldX, goldY)));
-                } else {
-                    setTile(goldX, goldY, T_FLOOR);
-                }
-
-                IntPair tGold;
-                while ((tGold = travel(goldX, goldY, d)) != null) {
-
-                    int next = tileAt(tGold.x, tGold.y);
-                    if (!(next == T_ELECTRIC || next == T_PANEL
-                            || next == T_BPANEL || next == T_RPANEL
-                            || next == T_GPANEL || next == T_FLOOR
-                            || isBotAt(tGold.x, tGold.y) || player.isAt(
-                            tGold.x, tGold.y))) {
-                        break;
-                    }
-
-                    goldX = tGold.x;
-                    goldY = tGold.y;
-
-                    if (next == T_ELECTRIC)
-                        break;
-                }
-
-                /* goldx is dest, newx is source */
-                if (goldX != newP.x || goldY != newP.y) {
-
-                    int landOn = tileAt(goldX, goldY);
-                    boolean doSwap = false;
-
-                    /* untrigger from source */
-                    if ((flagAt(newP.x, newP.y) & TF_HASPANEL) != 0) {
-                        int pan = realPanel(flagAt(newP.x, newP.y));
-                        /* any */
-                        if (pan == T_PANEL ||
-                        /* colors */
-                        (target == T_GSPHERE && pan == T_GPANEL)
-                                || (target == T_RSPHERE && pan == T_RPANEL)
-                                || (target == T_BSPHERE && pan == T_BPANEL))
-                            doSwap = true;
-                    }
-
-                    /*
-                     * only the correct color sphere can trigger the colored
-                     * panels
-                     */
-                    boolean doSwapT = triggers(target, landOn);
-
-                    setTile(goldX, goldY, target);
-
-                    boolean zapped = false;
-                    if (landOn == T_ELECTRIC) {
-                        /*
-                         * gold zapped. however, if the electric was the target
-                         * of a panel that we just left, the electric has been
-                         * swapped into the o world (along with the gold). So
-                         * swap there.
-                         */
-                        if (e != null) {
-                            e.doZap();
-                        }
-                        setTile(goldX, goldY, T_ELECTRIC);
-
-                        zapped = true;
-                    }
-
-                    if (doSwapT) {
-                        swapO(destAt(goldX, goldY));
-                    }
-
-                    if (doSwap) {
-                        swapO(destAt(goldX, goldY));
-                    }
-
-                    if (e != null) {
-                        e.doSlide();
-                    }
-
-                    return true;
-                } else {
-                    // didn't move, put it back
-                    setTile(newP.x, newP.y, target);
-
-                    return false;
-                }
-            }
-            case T_TRANSPORT: {
-                // not if there's an entity there
-                if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
-                    return false;
-                }
-
-                if (ent.canTeleport() || ent.isPlayer()) {
-                    IntPair targ;
-                    targ = where(dests[width * newP.y + newP.x]);
-
-                    if (e != null) {
-                        e.doTransport();
-                    }
-                    warp(ent, targ.x, targ.y);
-
-                    checkBotDeath(targ.x, targ.y, ent);
-
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-            case T_BUTTON: {
-
-                for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
-                    /* send a pulse in that direction. */
-                    IntPair pulse = newP;
-                    int pd = dd;
-
-                    while (pd != Entity.DIR_NONE
-                            && (pulse = travel(pulse.x, pulse.y, pd)) != null) {
-                        switch (tileAt(pulse.x, pulse.y)) {
-                        case T_BLIGHT:
-                            swapTiles(T_BUP, T_BDOWN);
-                            pd = Entity.DIR_NONE;
-                            break;
-                        case T_RLIGHT:
-                            swapTiles(T_RUP, T_RDOWN);
-                            pd = Entity.DIR_NONE;
-                            break;
-                        case T_GLIGHT:
-                            swapTiles(T_GUP, T_GDOWN);
-                            pd = Entity.DIR_NONE;
-                            break;
-
-                        case T_NS:
-                            if (pd == Entity.DIR_UP || pd == Entity.DIR_DOWN)
-                                continue;
-                            else
-                                pd = Entity.DIR_NONE;
-                            break;
-
-                        case T_WE:
-                            if (pd == Entity.DIR_LEFT || pd == Entity.DIR_RIGHT)
-                                continue;
-                            else
-                                pd = Entity.DIR_NONE;
-                            break;
-
-                        case T_NW:
-                            if (pd == Entity.DIR_DOWN)
-                                pd = Entity.DIR_LEFT;
-                            else if (pd == Entity.DIR_RIGHT)
-                                pd = Entity.DIR_UP;
-                            else
-                                pd = Entity.DIR_NONE;
-                            break;
-
-                        case T_SW:
-                            if (pd == Entity.DIR_UP)
-                                pd = Entity.DIR_LEFT;
-                            else if (pd == Entity.DIR_RIGHT)
-                                pd = Entity.DIR_DOWN;
-                            else
-                                pd = Entity.DIR_NONE;
-                            break;
-
-                        case T_NE:
-                            if (pd == Entity.DIR_DOWN)
-                                pd = Entity.DIR_RIGHT;
-                            else if (pd == Entity.DIR_LEFT)
-                                pd = Entity.DIR_UP;
-                            else
-                                pd = Entity.DIR_NONE;
-                            break;
-
-                        case T_SE:
-                            if (pd == Entity.DIR_UP)
-                                pd = Entity.DIR_RIGHT;
-                            else if (pd == Entity.DIR_LEFT)
-                                pd = Entity.DIR_DOWN;
-                            else
-                                pd = Entity.DIR_NONE;
-                            break;
-
-                        default:
-                            pd = Entity.DIR_NONE;
-                        }
-                    }
-                }
-
-                if (e != null) {
-                    e.doPulse();
-                }
-                return true;
-            }
-            case T_BROKEN:
-                setTile(newP.x, newP.y, T_FLOOR);
-                if (e != null) {
-                    e.doBroken();
-                }
-                return true;
-
-            case T_GREEN: {
-                IntPair dest;
-                if ((dest = travel(newP.x, newP.y, d)) != null) {
-                    if (tileAt(dest.x, dest.y) == T_FLOOR
-                            && !isBotAt(dest.x, dest.y)
-                            && !player.isAt(dest.x, dest.y)) {
-                        setTile(dest.x, dest.y, T_BLUE);
-                        setTile(newP.x, newP.y, T_FLOOR);
-
-                        checkStepOff(ent.getX(), ent.getY());
-
-                        ent.setX(newP.x);
-                        ent.setY(newP.y);
-                        return true;
-                    } else
-                        return false;
-                } else
-                    return false;
+            if (doSwapT) {
+                swapO(destAt(goldX, goldY));
             }
 
-            // steel
-            case T_STEEL:
-            case T_RSTEEL:
-            case T_GSTEEL:
-            case T_BSTEEL: {
-
-                /*
-                 * three phases. first, see if we can push this whole column one
-                 * space.
-                 * 
-                 * if so, generate animations.
-                 * 
-                 * then, update panel states. this is tricky.
-                 */
-
-                IntPair dest = newP;
-                {
-                    int curx = newP.x, cury = newP.y;
-                    /*
-                     * go until not steel, or if we hit a robot anywhere along
-                     * this, end
-                     */
-                    while (!isBotAt(curx, cury) && !player.isAt(curx, cury)
-                            && (dest = travel(curx, cury, d)) != null
-                            && isSteel(tileAt(dest.x, dest.y))) {
-                        curx = dest.x;
-                        cury = dest.y;
-                    }
-                }
-
-                /* entity in our column or at the end? sorry */
-                if (isBotAt(dest.x, dest.y) || player.isAt(dest.x, dest.y))
-                    return false;
-
-                /* what did we hit? */
-                int hitTile;
-                boolean zap = false;
-                switch (hitTile = tileAt(dest.x, dest.y)) {
-                /*
-                 * nb if we "hit" steel, then it's steel to the edge of the
-                 * level, so no push.
-                 */
-                case T_PANEL:
-                case T_GPANEL:
-                case T_BPANEL:
-                case T_RPANEL:
-                case T_FLOOR:
-                    break;
-                case T_ELECTRIC:
-                    zap = true;
-                    break;
-                default:
-                    return (false);
-                }
-
-                /*
-                 * guy destx,desty v v [ ][S][S][S][S][ ] ^ steels starting at
-                 * newx,newy
-                 * 
-                 * d ---->
-                 */
-                int revD = dirReverse(d);
-
-                /* move the steel blocks first. */
-                {
-                    int movex = dest.x, movey = dest.y;
-                    while (!(movex == newP.x && movey == newP.y)) {
-                        IntPair next;
-                        next = travel(movex, movey, revD);
-                        setTile(movex, movey, tileAt(next.x, next.y));
-                        movex = next.x;
-                        movey = next.y;
-                    }
-                }
-
-                /* and one more, for the tile that we're stepping onto */
-                {
-                    int replacement = ((flagAt(newP.x, newP.y) & TF_HASPANEL) == TF_HASPANEL) ? realPanel(flagAt(
-                            newP.x, newP.y))
-                            : T_FLOOR;
-                    setTile(newP.x, newP.y, replacement);
-                }
-
-                /*
-                 * reconcile panels.
-                 * 
-                 * imagine pushing a row of blocks one space to the right.
-                 * 
-                 * we loop over the NEW positions for the steel blocks. If a
-                 * steel block is on a panel (that it can trigger), then we
-                 * trigger that panel as long as the thing to its right (which
-                 * used to be there) couldn't trigger it. this handles new
-                 * panels that are turned ON.
-                 * 
-                 * if we can't trigger the panel, then we check to see if the
-                 * panel to our right (which used to be there) also can't
-                 * trigger it. If so, we don't do anything. Otherwise, we
-                 * "untrigger" the panel.
-                 * 
-                 * To simplify, if triggerstatus_now != triggerstatus_old, we
-                 * trigger. (Trigger has the same effect as untriggering.)
-                 * 
-                 * Because these swaps are supposed to be delayed, we set the
-                 * TF_TEMP flag if the tile should do a swap afterwards.
-                 */
-
-                boolean swapnew = false;
-                {
-                    int lookx = dest.x, looky = dest.y;
-                    int prevt = T_FLOOR; /* anything that doesn't trigger */
-                    while (!(lookx == newP.x && looky == newP.y)) {
-
-                        int heret = tileAt(lookx, looky);
-
-                        /* triggerstatus for this location (lookx, looky) */
-                        boolean triggerstatus_now = ((flagAt(lookx, looky) & TF_HASPANEL) == TF_HASPANEL)
-                                && triggers(heret, realPanel(flagAt(lookx,
-                                        looky)));
-
-                        boolean triggerstatus_old = ((flagAt(lookx, looky) & TF_HASPANEL) == TF_HASPANEL)
-                                && isSteel(prevt)
-                                && triggers(prevt, realPanel(flagAt(lookx,
-                                        looky)));
-
-                        if (triggerstatus_now != triggerstatus_old) {
-                            setFlag(lookx, looky, flagAt(lookx, looky)
-                                    | TF_TEMP);
-                            //           printf("Yes swap at %d/%d\n", lookx, looky);
-                        } else
-                            setFlag(lookx, looky, flagAt(lookx, looky)
-                                    & ~TF_TEMP);
-
-                        prevt = heret;
-
-                        IntPair next;
-                        next = travel(lookx, looky, revD);
-
-                        lookx = next.x;
-                        looky = next.y;
-                    }
-
-                    /* first panel is slightly different */
-                    {
-                        int first = tileAt(newP.x, newP.y);
-                        boolean trig_now = (first == T_PANEL);
-                        boolean trig_old = isPanel(first)
-                                && triggers(prevt, realPanel(flagAt(newP.x,
-                                        newP.y)));
-
-                        if (trig_old != trig_now) {
-                            swapnew = true;
-                        }
-                    }
-                } /* zap, if necessary, before swapping */
-                if (zap) {
-                    setTile(dest.x, dest.y, T_ELECTRIC);
-                    /* XXX animate */
-                }
-
-                /* now we can start swapping. */
-                checkStepOff(ent.getX(), ent.getY());
-
-                /*
-                 * this part is now invariant to order, because there is only
-                 * one destination per location
-                 */
-
-                if (swapnew) {
-                    swapO(destAt(newP.x, newP.y));
-                }
-
-                {
-                    int lookx = dest.x, looky = dest.y;
-                    while (!(lookx == newP.x && looky == newP.y)) {
-
-                        if ((flagAt(lookx, looky) & TF_TEMP) == TF_TEMP) {
-                            swapO(destAt(lookx, looky));
-                            setFlag(lookx, looky, flagAt(lookx, looky)
-                                    & ~TF_TEMP);
-                        }
-
-                        /* next */
-                        IntPair next;
-                        next = travel(lookx, looky, revD);
-                        lookx = next.x;
-                        looky = next.y;
-                    }
-                }
-
-                /* XXX also boundary conditions? (XXX what does that mean?) */
-                ent.setX(newP.x);
-                ent.setY(newP.y);
-
-                return true;
+            if (doSwap) {
+                swapO(destAt(goldX, goldY));
             }
 
-            // simple pushable blocks use this case
-            case T_RED:
-            case T_NS:
-            case T_NE:
-            case T_NW:
-            case T_SE:
-            case T_SW:
-            case T_WE:
-
-            case T_LR:
-            case T_UD:
-
-            case T_GREY: {
-                /*
-                 * we're always stepping onto the panel that the block was on,
-                 * so we don't need to change its state. (if it's a regular
-                 * panel, then don't change because our feet are on it. if it's
-                 * a colored panel, don't change because neither the man nor the
-                 * block can activate it.) But we do need to put a panel there
-                 * instead of floor.
-                 */
-
-                int replacement = ((flagAt(newP.x, newP.y) & TF_HASPANEL) == TF_HASPANEL) ? realPanel(flagAt(
-                        newP.x, newP.y))
-                        : T_FLOOR;
-
-                boolean doSwap = false;
-                boolean zap = false;
-                boolean hole = false;
-                IntPair dest;
-
-                if (target == T_LR
-                        && (d == Entity.DIR_UP || d == Entity.DIR_DOWN))
-                    return false;
-                if (target == T_UD
-                        && (d == Entity.DIR_LEFT || d == Entity.DIR_RIGHT))
-                    return false;
-
-                if ((dest = travel(newP.x, newP.y, d)) != null) {
-                    int destT = tileAt(dest.x, dest.y);
-                    if (player.isAt(dest.x, dest.y) || isBotAt(dest.x, dest.y)) {
-                        return false;
-                    }
-                    switch (destT) {
-                    case T_FLOOR:
-                        /* easy */
-                        setTile(dest.x, dest.y, target);
-                        setTile(newP.x, newP.y, replacement);
-                        break;
-                    case T_ELECTRIC:
-                        /* Zap! */
-                        if (target != T_LR && target != T_UD) {
-                            if (e != null) {
-                                e.doZap();
-                            }
-                            setTile(newP.x, newP.y, replacement);
-                        } else
-                            return false;
-                        zap = true;
-                        break;
-                    case T_HOLE:
-                        /* only grey blocks into holes */
-                        if (target == T_GREY) {
-                            if (e != null) {
-                                e.doHole();
-                            }
-                            setTile(dest.x, dest.y, T_FLOOR);
-                            setTile(newP.x, newP.y, replacement);
-                            hole = true;
-                            break;
-                        } else
-                            return false;
-                    case T_BPANEL:
-                    case T_RPANEL:
-                    case T_GPANEL:
-                    case T_PANEL:
-                        if (target != T_LR && target != T_UD) {
-                            /* delay the swap */
-                            doSwap = (destT == T_PANEL); // grey down holes
-                            setTile(dest.x, dest.y, target);
-                            setTile(newP.x, newP.y, replacement);
-                        } else
-                            return false;
-                        break;
-                    default:
-                        return false;
-                    }
-                    checkStepOff(ent.getX(), ent.getY());
-
-                    if (doSwap)
-                        swapO(destAt(dest.x, dest.y));
-
-                    ent.setX(newP.x);
-                    ent.setY(newP.y);
-                    return true;
-                } else
-                    return false;
+            if (e != null) {
+                e.doSlide();
             }
 
-            case T_ELECTRIC:
-                // some bots are stupid enough to zap themselves
-                if (ent != player && ent.zapsSelf()) {
-                    // move
-                    ent.setX(newP.x);
-                    ent.setY(newP.y);
+            return true;
+        } else {
+            // didn't move, put it back
+            setTile(newP.x, newP.y, target);
 
-                    // kill
-                    ((Bot) ent).delete();
-                    return true;
-                } else
-                    return false;
+            return false;
+        }
+    }
 
-            case T_BLUE:
-            case T_HOLE:
-            case T_LASER:
-            case T_STOP:
-            case T_RIGHT:
-            case T_LEFT:
-            case T_UP:
-            case T_DOWN:
-            case T_BLIGHT:
-            case T_RLIGHT:
-            case T_GLIGHT:
-            case T_RUP:
-            case T_BUP:
-            case T_GUP:
-            case T_OFF:
-            case T_BLACK:
+    /**
+     * @param ent
+     * @param newP
+     * @return
+     */
+    private boolean doZapMove(Entity ent, IntPair newP) {
+        // some bots are stupid enough to zap themselves
+        if (ent != player && ent.zapsSelf()) {
+            // move
+            ent.setX(newP.x);
+            ent.setY(newP.y);
 
-            default:
-                return false;
-
-            }
+            // kill
+            ((Bot) ent).delete();
+            return true;
         } else
             return false;
+    }
+
+    /**
+     * @param ent
+     * @param d
+     * @param e
+     * @param target
+     * @param newP
+     * @return
+     */
+    private boolean doSimpleBlockMove(Entity ent, int d, Effects e, int target,
+            IntPair newP) {
+        /*
+         * we're always stepping onto the panel that the block was on, so we
+         * don't need to change its state. (if it's a regular panel, then don't
+         * change because our feet are on it. if it's a colored panel, don't
+         * change because neither the man nor the block can activate it.) But we
+         * do need to put a panel there instead of floor.
+         */
+
+        int replacement = ((flagAt(newP.x, newP.y) & TF_HASPANEL) == TF_HASPANEL) ? realPanel(flagAt(
+                newP.x, newP.y))
+                : T_FLOOR;
+
+        boolean doSwap = false;
+        boolean zap = false;
+        boolean hole = false;
+        IntPair dest;
+
+        if (target == T_LR && (d == Entity.DIR_UP || d == Entity.DIR_DOWN))
+            return false;
+        if (target == T_UD && (d == Entity.DIR_LEFT || d == Entity.DIR_RIGHT))
+            return false;
+
+        if ((dest = travel(newP.x, newP.y, d)) != null) {
+            int destT = tileAt(dest.x, dest.y);
+            if (player.isAt(dest.x, dest.y) || isBotAt(dest.x, dest.y)) {
+                return false;
+            }
+            switch (destT) {
+            case T_FLOOR:
+                /* easy */
+                setTile(dest.x, dest.y, target);
+                setTile(newP.x, newP.y, replacement);
+                break;
+            case T_ELECTRIC:
+                /* Zap! */
+                if (target != T_LR && target != T_UD) {
+                    if (e != null) {
+                        e.doZap();
+                    }
+                    setTile(newP.x, newP.y, replacement);
+                } else
+                    return false;
+                zap = true;
+                break;
+            case T_HOLE:
+                /* only grey blocks into holes */
+                if (target == T_GREY) {
+                    if (e != null) {
+                        e.doHole();
+                    }
+                    setTile(dest.x, dest.y, T_FLOOR);
+                    setTile(newP.x, newP.y, replacement);
+                    hole = true;
+                    break;
+                } else
+                    return false;
+            case T_BPANEL:
+            case T_RPANEL:
+            case T_GPANEL:
+            case T_PANEL:
+                if (target != T_LR && target != T_UD) {
+                    /* delay the swap */
+                    doSwap = (destT == T_PANEL); // grey down holes
+                    setTile(dest.x, dest.y, target);
+                    setTile(newP.x, newP.y, replacement);
+                } else
+                    return false;
+                break;
+            default:
+                return false;
+            }
+            checkStepOff(ent.getX(), ent.getY());
+
+            if (doSwap)
+                swapO(destAt(dest.x, dest.y));
+
+            ent.setX(newP.x);
+            ent.setY(newP.y);
+            return true;
+        } else
+            return false;
+    }
+
+    /**
+     * @param ent
+     * @param d
+     * @param newP
+     * @return
+     */
+    private boolean doSteelMove(Entity ent, int d, IntPair newP) {
+        /*
+         * three phases. first, see if we can push this whole column one space.
+         * 
+         * if so, generate animations.
+         * 
+         * then, update panel states. this is tricky.
+         */
+
+        IntPair dest = newP;
+        {
+            int curx = newP.x, cury = newP.y;
+            /*
+             * go until not steel, or if we hit a robot anywhere along this, end
+             */
+            while (!isBotAt(curx, cury) && !player.isAt(curx, cury)
+                    && (dest = travel(curx, cury, d)) != null
+                    && isSteel(tileAt(dest.x, dest.y))) {
+                curx = dest.x;
+                cury = dest.y;
+            }
+        }
+
+        /* entity in our column or at the end? sorry */
+        if (isBotAt(dest.x, dest.y) || player.isAt(dest.x, dest.y))
+            return false;
+
+        /* what did we hit? */
+        int hitTile;
+        boolean zap = false;
+        switch (hitTile = tileAt(dest.x, dest.y)) {
+        /*
+         * nb if we "hit" steel, then it's steel to the edge of the level, so no
+         * push.
+         */
+        case T_PANEL:
+        case T_GPANEL:
+        case T_BPANEL:
+        case T_RPANEL:
+        case T_FLOOR:
+            break;
+        case T_ELECTRIC:
+            zap = true;
+            break;
+        default:
+            return (false);
+        }
+
+        /*
+         * guy destx,desty v v [ ][S][S][S][S][ ] ^ steels starting at newx,newy
+         * 
+         * d ---->
+         */
+        int revD = dirReverse(d);
+
+        /* move the steel blocks first. */
+        {
+            int movex = dest.x, movey = dest.y;
+            while (!(movex == newP.x && movey == newP.y)) {
+                IntPair next;
+                next = travel(movex, movey, revD);
+                setTile(movex, movey, tileAt(next.x, next.y));
+                movex = next.x;
+                movey = next.y;
+            }
+        }
+
+        /* and one more, for the tile that we're stepping onto */
+        {
+            int replacement = ((flagAt(newP.x, newP.y) & TF_HASPANEL) == TF_HASPANEL) ? realPanel(flagAt(
+                    newP.x, newP.y))
+                    : T_FLOOR;
+            setTile(newP.x, newP.y, replacement);
+        }
+
+        /*
+         * reconcile panels.
+         * 
+         * imagine pushing a row of blocks one space to the right.
+         * 
+         * we loop over the NEW positions for the steel blocks. If a steel block
+         * is on a panel (that it can trigger), then we trigger that panel as
+         * long as the thing to its right (which used to be there) couldn't
+         * trigger it. this handles new panels that are turned ON.
+         * 
+         * if we can't trigger the panel, then we check to see if the panel to
+         * our right (which used to be there) also can't trigger it. If so, we
+         * don't do anything. Otherwise, we "untrigger" the panel.
+         * 
+         * To simplify, if triggerstatus_now != triggerstatus_old, we trigger.
+         * (Trigger has the same effect as untriggering.)
+         * 
+         * Because these swaps are supposed to be delayed, we set the TF_TEMP
+         * flag if the tile should do a swap afterwards.
+         */
+
+        boolean swapnew = false;
+        {
+            int lookx = dest.x, looky = dest.y;
+            int prevt = T_FLOOR; /* anything that doesn't trigger */
+            while (!(lookx == newP.x && looky == newP.y)) {
+
+                int heret = tileAt(lookx, looky);
+
+                /* triggerstatus for this location (lookx, looky) */
+                boolean triggerstatus_now = ((flagAt(lookx, looky) & TF_HASPANEL) == TF_HASPANEL)
+                        && triggers(heret, realPanel(flagAt(lookx, looky)));
+
+                boolean triggerstatus_old = ((flagAt(lookx, looky) & TF_HASPANEL) == TF_HASPANEL)
+                        && isSteel(prevt)
+                        && triggers(prevt, realPanel(flagAt(lookx, looky)));
+
+                if (triggerstatus_now != triggerstatus_old) {
+                    setFlag(lookx, looky, flagAt(lookx, looky) | TF_TEMP);
+                    //           printf("Yes swap at %d/%d\n", lookx, looky);
+                } else
+                    setFlag(lookx, looky, flagAt(lookx, looky) & ~TF_TEMP);
+
+                prevt = heret;
+
+                IntPair next;
+                next = travel(lookx, looky, revD);
+
+                lookx = next.x;
+                looky = next.y;
+            }
+
+            /* first panel is slightly different */
+            {
+                int first = tileAt(newP.x, newP.y);
+                boolean trig_now = (first == T_PANEL);
+                boolean trig_old = isPanel(first)
+                        && triggers(prevt, realPanel(flagAt(newP.x, newP.y)));
+
+                if (trig_old != trig_now) {
+                    swapnew = true;
+                }
+            }
+        } /* zap, if necessary, before swapping */
+        if (zap) {
+            setTile(dest.x, dest.y, T_ELECTRIC);
+            /* XXX animate */
+        }
+
+        /* now we can start swapping. */
+        checkStepOff(ent.getX(), ent.getY());
+
+        /*
+         * this part is now invariant to order, because there is only one
+         * destination per location
+         */
+
+        if (swapnew) {
+            swapO(destAt(newP.x, newP.y));
+        }
+
+        {
+            int lookx = dest.x, looky = dest.y;
+            while (!(lookx == newP.x && looky == newP.y)) {
+
+                if ((flagAt(lookx, looky) & TF_TEMP) == TF_TEMP) {
+                    swapO(destAt(lookx, looky));
+                    setFlag(lookx, looky, flagAt(lookx, looky) & ~TF_TEMP);
+                }
+
+                /* next */
+                IntPair next;
+                next = travel(lookx, looky, revD);
+                lookx = next.x;
+                looky = next.y;
+            }
+        }
+
+        /* XXX also boundary conditions? (XXX what does that mean?) */
+        ent.setX(newP.x);
+        ent.setY(newP.y);
+
+        return true;
+    }
+
+    /**
+     * @param ent
+     * @param d
+     * @param newP
+     * @return
+     */
+    private boolean doGreenBlockMove(Entity ent, int d, IntPair newP) {
+        IntPair dest;
+        if ((dest = travel(newP.x, newP.y, d)) != null) {
+            if (tileAt(dest.x, dest.y) == T_FLOOR && !isBotAt(dest.x, dest.y)
+                    && !player.isAt(dest.x, dest.y)) {
+                setTile(dest.x, dest.y, T_BLUE);
+                setTile(newP.x, newP.y, T_FLOOR);
+
+                checkStepOff(ent.getX(), ent.getY());
+
+                ent.setX(newP.x);
+                ent.setY(newP.y);
+                return true;
+            } else
+                return false;
+        } else
+            return false;
+    }
+
+    /**
+     * @param e
+     * @param newP
+     * @return
+     */
+    private boolean doBrokenMove(Effects e, IntPair newP) {
+        setTile(newP.x, newP.y, T_FLOOR);
+        if (e != null) {
+            e.doBroken();
+        }
+        return true;
+    }
+
+    /**
+     * @param e
+     * @param newP
+     * @return
+     */
+    private boolean doButtonMove(Effects e, IntPair newP) {
+        for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
+            /* send a pulse in that direction. */
+            IntPair pulse = newP;
+            int pd = dd;
+
+            while (pd != Entity.DIR_NONE
+                    && (pulse = travel(pulse.x, pulse.y, pd)) != null) {
+                switch (tileAt(pulse.x, pulse.y)) {
+                case T_BLIGHT:
+                    swapTiles(T_BUP, T_BDOWN);
+                    pd = Entity.DIR_NONE;
+                    break;
+                case T_RLIGHT:
+                    swapTiles(T_RUP, T_RDOWN);
+                    pd = Entity.DIR_NONE;
+                    break;
+                case T_GLIGHT:
+                    swapTiles(T_GUP, T_GDOWN);
+                    pd = Entity.DIR_NONE;
+                    break;
+
+                case T_NS:
+                    if (pd == Entity.DIR_UP || pd == Entity.DIR_DOWN)
+                        continue;
+                    else
+                        pd = Entity.DIR_NONE;
+                    break;
+
+                case T_WE:
+                    if (pd == Entity.DIR_LEFT || pd == Entity.DIR_RIGHT)
+                        continue;
+                    else
+                        pd = Entity.DIR_NONE;
+                    break;
+
+                case T_NW:
+                    if (pd == Entity.DIR_DOWN)
+                        pd = Entity.DIR_LEFT;
+                    else if (pd == Entity.DIR_RIGHT)
+                        pd = Entity.DIR_UP;
+                    else
+                        pd = Entity.DIR_NONE;
+                    break;
+
+                case T_SW:
+                    if (pd == Entity.DIR_UP)
+                        pd = Entity.DIR_LEFT;
+                    else if (pd == Entity.DIR_RIGHT)
+                        pd = Entity.DIR_DOWN;
+                    else
+                        pd = Entity.DIR_NONE;
+                    break;
+
+                case T_NE:
+                    if (pd == Entity.DIR_DOWN)
+                        pd = Entity.DIR_RIGHT;
+                    else if (pd == Entity.DIR_LEFT)
+                        pd = Entity.DIR_UP;
+                    else
+                        pd = Entity.DIR_NONE;
+                    break;
+
+                case T_SE:
+                    if (pd == Entity.DIR_UP)
+                        pd = Entity.DIR_RIGHT;
+                    else if (pd == Entity.DIR_LEFT)
+                        pd = Entity.DIR_DOWN;
+                    else
+                        pd = Entity.DIR_NONE;
+                    break;
+
+                default:
+                    pd = Entity.DIR_NONE;
+                }
+            }
+        }
+
+        if (e != null) {
+            e.doPulse();
+        }
+        return true;
+    }
+
+    /**
+     * @param ent
+     * @param e
+     * @param newP
+     * @return
+     */
+    private boolean doTransportMove(Entity ent, Effects e, IntPair newP) {
+        // not if there's an entity there
+        if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+            return false;
+        }
+
+        if (ent.canTeleport() || ent.isPlayer()) {
+            IntPair targ;
+            targ = where(dests[width * newP.y + newP.x]);
+
+            if (e != null) {
+                e.doTransport();
+            }
+            warp(ent, targ.x, targ.y);
+
+            checkBotDeath(targ.x, targ.y, ent);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param e
+     * @param target
+     * @param newP
+     * @return
+     */
+    private boolean doToggleMove(Effects e, int target, IntPair newP) {
+        {
+            int opp = (target == T_0 ? T_1 : T_0);
+
+            swapTiles(T_UD, T_LR);
+
+            if (e != null) {
+                e.doSwap();
+            }
+            setTile(newP.x, newP.y, opp);
+
+            return true;
+        }
+    }
+
+    /**
+     * @param e
+     * @param newP
+     * @return
+     */
+    private boolean doElectricOffMove(Effects e, IntPair newP) {
+        if (e != null) {
+            e.doElectricOff();
+        }
+        for (int i = (width * height) - 1; i >= 0; i--) {
+            if (tiles[i] == T_ELECTRIC)
+                setTile(i, T_FLOOR);
+        }
+        setTile(newP.x, newP.y, T_OFF);
+        return true;
+    }
+
+    /**
+     * @param ent
+     * @param newP
+     * @return
+     */
+    private boolean doExitMove(Entity ent, IntPair newP) {
+        // bots don't exit
+        if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+            return false;
+        }
+
+        checkStepOff(ent.getX(), ent.getY());
+        ent.setX(newP.x);
+        ent.setY(newP.y);
+        return true;
+    }
+
+    /**
+     * @param ent
+     * @param d
+     * @param target
+     * @param newP
+     * @return
+     */
+    private boolean doFloorMove(Entity ent, int d, int target, IntPair newP) {
+        // sometimes we will push
+        Entity pushee = null;
+        Bot b;
+        if (player.isAt(newP.x, newP.y)) { // ent is not player!
+            // if player is on bot, no pushing either of them
+            if (getBotAt(newP.x, newP.y) != null) {
+                return false;
+            }
+
+            if (ent.canPushPlayer()) {
+                pushee = player;
+            } else if (ent.crushesPlayer()) {
+                pushee = null; // CRUSH! not push
+            } else {
+                return false;
+            }
+        } else if ((b = getBotAt(newP.x, newP.y)) != null) {
+            if (ent.canPushBots()) {
+                pushee = b;
+            } else if (ent.walksIntoBots()) {
+                pushee = null; // WALK! not push
+            } else {
+                return false;
+            }
+        }
+
+        if (pushee != null) {
+            // we are pushing, do some sort of recursive push
+            IntPair far = travel(newP.x, newP.y, d);
+            if (far != null) {
+                int fTarget = tileAt(far.x, far.y);
+                switch (fTarget) {
+                case T_ELECTRIC:
+                    // only bots can go into electric
+                    if (pushee == player) {
+                        return false;
+                    }
+                    break;
+                case T_TRAP2:
+                case T_TRAP1:
+                case T_FLOOR:
+                case T_ROUGH:
+                case T_RDOWN:
+                case T_GDOWN:
+                case T_BDOWN:
+                case T_PANEL:
+                case T_RPANEL:
+                case T_GPANEL:
+                case T_BPANEL:
+                    break;
+                default:
+                    return false;
+                }
+
+                // can't push 2 entities
+                if (isBotAt(far.x, far.y)) {
+                    return false;
+                }
+                if (player.isAt(far.x, far.y)) {
+                    return false;
+                }
+
+                // push
+                pushee.setX(far.x);
+                pushee.setY(far.y);
+
+                // zapping
+                if (fTarget == T_ELECTRIC && pushee != player) {
+                    ((Bot) pushee).delete();
+                }
+
+                // panels
+                if (fTarget == T_PANEL) {
+                    swapO(destAt(far.x, far.y));
+                }
+
+                // handle leaving current (pushed) position
+                if (target == T_PANEL) {
+                    // do nothing, or else get a double flip
+                    // since pusher is going on here now
+                } else {
+                    checkStepOff(newP.x, newP.y);
+                }
+
+                // handle leaving pusher position
+                checkStepOff(ent.getX(), ent.getY());
+
+                // then move
+                ent.setX(newP.x);
+                ent.setY(newP.y);
+
+                // done?
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            checkBotDeath(newP.x, newP.y, ent); // might have stepped
+            // onto bot
+
+            // panels again
+            checkStepOff(ent.getX(), ent.getY());
+            if (target == T_PANEL) {
+                swapO(destAt(newP.x, newP.y));
+            }
+
+            ent.setX(newP.x);
+            ent.setY(newP.y);
+
+            return true;
+        }
     }
 
     private void setFlag(int x, int y, int f) {
