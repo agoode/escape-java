@@ -14,47 +14,60 @@ package org.spacebar.escape.common;
  */
 abstract public class Entity {
     static private final int CAP_IS_PLAYER = 0;
+
     static private final int CAP_CAN_TELEPORT = 1;
+
     static private final int CAP_CRUSH_PLAYER = 2;
+
     static private final int CAP_WALK_INTO_BOTS = 3;
+
     static private final int CAP_PUSH_PLAYER = 4;
+
     static private final int CAP_ZAP_SELF = 5;
+
     static private final int CAP_PUSH_BOTS = 6;
+
     static private final int NUM_CAPS = 7;
-    
+
     protected final void iCanTeleport() {
         capabilities[CAP_CAN_TELEPORT] = true;
     }
+
     protected final void iCrushPlayer() {
         capabilities[CAP_CRUSH_PLAYER] = true;
     }
+
     protected final void iAmPlayer() {
         capabilities[CAP_IS_PLAYER] = true;
     }
+
     protected final void iPushBots() {
         capabilities[CAP_PUSH_BOTS] = true;
         iPushPlayer();
     }
+
     protected final void iPushPlayer() {
         capabilities[CAP_PUSH_PLAYER] = true;
     }
+
     protected final void iWalkIntoBots() {
         capabilities[CAP_WALK_INTO_BOTS] = true;
         iCrushPlayer();
     }
+
     protected final void iZapSelf() {
         capabilities[CAP_ZAP_SELF] = true;
         iWalkIntoBots();
     }
-    
+
     protected final void clearCapabilities() {
         for (int i = 0; i < capabilities.length; i++) {
             capabilities[i] = false;
         }
     }
-    
+
     final private boolean capabilities[] = new boolean[NUM_CAPS];
-    
+
     private int d;
 
     private int x;
@@ -65,6 +78,7 @@ abstract public class Entity {
     public final static int DIR_NONE = 0;
 
     public final static int FIRST_DIR = 1;
+
     public final static int DIR_UP = 1;
 
     public final static int DIR_DOWN = 2;
@@ -72,15 +86,15 @@ abstract public class Entity {
     public final static int DIR_LEFT = 3;
 
     public final static int DIR_RIGHT = 4;
+
     public final static int LAST_DIR = 4;
 
-    
     public Entity(int x, int y, int d) {
         this.x = x;
         this.y = y;
         this.d = d;
     }
-    
+
     final public boolean canTeleport() {
         return capabilities[CAP_CAN_TELEPORT];
     }
@@ -117,7 +131,7 @@ abstract public class Entity {
     final public boolean canPushBots() {
         return capabilities[CAP_PUSH_BOTS];
     }
-    
+
     final public boolean canPushPlayer() {
         return capabilities[CAP_PUSH_PLAYER];
     }
@@ -149,7 +163,7 @@ abstract public class Entity {
     final public boolean isAt(int x, int y) {
         return this.x == x && this.y == y;
     }
-    
+
     final public boolean walksIntoBots() {
         return capabilities[CAP_WALK_INTO_BOTS];
     }
@@ -157,29 +171,49 @@ abstract public class Entity {
     final public boolean zapsSelf() {
         return capabilities[CAP_ZAP_SELF];
     }
-    
+
     public String toString() {
         String s = getClass().getName() + ": (" + x + "," + y + "," + d + ") [";
-        if (isPlayer()) s += " isPlayer";
-        if (canTeleport()) s += " canTeleport";
-        if (crushesPlayer()) s += " crushesPlayer";
-        if (walksIntoBots()) s += " walksIntoBots";
-        if (canPushPlayer()) s += " pushesPlayer";
-        if (zapsSelf()) s += " zapsSelf";
-        if (canPushBots()) s += " pushesBots";
+        if (isPlayer())
+            s += " isPlayer";
+        if (canTeleport())
+            s += " canTeleport";
+        if (crushesPlayer())
+            s += " crushesPlayer";
+        if (walksIntoBots())
+            s += " walksIntoBots";
+        if (canPushPlayer())
+            s += " pushesPlayer";
+        if (zapsSelf())
+            s += " zapsSelf";
+        if (canPushBots())
+            s += " pushesBots";
         s += " ]";
         return s;
     }
+
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
         if (obj instanceof Entity) {
             Entity e = (Entity) obj;
-            
-            for (int i = 0; i < capabilities.length; i++) {
-                if (capabilities[i] != e.capabilities[i]) {
-                    return false;
-                }
-            }
+
+            return x == e.x && y == e.y && type == e.type;
         }
         return false;
     }
+
+    public static final int B_DELETED = -2;
+
+    public static final int B_PLAYER = -1;
+
+    public static final int B_BROKEN = 0;
+
+    public static final int B_DALEK = 1;
+
+    public static final int B_HUGBOT = 2;
+
+    protected int type;
 }

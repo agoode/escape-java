@@ -13,14 +13,6 @@ package org.spacebar.escape.common;
  * Preferences - Java - Code Style - Code Templates
  */
 public class Bot extends Entity {
-    public final static int B_DELETED = -2;
-
-    public final static int B_BROKEN = 0;
-
-    public final static int B_DALEK = 1;
-
-    public final static int B_HUGBOT = 2;
-
     private final static IntPair brokenDirs = new IntPair(DIR_NONE, DIR_NONE);
 
     public Bot(int x, int y, int d, int type) {
@@ -34,7 +26,7 @@ public class Bot extends Entity {
     }
     
     public void setToType(int type) {
-        botType = type;
+        this.type = type;
         clearCapabilities();
         
         switch (type) {
@@ -65,14 +57,12 @@ public class Bot extends Entity {
         iWalkIntoBots();
     }
 
-    private int botType;
-
     public int getBotType() {
-        return botType;
+        return type;
     }
 
     public IntPair getDirChoices(Entity e) {
-        switch (botType) {
+        switch (type) {
         case B_BROKEN:
             return brokenDirs;
         case B_DALEK:

@@ -384,23 +384,8 @@ public class Level {
         setTile(y * width + x, t);
     }
 
-    private void oSetTile(int x, int y, int t) {
-        oTiles[y * width + x] = t;
-    }
-
-    private void setDest(int x, int y, int xd, int yd) {
-        dests[y * width + x] = yd * width + xd;
-    }
-
     private int destAt(int x, int y) {
         return dests[y * width + x];
-    }
-
-    private IntPair getDest(int x, int y) {
-        int xd = dests[y * width + x] % width;
-        int yd = dests[y * width + x] / width;
-
-        return new IntPair(xd, yd);
     }
 
     private int flagAt(int x, int y) {
@@ -583,7 +568,7 @@ public class Level {
             // move bots
             for (int i = 0; i < bots.length; i++) {
                 Bot b = bots[i];
-                if (b.getBotType() == Bot.B_DELETED) {
+                if (b.getBotType() == Entity.B_DELETED) {
                     continue;
                 }
                 IntPair dirs = b.getDirChoices(player);
@@ -1489,10 +1474,10 @@ public class Level {
         if (ent != player) {
             for (int b = 0; b < bots.length; b++) {
                 Bot bb = bots[b];
-                if (ent != bb && bb.getBotType() != Bot.B_DELETED
+                if (ent != bb && bb.getBotType() != Entity.B_DELETED
                         && x == bb.getX() && y == bb.getY()) {
                     bots[b].delete();
-                    ((Bot) ent).setToType(Bot.B_BROKEN);
+                    ((Bot) ent).setToType(Entity.B_BROKEN);
                 }
             }
         }
@@ -1504,7 +1489,7 @@ public class Level {
 
     private Bot getBotAt(int x, int y) {
         for (int i = 0; i < bots.length; i++) {
-            if (bots[i].getBotType() != Bot.B_DELETED && bots[i].isAt(x, y)) {
+            if (bots[i].getBotType() != Entity.B_DELETED && bots[i].isAt(x, y)) {
                 return bots[i];
             }
         }
@@ -1703,7 +1688,7 @@ public class Level {
     }
 
     public boolean isBotDeleted(int botIndex) {
-        return bots[botIndex].getBotType() == Bot.B_DELETED;
+        return bots[botIndex].getBotType() == Entity.B_DELETED;
     }
 
     public IntTriple getLaser() {
@@ -1711,6 +1696,10 @@ public class Level {
     }
 
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
         if (obj instanceof Level) {
             Level l = (Level) obj;
 
@@ -1737,13 +1726,50 @@ public class Level {
             }
 
             // entities
-            
+            if (!player.equals(l.player)) {
+                return false;
+            }
+
+            try {
+                for (int i = 0; i < bots.length; i++) {
+                    if (!bots[i].equals(l.bots[i])) {
+                        return false;
+                    }
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return super.hashCode();
+        // Like Tom,
+        /*
+         * ignore title, author, w/h, dests, flags, since these don't change.
+         * also ignore botd and guyd, which are presentational.
+         */
+
+        FNV32 hash = new FNV32();
+        
+        // player
+        hash.fnv32(player.getX());
+        hash.fnv32(player.getY());
+        
+        // tiles, oTiles
+        for (int i = 0; i < tiles.length; i++) {
+            hash.fnv32(tiles[i]);
+            hash.fnv32(oTiles[i]);
+        }
+        
+        // bots
+        for (int i = 0; i < bots.length; i++) {
+            Bot b = bots[i];
+            hash.fnv32(b.getBotType());
+            hash.fnv32(b.getX());
+            hash.fnv32(b.getY());
+        }
+        
+        return hash.hval;
     }
 }
