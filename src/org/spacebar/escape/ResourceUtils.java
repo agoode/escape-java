@@ -94,7 +94,6 @@ public class ResourceUtils {
 
             Graphics2D g = biggerImgs[i].createGraphics();
             g.scale(1 << scale, 1 << scale);
-            System.out.println(g.getTransform());
             g.drawImage(origImg, 0, 0, null);
             g.dispose();
         }
@@ -127,7 +126,7 @@ public class ResourceUtils {
         g.drawImage(img, 0, 0, null);
         g.dispose();
 
-        System.out.println(img2);
+//        System.out.println(img2);
 
         return img2;
     }

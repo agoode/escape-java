@@ -42,7 +42,10 @@ public class EscapeLevelView extends JComponent {
 
         public void actionPerformed(ActionEvent e) {
             if (!done) {
-                theLevel.move(dir, effects);
+                if (theLevel.move(dir, effects)) {
+                    // append to solution
+                    addToSolution(dir);
+                }
                 setPlayerDir(dir);
 
                 if ((laser = theLevel.isDead()) != null) {
@@ -51,7 +54,37 @@ public class EscapeLevelView extends JComponent {
                     done = true;
                 } else if (theLevel.isWon()) {
                     effects.doExit();
-                    System.out.println("won");
+                    System.out.println("won in " + solutionCount + " steps");
+                    System.out.print("solution: [");
+                    for (int i = 0; i < solutionCount; i++) {
+                        int d = solution[i];
+                        String s;
+                        switch (d) {
+                        case Level.DIR_UP:
+                            //                            s = "up";
+                            s = "↑";
+                            break;
+                        case Level.DIR_DOWN:
+                            //                            s = "down";
+                            s = "↓";
+                            break;
+                        case Level.DIR_LEFT:
+                            //                            s = "left";
+                            s = "←";
+                            break;
+                        case Level.DIR_RIGHT:
+                            //                            s = "right";
+                            s = "→";
+                            break;
+                        default:
+                            s = "?";
+                        }
+                        System.out.print(s);
+                        if (i != solutionCount - 1) {
+                            System.out.print(" ");
+                        }
+                    }
+                    System.out.println("]");
                     done = true;
                 }
                 repairDamage();
@@ -85,7 +118,8 @@ public class EscapeLevelView extends JComponent {
                 scaleVal = 1 / (double) (1 << scale);
             }
 
-            System.out.println("scale: " + scale + ", scaleVal: " + scaleVal);
+            //            System.out.println("scale: " + scale + ", scaleVal: " +
+            // scaleVal);
 
             bufferPaint();
             repaint();
@@ -125,10 +159,10 @@ public class EscapeLevelView extends JComponent {
     private final static int TILES_ACROSS = 16;
 
     static {
-//        Effects e1 = new NESEffects();
+        //        Effects e1 = new NESEffects();
         Effects e2 = new TextEffects();
         CompoundEffects e = new CompoundEffects();
-//        e.add(e1);
+        //        e.add(e1);
         e.add(e2);
         effects = e;
     }
@@ -158,6 +192,10 @@ public class EscapeLevelView extends JComponent {
     private int paintedTilesAcross;
 
     private int paintedTilesDown;
+
+    byte solution[];
+
+    int solutionCount;
 
     public EscapeLevelView(File f) {
         super();
@@ -209,7 +247,7 @@ public class EscapeLevelView extends JComponent {
         // restore clip and draw the rest
         g2.setClip(clip);
         g2.setTransform(origAT);
-        paintArrows();
+        paintArrows(g2);
 
         // restore transform and draw title
         g2.setTransform(origAT);
@@ -286,6 +324,8 @@ public class EscapeLevelView extends JComponent {
         done = false;
         showBizarro = false;
         laser = theLevel.isDead();
+        solution = null;
+        solutionCount = 0;
 
         bufferPaint();
         repaint();
@@ -414,8 +454,8 @@ public class EscapeLevelView extends JComponent {
     private void paintLevel(Graphics2D g2) {
         int zoom = getZoomIndex();
         int tileSize = getTileSize();
-        System.out.println("tilesize: " + tileSize);
-        System.out.println("zoom: " + zoom);
+        //        System.out.println("tilesize: " + tileSize);
+        //        System.out.println("zoom: " + zoom);
 
         for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
             for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
@@ -446,18 +486,43 @@ public class EscapeLevelView extends JComponent {
         }
     }
 
-    private void paintArrows() {
+    private void paintArrows(Graphics2D g) {
+        int h = backBuffer.getHeight();
+        int w = backBuffer.getWidth();
+
+        AffineTransform t = g.getTransform();
+
         if (xScroll > 0) {
             // left arrow
+            int x = 3;
+            int y = h / 2;
+            g.translate(x, y);
+            drawString(g, Characters.PICS + Characters.ARROWL + Characters.POP);
+            g.setTransform(t);
         }
         if (yScroll > 0) {
             // top arrow
+            int x = w / 2;
+            int y = -4;
+            g.translate(x, y);
+            drawString(g, Characters.PICS + Characters.ARROWU + Characters.POP);
+            g.setTransform(t);
         }
-        if (paintedTilesAcross < theLevel.getWidth()) {
+        if (paintedTilesAcross + xScroll < theLevel.getWidth()) {
             // right arrow
+            int x = w - LEVEL_MARGIN;
+            int y = h / 2;
+            g.translate(x, y);
+            drawString(g, Characters.PICS + Characters.ARROWR + Characters.POP);
+            g.setTransform(t);
         }
-        if (paintedTilesDown < theLevel.getHeight()) {
+        if (paintedTilesDown + yScroll < theLevel.getHeight()) {
             // down arrow
+            int x = w / 2;
+            int y = h - LEVEL_MARGIN;
+            g.translate(x, y);
+            drawString(g, Characters.PICS + Characters.ARROWD + Characters.POP);
+            g.setTransform(t);
         }
     }
 
@@ -505,7 +570,8 @@ public class EscapeLevelView extends JComponent {
             }
         }
 
-        System.out.println("pbx: " + playerBorderX + ", pby: " + playerBorderY);
+        //        System.out.println("pbx: " + playerBorderX + ", pby: " +
+        // playerBorderY);
 
         final int playerX = theLevel.getPlayerX();
         final int playerY = theLevel.getPlayerY();
@@ -513,18 +579,18 @@ public class EscapeLevelView extends JComponent {
         final int playerScreenY = playerY - yScroll;
 
         if (playerScreenX < playerBorderX) {
-            System.out.println("scroll left!");
+            //            System.out.println("scroll left!");
             xScroll = playerX - playerBorderX;
         } else if (playerScreenX > (paintedTilesAcross - 1) - playerBorderX) {
-            System.out.println("scroll right!");
+            //            System.out.println("scroll right!");
             xScroll = playerX - (paintedTilesAcross - 1) + playerBorderX;
         }
 
         if (playerScreenY < playerBorderY) {
-            System.out.println("scroll up!");
+            //            System.out.println("scroll up!");
             yScroll = playerY - playerBorderY;
         } else if (playerScreenY > (paintedTilesDown - 1) - playerBorderY) {
-            System.out.println("scroll down!");
+            //            System.out.println("scroll down!");
             yScroll = playerY - (paintedTilesDown - 1) + playerBorderY;
         }
 
@@ -544,20 +610,37 @@ public class EscapeLevelView extends JComponent {
             yScroll = maxYScroll;
         }
 
-        System.out.println("pta: " + paintedTilesAcross + ", ptd: "
-                + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
+        //        System.out.println("pta: " + paintedTilesAcross + ", ptd: "
+        //                + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
     }
 
     /**
      * @param dir
      *            The dir to set.
      */
-    public void setPlayerDir(int dir) {
+    void setPlayerDir(int dir) {
         if (dir != Level.DIR_DOWN && dir != Level.DIR_LEFT
                 && dir != Level.DIR_RIGHT && dir != Level.DIR_UP) {
             throw new IllegalArgumentException("Bad direction");
         }
         this.playerDir = dir;
+    }
+
+    void addToSolution(int dir) {
+        if (solution == null) {
+            solution = new byte[16];
+        }
+
+        solutionCount++;
+
+        if (solutionCount == solution.length) {
+            // extend
+            byte b[] = new byte[(int) (solution.length * 1.5)];
+            System.arraycopy(solution, 0, b, 0, solution.length);
+            solution = b;
+        }
+
+        solution[solutionCount - 1] = (byte) dir;
     }
 
     private void setupKeys() {
