@@ -38,18 +38,16 @@ public class EscapeCanvas extends Canvas {
 
     Level theLevel;
 
-    //    final static Image tiles[] = ResourceUtil.loadImages("/tiles",
-    // NUM_IMAGES, ".png");
-    final static Image tiles[];
+    final static Image tiles = ResourceUtil.loadImage("/tiles8x8i.png");
 
     final static Image player = ResourceUtil.loadImage("/player8x8i.png");
 
-    static {
-        Image temp = ResourceUtil.loadImage("/tiles8x8i.png");
-        tiles = ResourceUtil.unpackTiles(temp, TILE_SIZE, TILE_SIZE,
-                Level.LAST_T + 1, TILES_ACROSS);
-    }
-
+    private Image levelBuffer;
+    private int bufW;
+    private int bufH;
+    
+    private boolean needsRedraw;
+    
     private byte playerDir;
 
     EscapeCanvas(byte[] level) throws IOException {
@@ -61,28 +59,36 @@ public class EscapeCanvas extends Canvas {
         theLevel = new Level(new BitInputStream(new ByteArrayInputStream(
                 origLevel)));
         playerDir = Level.DIR_DOWN;
+        needsRedraw = true;
     }
 
+    // clobbers clip
     static private void drawTile(Graphics g, int tile) {
-        //        int si = (tile % TILES_ACROSS) / tiles.length;
-        //        int sx = (tile % (TILES_ACROSS / tiles.length)) * TILE_SIZE;
+        int sx = tile % TILES_ACROSS * TILE_SIZE;
+        int sy = tile / TILES_ACROSS * TILE_SIZE;
 
-        //        int cx = g.getClipX();
-        //        int cy = g.getClipY();
-        //        int cw = g.getClipWidth();
-        //        int ch = g.getClipHeight();
+//        int cx = g.getClipX();
+//        int cy = g.getClipY();
+//        int cw = g.getClipWidth();
+//        int ch = g.getClipHeight();
 
-        //        Image t = tiles[si];
 
-        //        g.clipRect(0, 0, TILE_SIZE, TILE_SIZE);
-        g.drawImage(tiles[tile], 0, 0, Graphics.TOP | Graphics.LEFT);
+        g.setClip(0, 0, TILE_SIZE, TILE_SIZE);
+        g.drawImage(tiles, -sx, -sy, Graphics.TOP | Graphics.LEFT);
 
         //        System.out.println("s: " + sx + " " + sy + ", d: " + dx + " " + dy
         //                + ", p:" + px + " " + py);
-        //        g.setClip(cx, cy, cw, ch);
     }
 
     protected void paint(Graphics g) {
+        if (levelBuffer == null) {
+            initLevelBuffer();
+        }
+
+        if (needsRedraw) {
+            drawLevel();
+        }
+        
         int h = getHeight();
         int w = getWidth();
 
@@ -90,8 +96,8 @@ public class EscapeCanvas extends Canvas {
         g.fillRect(0, 0, w, h);
 
         // nudge
-        g.translate(0, font.getBaselinePosition());
-        drawLevel(g);
+        g.translate(-TILE_SIZE / 2, font.getBaselinePosition());
+        g.drawImage(levelBuffer, 0, 0, Graphics.TOP | Graphics.LEFT);
         drawPlayer(g);
 
         g.setFont(font);
@@ -100,21 +106,36 @@ public class EscapeCanvas extends Canvas {
                 .getTranslateY(), Graphics.TOP | Graphics.LEFT);
     }
 
-    private void drawLevel(Graphics g) {
-        int lw = theLevel.getWidth();
-        int lh = theLevel.getHeight();
+    private void initLevelBuffer() {
+        bufW = Math.min(theLevel.getWidth() * TILE_SIZE, getWidth() * 2);
+        bufH = Math.min(theLevel.getHeight() * TILE_SIZE, getHeight() * 2);
+        levelBuffer = Image.createImage(bufW, bufH);
+        
+        // clear
+        Graphics g = levelBuffer.getGraphics();
+        g.setColor(0);
+        g.fillRect(0, 0, bufW, bufH);
+    }
+    
+    private void drawLevel() {
+        int lw = theLevel.getWidth() - 1;
+        int lh = theLevel.getHeight() - 1;
 
+        Graphics g = levelBuffer.getGraphics();
+        
         // skip to end, and go in reverse
-        g.translate(lw * TILE_SIZE, lh * TILE_SIZE);
+        g.translate((lw + 1) * TILE_SIZE, (lh + 1) * TILE_SIZE);
         int origX = g.getTranslateX();
-        for (int j = lh - 1; j >= 0; j--) {
+        for (int j = lh; j >= 0; j--) {
             g.translate(origX - g.getTranslateX(), -TILE_SIZE);
-            for (int i = lw - 1; i >= 0; i--) {
+            for (int i = lw; i >= 0; i--) {
                 g.translate(-TILE_SIZE, 0);
                 int t = theLevel.tileAt(i, j);
                 drawTile(g, t);
             }
         }
+        
+        needsRedraw = false;
     }
 
     // assume translation is at 0,0 of level
