@@ -15,6 +15,19 @@ public class Level {
             return solutionCount;
         }
         
+        public Solution(BitInputStream in) throws IOException {
+            solutionCount = Misc.getIntFromStream(in);
+            
+            int sol[] = RunLengthEncoding.decode(in, solutionCount);
+            solution = new byte[sol.length];
+            for (int i = 0; i < sol.length; i++) {
+                byte b = (byte) sol[i];
+                solution[i] = b;
+            }
+        }
+        
+        public Solution() {}
+
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("solution: [");

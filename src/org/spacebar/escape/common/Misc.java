@@ -30,7 +30,7 @@ public class Misc {
         return out.toByteArray();
     }
 
-    static int getIntFromStream(InputStream in) throws IOException {
+    public static int getIntFromStream(InputStream in) throws IOException {
         int r = 0;
     
         r += eofRead(in) << 24;
@@ -41,7 +41,7 @@ public class Misc {
         return r;
     }
 
-    static int eofRead(InputStream in) throws IOException {
+    public static int eofRead(InputStream in) throws IOException {
         int i = in.read();
         if (i == -1) {
             throw new EOFException();
@@ -49,7 +49,7 @@ public class Misc {
         return i;
     }
 
-    static String getStringFromStream(InputStream in, int size)
+    public static String getStringFromStream(InputStream in, int size)
             throws IOException {
         byte buf[] = getBytesFromStream(in, size);
     
@@ -57,7 +57,7 @@ public class Misc {
         return (result);
     }
 
-    static byte[] getBytesFromStream(InputStream in, int size) throws IOException {
+    public static byte[] getBytesFromStream(InputStream in, int size) throws IOException {
         byte b[] = new byte[size];
     
         int c = b.length;

@@ -2,8 +2,12 @@ package org.spacebar.escape.common;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+
+import org.spacebar.escape.common.Level.Solution;
+import org.spacebar.escape.common.hash.MD5;
 
 public class PlayerInfo {
     static final private String PLAYER_MAGIC = "ESXP";
@@ -19,9 +23,9 @@ public class PlayerInfo {
     int webSeqL;
     String name;
     
-    Hashtable solutions;
+    Hashtable solutions = new Hashtable();
     
-    public PlayerInfo(InputStream in) throws IOException {
+    public PlayerInfo(BitInputStream in) throws IOException {
         // read magic
         String magic = Misc.getStringFromStream(in, 4);
         
@@ -39,7 +43,7 @@ public class PlayerInfo {
 
     }
 
-    private void decodeBinaryFormat(InputStream in) throws IOException {
+    private void decodeBinaryFormat(BitInputStream in) throws IOException {
         // get web stuff
         webID = Misc.getIntFromStream(in);
         webSeqH = Misc.getIntFromStream(in);
@@ -57,11 +61,45 @@ public class PlayerInfo {
         // all solutions
         int numSolutions = Misc.getIntFromStream(in);
         while (numSolutions-- > 0) {
+            // md5
+            MD5 md5 = new MD5(in);
             
+            // discard length of rle encoded bytes
+            Misc.getIntFromStream(in);
+            
+            // get solution
+            Level.Solution s = new Level.Solution(in);
+            
+            addSolution(md5, s, false);
         }
+        
+        // read optional ratings
+        // XXX
+        
+        // read optional chunks
+        // XXX
     }
     
-    private void addSolution(String md5, Level.Solution s, boolean append) {
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        
+        Enumeration e = solutions.keys();
+        while (e.hasMoreElements()) {
+            MD5 md5 = (MD5) e.nextElement();
+
+            sb.append(md5 + " -> ");
+            
+            Vector v = (Vector) solutions.get(md5);
+            for (int i = 0; i < v.size(); i++) {
+                Level.Solution s = (Solution) v.elementAt(i);
+                sb.append(s.toString() + " ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+    
+    private void addSolution(MD5 md5, Level.Solution s, boolean append) {
         Vector v = (Vector) solutions.get(md5);
         if (v == null) {
             v = new Vector();
@@ -69,11 +107,11 @@ public class PlayerInfo {
         }
         
         // if there is already something, and we are not appending, forget it
-        if (!append && v.isEmpty()) {
+        if (!append && !v.isEmpty()) {
             return;
         }
         
         // add the item to the front
-        v.add(0, s);
+        v.insertElementAt(s, 0);
     }
 }
