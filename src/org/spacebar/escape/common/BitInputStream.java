@@ -1,29 +1,13 @@
-/*
- * Created on Dec 19, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.spacebar.escape.common;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-/**
- * @author adam
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
-public class BitInputStream extends InputStream {
+public class BitInputStream extends DataInputStream {
     private byte nextByte;
     private byte bitsLeftInByte;
-    final InputStream baseStream;
     
     public BitInputStream(InputStream in) {
-        super();
-        baseStream = in;
+        super(in);
     }
 
     public int read() throws IOException {
@@ -49,12 +33,10 @@ public class BitInputStream extends InputStream {
         return result;
     }
 
-    private boolean readBit() throws IOException, EOFException {
+    private boolean readBit() throws IOException {
         if (bitsLeftInByte == 0) {
-            int result = baseStream.read();
-            if (result == -1) {
-                throw new EOFException();
-            }
+            int result = readUnsignedByte();
+
             nextByte = (byte) result;
             bitsLeftInByte = 8;
         }

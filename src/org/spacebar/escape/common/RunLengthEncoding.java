@@ -19,7 +19,7 @@ public class RunLengthEncoding {
         int result[] = new int[len];
 
         // number of bytes to represent one integer
-        final int bytecount = Misc.eofRead(in);
+        final int bytecount = in.readUnsignedByte();
 
         int bits;
         int framebits = 8;

@@ -16,7 +16,7 @@ public class Level {
         }
         
         public Solution(BitInputStream in) throws IOException {
-            solutionCount = Misc.getIntFromStream(in);
+            solutionCount = in.readInt();
             
             int sol[] = RunLengthEncoding.decode(in, solutionCount);
             solution = new byte[sol.length];
@@ -1513,8 +1513,8 @@ public class Level {
         author = m.author;
         title = m.title;
 
-        int playerX = Misc.getIntFromStream(in);
-        int playerY = Misc.getIntFromStream(in);
+        int playerX = in.readInt();
+        int playerY = in.readInt();
 
         player = new Player(playerX, playerY, Entity.DIR_DOWN);
 
@@ -1528,7 +1528,7 @@ public class Level {
         int botI[] = null;
         int botT[] = null;
         try {
-            bots = Misc.getIntFromStream(in);
+            bots = in.readInt();
             botI = RunLengthEncoding.decode(in, bots);
             botT = RunLengthEncoding.decode(in, bots);
         } catch (EOFException e) {
@@ -1549,23 +1549,23 @@ public class Level {
     }
 
     public static MetaData getMetaData(BitInputStream in) throws IOException {
-        String magic = Misc.getStringFromStream(in, 4);
+        String magic = Misc.getStringFromData(in, 4);
         if (!magic.equals("ESXL")) {
             throw new IOException("Bad magic");
         }
 
-        int width = Misc.getIntFromStream(in);
-        int height = Misc.getIntFromStream(in);
+        int width = in.readInt();
+        int height = in.readInt();
 
         //        System.out.println("width: " + width + ", height: " + height);
 
         int size;
 
-        size = Misc.getIntFromStream(in);
-        String title = Misc.getStringFromStream(in, size);
+        size = in.readInt();
+        String title = Misc.getStringFromData(in, size);
 
-        size = Misc.getIntFromStream(in);
-        String author = Misc.getStringFromStream(in, size);
+        size = in.readInt();
+        String author = Misc.getStringFromData(in, size);
 
         return new MetaData(width, height, title, author);
     }
@@ -1626,7 +1626,14 @@ public class Level {
         }
     }
 
+    public String toString() {
+        return "[\"" + title + "\" by " + author + " (" + width + "x"
+                + height + ")" + " player: (" + this.player.getX() + ","
+                + this.player.getY() + ")]";
+    }
+    
     public void print(PrintStream p) {
+        p.println(toString());
         p.println("\"" + title + "\" by " + author + " (" + width + ","
                 + height + ")" + " player: (" + this.player.getX() + ","
                 + this.player.getY() + ")");
