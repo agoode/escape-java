@@ -1496,6 +1496,31 @@ public class Level {
         return null;
     }
 
+    public Level(Level l) {
+        width = l.width;
+        height = l.height;
+        
+        author = l.author;
+        title = l.title;
+        
+        player = new Player(l.player.getX(), l.player.getY(), l.player.getDir());
+        
+        tiles = new int[l.tiles.length];
+        oTiles = new int[l.oTiles.length];
+        dests = new int[l.dests.length];
+        flags = new int[l.flags.length];
+        
+        System.arraycopy(l.tiles, 0, tiles, 0, tiles.length);
+        System.arraycopy(l.oTiles, 0, oTiles, 0, oTiles.length);
+        System.arraycopy(l.dests, 0, dests, 0, dests.length);
+        System.arraycopy(l.flags, 0, flags, 0, flags.length);
+        
+        bots = new Bot[l.bots.length];
+        System.arraycopy(l.bots, 0, bots, 0, bots.length);
+        
+        dirty = new DirtyList();
+    }
+    
     public Level(BitInputStream in) throws IOException {
         MetaData m = getMetaData(in);
 
@@ -1536,7 +1561,6 @@ public class Level {
         }
 
         dirty = new DirtyList();
-        dirty.setAllDirty();
 
         isDead(); // calculate laser cache
     }
@@ -1576,6 +1600,8 @@ public class Level {
             int n = width * height;
             dirty = new boolean[n];
             dirtyList = new int[n];
+            
+            setAllDirty();
         }
 
         public void clearDirty() {
