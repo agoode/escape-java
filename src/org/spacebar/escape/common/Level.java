@@ -153,6 +153,8 @@ public class Level {
     public final static int T_RPANEL = 49;
 
     public final static int T_GPANEL = 50;
+    
+    public final static int LAST_T = 50;
 
     /**
      * @return Returns the author.
