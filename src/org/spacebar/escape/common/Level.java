@@ -355,6 +355,10 @@ public class Level {
         return (y * width) + x;
     }
 
+    public int tileAt(int i) {
+        return tiles[i];
+    }
+    
     public int tileAt(int x, int y) {
         return tiles[y * width + x];
     }
@@ -1057,8 +1061,16 @@ public class Level {
             allDirty = true;
         }
 
+        public boolean isDirty(int i) {
+            return allDirty || dirty[i];
+        }
+        
         public boolean isDirty(int x, int y) {
-            return (allDirty || dirty[index(x, y)]);
+            return allDirty || dirty[index(x, y)];
+        }
+        
+        public boolean isAnyDirty() {
+            return allDirty || numDirty > 0;
         }
     }
     

@@ -9,12 +9,11 @@ package org.spacebar.escape.midp1;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Font;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.*;
+import javax.microedition.midlet.MIDlet;
 
 import org.spacebar.escape.common.BitInputStream;
+import org.spacebar.escape.common.IntTriple;
 import org.spacebar.escape.common.Level;
 
 /**
@@ -36,7 +35,11 @@ public class EscapeCanvas extends Canvas {
 
     //    private static final byte NUM_IMAGES = 4;
 
+    boolean done;
+
     final byte origLevel[];
+
+    final MIDlet parent;
 
     Level theLevel;
 
@@ -50,20 +53,25 @@ public class EscapeCanvas extends Canvas {
 
     private int bufH;
 
-    private boolean needsRedraw;
-
     private int playerDir;
 
-    EscapeCanvas(byte[] level) throws IOException {
+    EscapeCanvas(byte[] level, MIDlet parent) {
+        this.parent = parent;
         origLevel = level;
+        playerDir = Level.DIR_DOWN;
         initLevel();
     }
 
-    void initLevel() throws IOException {
-        theLevel = new Level(new BitInputStream(new ByteArrayInputStream(
-                origLevel)));
-        playerDir = Level.DIR_DOWN;
-        needsRedraw = true;
+    void initLevel() {
+        try {
+            theLevel = new Level(new BitInputStream(new ByteArrayInputStream(
+                    origLevel)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        done = false;
+        repaint();
     }
 
     // clobbers clip
@@ -88,7 +96,7 @@ public class EscapeCanvas extends Canvas {
             initLevelBuffer();
         }
 
-        if (needsRedraw) {
+        if (theLevel.dirty.isAnyDirty()) {
             drawLevel();
         }
 
@@ -100,8 +108,10 @@ public class EscapeCanvas extends Canvas {
 
         // nudge
         g.translate(-TILE_SIZE / 2, font.getBaselinePosition());
+
         g.drawImage(levelBuffer, 0, 0, Graphics.TOP | Graphics.LEFT);
         drawPlayer(g);
+        drawLaser(g);
 
         g.setFont(font);
         g.setColor(255, 255, 255);
@@ -123,32 +133,44 @@ public class EscapeCanvas extends Canvas {
         levelBuffer = Image.createImage(bufW * TILE_SIZE, bufH * TILE_SIZE);
 
         // clear
+        clearLevelBuffer();
+    }
+
+    private void clearLevelBuffer() {
         Graphics g = levelBuffer.getGraphics();
         g.setColor(0);
         g.fillRect(0, 0, bufW * TILE_SIZE, bufH * TILE_SIZE);
     }
 
     private void drawLevel() {
-        int lw = theLevel.getWidth() - 1;
-        int lh = theLevel.getHeight() - 1;
+        Level theLevel = this.theLevel;
 
+        int lw = theLevel.getWidth();
+        int lh = theLevel.getHeight();
+
+        int n = lh * lw;
+
+        Level.DirtyList dirty = theLevel.dirty;
         Graphics g = levelBuffer.getGraphics();
 
+        int w = lw * TILE_SIZE;
+        int h = lh * TILE_SIZE;
+
         // skip to end, and go in reverse
-        g.translate((lw + 1) * TILE_SIZE, (lh + 1) * TILE_SIZE);
-        int origX = g.getTranslateX();
-        for (int j = lh; j >= 0; j--) {
-            g.translate(origX - g.getTranslateX(), -TILE_SIZE);
-            for (int i = lw; i >= 0; i--) {
-                g.translate(-TILE_SIZE, 0);
-                if (theLevel.dirty.isDirty(i, j)) {
-                    int t = theLevel.tileAt(i, j);
-                    drawTile(g, t);
-                }
+        g.translate(0, h);
+
+        for (int i = n - 1; i >= 0; i--) {
+            if (i % lw == lw - 1) {
+                // back to the right and up one
+                g.translate(w, -TILE_SIZE);
+            }
+            g.translate(-TILE_SIZE, 0);
+            if (dirty.isDirty(i)) {
+                int t = theLevel.tileAt(i);
+                drawTile(g, t);
             }
         }
-
-        needsRedraw = false;
+        theLevel.dirty.clearDirty();
     }
 
     // assume translation is at 0,0 of level
@@ -188,6 +210,38 @@ public class EscapeCanvas extends Canvas {
         g.clipRect(0, 0, TILE_SIZE, TILE_SIZE);
         g.drawImage(player, sx, sy, Graphics.TOP | Graphics.LEFT);
         g.setClip(cx, cy, cw, ch);
+
+        g.translate(-dx, -dy);
+    }
+
+    private void drawLaser(Graphics g) {
+        IntTriple laser = theLevel.isDead();
+        if (laser == null) {
+            return;
+        }
+
+        int lx = laser.x * TILE_SIZE + TILE_SIZE / 2;
+        int ly = laser.y * TILE_SIZE + TILE_SIZE / 2;
+        int px = theLevel.getPlayerX() * TILE_SIZE + TILE_SIZE / 2;
+        int py = theLevel.getPlayerY() * TILE_SIZE + TILE_SIZE / 2;
+
+        switch (laser.d) {
+        case Level.DIR_DOWN:
+            ly += TILE_SIZE / 2;
+            break;
+        case Level.DIR_UP:
+            ly -= TILE_SIZE / 2;
+            break;
+        case Level.DIR_RIGHT:
+            lx += TILE_SIZE / 2;
+            break;
+        case Level.DIR_LEFT:
+            lx -= TILE_SIZE / 2;
+            break;
+        }
+
+        g.setColor(255, 0, 0);
+        g.drawLine(lx, ly, px, py);
     }
 
     protected void keyPressed(int keyCode) {
@@ -204,15 +258,38 @@ public class EscapeCanvas extends Canvas {
         case DOWN:
             doMove(Level.DIR_DOWN);
             break;
+        case FIRE:
+            initLevel();
+            break;
         }
     }
 
     private void doMove(int dir) {
-        needsRedraw = true;
+        if (done) {
+            return;
+        }
+
         playerDir = dir;
 
         theLevel.move(dir, null);
 
+        final Display d = Display.getDisplay(parent);
+
+        if (theLevel.isDead() != null) {
+            done = true;
+            d.callSerially(new Runnable() {
+                public void run() {
+                    AlertType.ERROR.playSound(d);
+                }
+            });
+        } else if (theLevel.isWon()) {
+            done = true;
+            d.callSerially(new Runnable() {
+                public void run() {
+                    AlertType.INFO.playSound(d);
+                }
+            });
+        }
         repaint();
     }
 
