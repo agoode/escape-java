@@ -9,7 +9,6 @@ package org.spacebar.escape;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,7 +21,6 @@ import javax.swing.KeyStroke;
 
 import org.spacebar.escape.util.BitInputStream;
 import org.spacebar.escape.util.Characters;
-import org.spacebar.escape.util.StyleStack;
 
 /**
  * @author adam
@@ -40,7 +38,9 @@ public class PlayCanvas extends DoubleBufferCanvas {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (!done) {
+            if (done) {
+                
+            } else {
                 if (theLevel.move(dir, effects)) {
                     // append to solution
                     addToSolution(dir);
@@ -49,10 +49,11 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
                 if ((theLevel.isDead()) != null) {
                     effects.doLaser();
-                    System.out.println("dead");
+                    status = Characters.RED + "You died!" + Characters.POP;
                     done = true;
                 } else if (theLevel.isWon()) {
                     effects.doExit();
+                    status = Characters.GREEN + "Solved!" + Characters.POP;
                     System.out.println("won in " + solutionCount + " steps");
                     System.out.print("solution: [");
                     for (int i = 0; i < solutionCount; i++) {
@@ -120,15 +121,6 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
     final static Effects effects;
 
-    private final static BufferedImage font = ResourceUtils
-            .loadImage("font.png");
-
-    private final static int FONT_HEIGHT = 16;
-
-    private final static int FONT_SPACE = 1;
-
-    private final static int FONT_WIDTH = 8;
-
     private final static int FONT_MARGIN = 2;
 
     private final static int PLAYER_BORDER = 2;
@@ -160,6 +152,8 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
     Level theLevel;
 
+    String status;
+
     private int xScroll;
 
     private int yScroll;
@@ -171,7 +165,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
     byte solution[];
 
     int solutionCount;
-    
+
     public PlayCanvas(File file) {
         levelFile = file;
         initLevel();
@@ -211,43 +205,11 @@ public class PlayCanvas extends DoubleBufferCanvas {
         g.setTransform(origAT);
         g.translate(FONT_MARGIN, FONT_MARGIN);
         paintTitle(g);
-    }
 
-    static private void drawString(Graphics2D g2, String text) {
-        StyleStack s = new StyleStack();
-
-        Composite ac = g2.getComposite();
-
-        int dx = 0;
-        int dy = 0;
-        for (int i = 0; i < text.length(); i++) {
-            char ch = text.charAt(i);
-            if (ch == '^') {
-                i++;
-                ch = text.charAt(i);
-                switch (ch) {
-                case '^':
-                    break;
-                case '<':
-                    s.pop();
-                    break;
-                default:
-                    s.push(ch);
-                }
-            } else {
-                int tile = Characters.getIndexForChar(text.charAt(i));
-
-                int sx = tile * (FONT_WIDTH + FONT_SPACE);
-                int sy = s.getColor() * (FONT_HEIGHT);
-
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, s.getAlphaValue()));
-                g2.drawImage(font, dx, dy, dx + FONT_WIDTH, dy + FONT_HEIGHT,
-                        sx, sy, sx + FONT_WIDTH, sy + FONT_HEIGHT, null);
-                dx += FONT_WIDTH;
-            }
-        }
-        g2.setComposite(ac);
+        // restore transform and draw status
+        g.setTransform(origAT);
+        g.translate(FONT_MARGIN, h - LevelDraw.FONT_HEIGHT - 1);
+        paintStatus(g);
     }
 
     /**
@@ -275,6 +237,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
         showBizarro = false;
         solution = null;
         solutionCount = 0;
+        status = null;
 
         bufferRepaint();
     }
@@ -295,7 +258,8 @@ public class PlayCanvas extends DoubleBufferCanvas {
             int x = 3;
             int y = h / 2;
             g.translate(x, y);
-            drawString(g, Characters.PICS + Characters.ARROWL + Characters.POP);
+            LevelDraw.drawString(g, Characters.PICS + Characters.ARROWL
+                    + Characters.POP);
             g.setTransform(t);
         }
         if (yScroll > 0) {
@@ -303,7 +267,8 @@ public class PlayCanvas extends DoubleBufferCanvas {
             int x = w / 2;
             int y = -4;
             g.translate(x, y);
-            drawString(g, Characters.PICS + Characters.ARROWU + Characters.POP);
+            LevelDraw.drawString(g, Characters.PICS + Characters.ARROWU
+                    + Characters.POP);
             g.setTransform(t);
         }
         if (paintedTilesAcross + xScroll < theLevel.getWidth()) {
@@ -311,7 +276,8 @@ public class PlayCanvas extends DoubleBufferCanvas {
             int x = w - LEVEL_MARGIN;
             int y = h / 2;
             g.translate(x, y);
-            drawString(g, Characters.PICS + Characters.ARROWR + Characters.POP);
+            LevelDraw.drawString(g, Characters.PICS + Characters.ARROWR
+                    + Characters.POP);
             g.setTransform(t);
         }
         if (paintedTilesDown + yScroll < theLevel.getHeight()) {
@@ -319,7 +285,8 @@ public class PlayCanvas extends DoubleBufferCanvas {
             int x = w / 2;
             int y = h - LEVEL_MARGIN;
             g.translate(x, y);
-            drawString(g, Characters.PICS + Characters.ARROWD + Characters.POP);
+            LevelDraw.drawString(g, Characters.PICS + Characters.ARROWD
+                    + Characters.POP);
             g.setTransform(t);
         }
     }
@@ -329,7 +296,13 @@ public class PlayCanvas extends DoubleBufferCanvas {
                 + Characters.POP + Characters.BLUE + theLevel.getAuthor()
                 + Characters.POP;
 
-        drawString(g2, text);
+        LevelDraw.drawString(g2, text);
+    }
+
+    private void paintStatus(Graphics2D g2) {
+        if (status != null) {
+            LevelDraw.drawString(g2, status);
+        }
     }
 
     void updateScroll() {
@@ -458,20 +431,28 @@ public class PlayCanvas extends DoubleBufferCanvas {
         });
 
         // restart
-        addAction("ENTER", "restart", new AbstractAction() {
+        addAction("ENTER", "restartOrExit", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                initLevel();
+                if (theLevel.isWon()) {
+                    exitPlayCanvas();
+                } else {
+                    initLevel();
+                }
             }
         });
 
         // quit
         addAction("ESCAPE", "exit", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                exitPlayCanvas();
             }
         });
     }
 
+    void exitPlayCanvas() {
+        System.exit(0);
+    }
+    
     private void addAction(String keyStroke, String name, Action a) {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(keyStroke), name);
