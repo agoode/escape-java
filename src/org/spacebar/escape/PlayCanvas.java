@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -172,21 +174,33 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
     int solutionCount;
 
-    public PlayCanvas(File f) {
-        super();
+    public PlayCanvas(File file) {
+        this(file, null);
+    }
+    
+    public PlayCanvas(File file, Frame frame) {
+        super(frame);
 
-        levelFile = f;
+        levelFile = file;
         initLevel();
 
         playerDir = Level.DIR_DOWN;
-
         setupKeys();
+        
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                bufferRepaint();
+            }
+        }, 0, 500); 
     }
 
     protected void bufferPaint(Graphics2D g) {
         int w = getWidth();
         int h = getHeight();
 
+        System.out.println("bufferPaint: (" + w + "," + h + ")");
+        
         updateScroll();
 
         // clear

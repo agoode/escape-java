@@ -27,8 +27,8 @@ public class LevelDraw {
     private final static int TILE_SIZE = 32;
 
     private final static BufferedImage[] player = ResourceUtils
-    .loadScaledImages("player.png", SCALE_DOWN_FACTORS,
-            SCALE_UP_FACTORS);
+            .loadScaledImages("player.png", SCALE_DOWN_FACTORS,
+                    SCALE_UP_FACTORS);
 
     private final static BufferedImage[] tiles = ResourceUtils
             .loadScaledImages("tiles.png", SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);

@@ -6,8 +6,8 @@
  */
 package org.spacebar.escape;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
@@ -21,9 +21,35 @@ import javax.swing.JComponent;
 abstract public class DoubleBufferCanvas extends JComponent {
 
     private BufferedImage backBuffer;
+    
+    final private Frame theFrame;
+    final private BufferStrategy strategy;
 
-    DoubleBufferCanvas() {
+    DoubleBufferCanvas(Frame f) {
         super();
+        setBackground(Color.BLACK);
+
+        theFrame = f;
+        
+        if (f != null) {
+            System.out.println("using active rendering");
+            ImageCapabilities ic = f.getGraphicsConfiguration()
+                    .getImageCapabilities();
+            BufferCapabilities bc = new BufferCapabilities(ic, ic, null);
+            try {
+                f.createBufferStrategy(2, bc);
+            } catch (AWTException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            strategy = f.getBufferStrategy();
+            System.out.println("page flip: "
+                    + strategy.getCapabilities().isPageFlipping());
+        } else {
+            System.out.println("using passive rendering");
+            strategy = null;
+        }
 
         setOpaque(true);
     }
@@ -31,15 +57,29 @@ abstract public class DoubleBufferCanvas extends JComponent {
     abstract protected void bufferPaint(Graphics2D g);
 
     public void bufferRepaint() {
-        if (backBuffer == null) {
-            return;
+        if (strategy != null) {
+            // active
+            Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+            Insets in = theFrame.getInsets();
+            g.translate(in.left, in.top);
+            do {
+                bufferPaint(g);
+            } while (strategy.contentsLost());
+            g.dispose();
+
+            //            System.out.println("strategy.show()");
+            strategy.show();
+        } else {
+            // passive
+            if (backBuffer == null) {
+                return;
+            } else {
+                Graphics2D g = backBuffer.createGraphics();
+                bufferPaint(g);
+                g.dispose();
+                repaint();
+            }
         }
-        System.out.println("*** buffer repaint");
-        
-        Graphics2D g2 = backBuffer.createGraphics();
-        bufferPaint(g2);
-        g2.dispose();
-        repaint();
     }
 
     private void initBackBuffer() {
@@ -49,15 +89,24 @@ abstract public class DoubleBufferCanvas extends JComponent {
     }
 
     protected void paintComponent(Graphics g) {
-        if (backBuffer == null || backBuffer.getHeight() != getHeight()
-                || backBuffer.getWidth() != getWidth()) {
-            initBackBuffer();
-            Graphics2D g2 = backBuffer.createGraphics();
-            bufferPaint(g2);
-            g2.dispose();
+        if (strategy != null) {
+            // active
+            if (strategy.contentsLost()) {
+                bufferRepaint();
+            } else {
+                strategy.show();
+            }
+        } else {
+            // passive
+            if (backBuffer == null || backBuffer.getHeight() != getHeight()
+                    || backBuffer.getWidth() != getWidth()) {
+                initBackBuffer();
+                Graphics2D g2 = backBuffer.createGraphics();
+                bufferPaint(g2);
+                g2.dispose();
+            }
+
+            g.drawImage(backBuffer, 0, 0, this);
         }
-
-        g.drawImage(backBuffer, 0, 0, this);
     }
-
 }
