@@ -7,8 +7,6 @@
 package org.spacebar.escape;
 
 import java.awt.Color;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,14 +44,9 @@ public class EscapeMain extends JFrame {
         getContentPane().setBackground(Color.BLACK);
         getRootPane().setDoubleBuffered(false);
 
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        System.out.println("full screen supported: " + gd.isFullScreenSupported());
-        
-        setVisible(true);
-
         PlayCanvas pc = new PlayCanvas(f);
         setContentPane(pc);
-        validate();
+        setVisible(true);
     }
 
     public static void main(String[] args) {
