@@ -90,7 +90,6 @@ public class TestSolutions {
 
                         String ls = l.toString();
                         System.out.print(" " + ls);
-//                        System.out.print(" " + sol.length() + " moves");
                         System.out.flush();
 
                         //                        DrawnLevel d = new DrawnLevel(l);
