@@ -34,7 +34,7 @@ abstract public class Entity {
     }
 
     protected final void iCrushPlayer() {
-        capabilities[CAP_CRUSH_PLAYER] = true;
+        iWalkIntoBots();
     }
 
     protected final void iAmPlayer() {
@@ -42,21 +42,21 @@ abstract public class Entity {
     }
 
     protected final void iPushBots() {
-        capabilities[CAP_PUSH_BOTS] = true;
         iPushPlayer();
     }
 
     protected final void iPushPlayer() {
+        capabilities[CAP_PUSH_BOTS] = true;
         capabilities[CAP_PUSH_PLAYER] = true;
     }
 
     protected final void iWalkIntoBots() {
+        capabilities[CAP_CRUSH_PLAYER] = true;
         capabilities[CAP_WALK_INTO_BOTS] = true;
-        iCrushPlayer();
+        capabilities[CAP_ZAP_SELF] = true;
     }
 
     protected final void iZapSelf() {
-        capabilities[CAP_ZAP_SELF] = true;
         iWalkIntoBots();
     }
 

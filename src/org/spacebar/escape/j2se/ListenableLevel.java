@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.spacebar.escape.common.BitInputStream;
 import org.spacebar.escape.common.Effects;
+import org.spacebar.escape.common.Entity;
 import org.spacebar.escape.common.Level;
 
 public class ListenableLevel extends Level {
@@ -26,14 +27,8 @@ public class ListenableLevel extends Level {
 
     List moveListeners = new ArrayList();
     
-    public boolean move(int d) {
-        boolean r = super.move(d);
-        afterMove(r);
-        return r;
-    }
-
-    public boolean move(int d, Effects e) {
-        boolean r = super.move(d, e);
+    public boolean realMove(Entity ent, int d, Effects e) {
+        boolean r = super.realMove(ent, d, e);
         afterMove(r);
         return r;
     }

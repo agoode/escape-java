@@ -31,7 +31,8 @@ public class LevelCanvas extends DoubleBufferCanvas {
 
     private final static int PLAYER_BORDER = 2;
 
-    private final static int LEVEL_MARGIN = 12;
+    private final static int LEVEL_MARGIN_X = 12;
+    private final static int LEVEL_MARGIN_Y = 15;
 
     static {
         //        Effects e1 = new NESEffects();
@@ -88,12 +89,12 @@ public class LevelCanvas extends DoubleBufferCanvas {
 
         // save clip, setup for drawing level
         Shape clip = g.getClip();
-        g.clip(new Rectangle(LEVEL_MARGIN, LEVEL_MARGIN, w - 2 * LEVEL_MARGIN,
-                h - 2 * LEVEL_MARGIN));
+        g.clip(new Rectangle(LEVEL_MARGIN_X, LEVEL_MARGIN_Y, w - 2 * LEVEL_MARGIN_X,
+                h - 2 * LEVEL_MARGIN_Y));
 
         // save transform and translate
         AffineTransform origAT = g.getTransform();
-        g.translate(LEVEL_MARGIN, LEVEL_MARGIN);
+        g.translate(LEVEL_MARGIN_X, LEVEL_MARGIN_Y);
 
         // paint things within boundaries of level
         paintLevel(g);
@@ -199,7 +200,7 @@ public class LevelCanvas extends DoubleBufferCanvas {
         }
         if (paintedTilesAcross + xScroll < theLevel.getWidth()) {
             // right arrow
-            int x = w - LEVEL_MARGIN;
+            int x = w - LEVEL_MARGIN_X;
             int y = h / 2;
             g.translate(x, y);
             Drawing.drawString(g, Characters.PICS + Characters.ARROWR
@@ -209,7 +210,7 @@ public class LevelCanvas extends DoubleBufferCanvas {
         if (paintedTilesDown + yScroll < theLevel.getHeight()) {
             // down arrow
             int x = w / 2;
-            int y = h - LEVEL_MARGIN;
+            int y = h - LEVEL_MARGIN_Y;
             g.translate(x, y);
             Drawing.drawString(g, Characters.PICS + Characters.ARROWD
                     + Characters.POP);
@@ -235,8 +236,8 @@ public class LevelCanvas extends DoubleBufferCanvas {
         int tileSize = Drawing.getTileSize(scale);
 
         // keep at least LEVEL_MARGIN everywhere
-        paintedTilesAcross = ((getWidth() - (2 * LEVEL_MARGIN)) / tileSize);
-        paintedTilesDown = ((getHeight() - (2 * LEVEL_MARGIN)) / tileSize);
+        paintedTilesAcross = ((getWidth() - (2 * LEVEL_MARGIN_X)) / tileSize);
+        paintedTilesDown = ((getHeight() - (2 * LEVEL_MARGIN_Y)) / tileSize);
 
         int w = theLevel.getWidth();
         int h = theLevel.getHeight();

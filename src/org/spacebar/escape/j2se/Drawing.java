@@ -7,6 +7,7 @@
 package org.spacebar.escape.j2se;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import org.spacebar.escape.common.*;
@@ -299,6 +300,12 @@ public class Drawing {
 
         g2.drawImage(bots[botType][zoom], dx, dy, dx + tileSize, dy + height,
                 sx, 0, sx + tileSize, height, null);
+        g2.setColor(Color.WHITE);
+        AffineTransform a = g2.getTransform();
+        g2.translate(dx + tileSize - Characters.FONT_WIDTH, dy + height
+                - Characters.FONT_HEIGHT);
+        drawString(g2, Characters.YELLOW + Integer.toString(botIndex + 1));
+        g2.setTransform(a);
     }
 
     static private void paintPlayer(Graphics2D g2, Level theLevel, int xScroll,

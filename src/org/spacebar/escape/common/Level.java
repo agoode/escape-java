@@ -510,7 +510,7 @@ public class Level {
         return result;
     }
 
-    private boolean realMove(Entity ent, int d, Effects e) {
+    protected boolean realMove(Entity ent, int d, Effects e) {
         final IntPair newP = new IntPair();
         if (travel(ent.getX(), ent.getY(), d, newP)) {
             return maybeDoMove(ent, d, e, newP);
@@ -644,26 +644,25 @@ public class Level {
 
         // can't push if entity there
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
-            //                    return false;
+            return false;
         }
 
         int goldX = newP.x, goldY = newP.y;
 
         /* remove gold block */
-        if ((flagAt(goldX, goldY) & TF_HASPANEL) != 0) {
-            setTile(goldX, goldY, realPanel(flagAt(goldX, goldY)));
-        } else {
-            setTile(goldX, goldY, T_FLOOR);
-        }
+        int replacement = ((flagAt(goldX, goldY) & TF_HASPANEL) != 0)?
+                realPanel(flagAt(goldX, goldY)):
+                T_FLOOR;
 
+        setTile(goldX, goldY, replacement);
+                
         IntPair tGold = new IntPair();
         while (travel(goldX, goldY, d, tGold)) {
-
             int next = tileAt(tGold.x, tGold.y);
             if (!(next == T_ELECTRIC || next == T_PANEL || next == T_BPANEL
-                    || next == T_RPANEL || next == T_GPANEL || next == T_FLOOR
+                    || next == T_RPANEL || next == T_GPANEL || next == T_FLOOR)
                     || isBotAt(tGold.x, tGold.y) || player.isAt(tGold.x,
-                    tGold.y))) {
+                    tGold.y)) {
                 break;
             }
 
