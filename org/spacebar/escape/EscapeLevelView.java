@@ -8,7 +8,6 @@ package org.spacebar.escape;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -33,153 +32,6 @@ import org.spacebar.escape.util.StyleStack;
  * Preferences - Java - Code Style - Code Templates
  */
 public class EscapeLevelView extends JComponent {
-    private final static BufferedImage tiles = ResourceUtils
-            .loadImage("tiles.png");
-
-    private final static BufferedImage guy = ResourceUtils
-            .loadImage("player.png");
-
-    private final static BufferedImage font = ResourceUtils
-            .loadImage("font.png");
-
-    static {
-        GraphicsEnvironment ge = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        GraphicsConfiguration gc = gd.getDefaultConfiguration();
-        BufferCapabilities bc = gc.getBufferCapabilities();
-
-        System.out.println("page flipping available: " + bc.isPageFlipping());
-        System.out
-                .println("full screen required: " + bc.isFullScreenRequired());
-
-        System.out.println("tiles: " + tiles);
-        System.out.println("guy: " + guy);
-        System.out.println("font: " + font);
-    }
-
-    final static Effects effects;
-    static {
-        //        Effects e1 = new NESEffects();
-        Effects e2 = new TextEffects();
-        CompoundEffects e = new CompoundEffects();
-        //        e.add(e1);
-        e.add(e2);
-        effects = e;
-    }
-
-    private final static int TILE_SIZE = 32;
-
-    private final static int TILES_ACROSS = 16;
-
-    private final static int FONT_WIDTH = 8;
-
-    private final static int FONT_SPACE = 1;
-
-    private final static int FONT_HEIGHT = 16;
-
-    private final static int FONT_X_MARGIN = 4;
-
-    private final static int FONT_Y_MARGIN = 2;
-
-    private final static int LEVEL_MARGIN = 12;
-
-    Level theLevel;
-
-    final File levelFile;
-
-    boolean done;
-
-    IntTriple laser;
-
-    private int guyDir;
-
-    private BufferedImage backBuffer;
-
-    int scale = 0;
-
-    double scaleVal = 1.0;
-
-    /**
-     * @return Returns the dir.
-     */
-    public int getGuyDir() {
-        return guyDir;
-    }
-
-    /**
-     * @param dir
-     *            The dir to set.
-     */
-    public void setGuyDir(int dir) {
-        if (dir != Level.DIR_DOWN && dir != Level.DIR_LEFT
-                && dir != Level.DIR_RIGHT && dir != Level.DIR_UP) {
-            throw new IllegalArgumentException("Bad direction");
-        }
-        this.guyDir = dir;
-    }
-
-    public EscapeLevelView(File f) {
-        super();
-
-        setOpaque(true);
-
-        levelFile = f;
-        initLevel();
-
-        guyDir = Level.DIR_DOWN;
-
-        // setup keys
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "goLeft");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "goDown");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "goRight");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "goUp");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_CLOSE_BRACKET, 0),
-                        "scaleUp");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_OPEN_BRACKET, 0),
-                "scaleDown");
-
-        Action a;
-
-        a = new Mover(Level.DIR_DOWN);
-        getActionMap().put("goDown", a);
-        a = new Mover(Level.DIR_LEFT);
-        getActionMap().put("goLeft", a);
-        a = new Mover(Level.DIR_RIGHT);
-        getActionMap().put("goRight", a);
-        a = new Mover(Level.DIR_UP);
-        getActionMap().put("goUp", a);
-        a = new Scaler(false);
-        getActionMap().put("scaleUp", a);
-        a = new Scaler(true);
-        getActionMap().put("scaleDown", a);
-    }
-
-    /**
-     * @throws IOException
-     * @throws FileNotFoundException
-     */
-    void initLevel() {
-        done = false;
-        laser = null;
-
-        try {
-            theLevel = new Level(new BitInputStream(new FileInputStream(
-                    levelFile)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        repaint();
-    }
 
     private class Mover extends AbstractAction {
         final int dir;
@@ -191,19 +43,19 @@ public class EscapeLevelView extends JComponent {
         public void actionPerformed(ActionEvent e) {
             if (done) {
                 initLevel();
-            }
+            } else {
+                theLevel.move(dir, effects);
+                setGuyDir(dir);
 
-            theLevel.move(dir, effects);
-            setGuyDir(dir);
-            laser = theLevel.isDead();
-            if (laser != null) {
-                effects.doLaser();
-                System.out.println("dead");
-                done = true;
-            } else if (theLevel.isWon()) {
-                effects.doExit();
-                System.out.println("won");
-                done = true;
+                if ((laser = theLevel.isDead()) != null) {
+                    effects.doLaser();
+                    System.out.println("dead");
+                    done = true;
+                } else if (theLevel.isWon()) {
+                    effects.doExit();
+                    System.out.println("won");
+                    done = true;
+                }
             }
             repairDamage();
         }
@@ -219,15 +71,16 @@ public class EscapeLevelView extends JComponent {
         public void actionPerformed(ActionEvent e) {
             if (smaller) {
                 scale++;
-                if (scale > 5) {
-                    scale = 5;
+                if (scale > SCALE_FACTORS - 1) {
+                    scale = SCALE_FACTORS - 1;
                 }
             } else {
                 scale--;
-                if (scale < -1) {
-                    scale = -1;
+                if (scale < -2) {
+                    scale = -2;
                 }
             }
+            
             if (scale < 0) {
                 scaleVal = 1 * (double) (1 << -scale);
             } else {
@@ -239,20 +92,79 @@ public class EscapeLevelView extends JComponent {
         }
     }
 
-    protected void paintComponent(Graphics g) {
-        if (backBuffer == null || backBuffer.getHeight() != getHeight()
-                || backBuffer.getWidth() != getWidth()) {
-            initBackBuffer();
-            bufferPaint();
-        }
+    final static Effects effects;
 
-        g.drawImage(backBuffer, 0, 0, this);
+    private final static BufferedImage font = ResourceUtils
+            .loadImage("font.png");
+
+    private final static int FONT_HEIGHT = 16;
+
+    private final static int FONT_SPACE = 1;
+
+    private final static int FONT_WIDTH = 8;
+
+    private final static int FONT_MARGIN = 2;
+
+    private final static int SCALE_FACTORS = 6;
+
+    private final static BufferedImage[] guy = ResourceUtils.loadScaledImages(
+            "player.png", SCALE_FACTORS);
+
+    private final static int LEVEL_MARGIN = 12;
+
+    private final static int TILE_SIZE = 32;
+
+    private final static BufferedImage[] tiles = ResourceUtils
+            .loadScaledImages("tiles.png", SCALE_FACTORS);
+
+    private final static int TILES_ACROSS = 16;
+
+    static {
+        //        Effects e1 = new NESEffects();
+        Effects e2 = new TextEffects();
+        CompoundEffects e = new CompoundEffects();
+        //        e.add(e1);
+        e.add(e2);
+        effects = e;
     }
 
-    private void initBackBuffer() {
-        System.out.println("initializing back buffer");
-        backBuffer = (BufferedImage) createImage(getWidth(), getHeight());
-        System.out.println("backBuffer: " + backBuffer);
+    private BufferedImage backBuffer;
+
+    boolean done;
+
+    boolean showBizarro;
+
+    private int guyDir;
+
+    IntTriple laser;
+
+    final File levelFile;
+
+    int scale = 0;
+
+    double scaleVal = 1.0;
+
+    Level theLevel;
+
+    private int scrollX;
+
+    private int scrollY;
+
+    private int paintedTilesAcross;
+
+    private int paintedTilesDown;
+
+    public EscapeLevelView(File f) {
+        super();
+
+        setOpaque(true);
+
+        levelFile = f;
+        initLevel();
+
+        guyDir = Level.DIR_DOWN;
+
+        setupKeys();
     }
 
     void bufferPaint() {
@@ -260,6 +172,8 @@ public class EscapeLevelView extends JComponent {
     }
 
     private void bufferPaint(Rectangle clip) {
+        updateScroll();
+
         Graphics2D g2 = backBuffer.createGraphics();
         g2.clip(clip);
 
@@ -270,32 +184,22 @@ public class EscapeLevelView extends JComponent {
 
         g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
 
-        if (scaleVal < 1.0) {
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        if (scaleVal > 1.0) {
+            g2.scale(scaleVal, scaleVal);
         }
 
-        g2.scale(scaleVal, scaleVal);
         paintLevel(g2);
         paintGuy(g2);
 
         g2.setTransform(origAT);
         g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
-        paintLaser(g2, laser);
+        paintLaser(g2);
 
         g2.setTransform(origAT);
-        g2.translate(FONT_X_MARGIN, FONT_Y_MARGIN);
+        g2.translate(FONT_MARGIN, FONT_MARGIN);
         paintTitle(g2);
 
         g2.dispose();
-    }
-
-    private void paintTitle(Graphics2D g2) {
-        String text = theLevel.getTitle() + " " + Characters.GRAY + "by "
-                + Characters.POP + Characters.BLUE + theLevel.getAuthor()
-                + Characters.POP;
-
-        drawString(g2, text);
     }
 
     private void drawString(Graphics2D g2, String text) {
@@ -335,9 +239,60 @@ public class EscapeLevelView extends JComponent {
         g2.setComposite(ac);
     }
 
+    /**
+     * @return Returns the dir.
+     */
+    public int getGuyDir() {
+        return guyDir;
+    }
+
+    private void initBackBuffer() {
+        //        System.out.println("initializing back buffer");
+        backBuffer = (BufferedImage) createImage(getWidth(), getHeight());
+        //        System.out.println("backBuffer: " + backBuffer);
+    }
+
+    /**
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    void initLevel() {
+        try {
+            theLevel = new Level(new BitInputStream(new FileInputStream(
+                    levelFile)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        done = false;
+        showBizarro = false;
+        laser = theLevel.isDead();
+
+        repaint();
+    }
+
+    protected void paintComponent(Graphics g) {
+        if (backBuffer == null || backBuffer.getHeight() != getHeight()
+                || backBuffer.getWidth() != getWidth()) {
+            initBackBuffer();
+            bufferPaint();
+        }
+
+        g.drawImage(backBuffer, 0, 0, this);
+    }
+
     private void paintGuy(Graphics2D g2) {
-        int dx = theLevel.getGuyX() * TILE_SIZE;
-        int dy = theLevel.getGuyY() * TILE_SIZE;
+        int zoom = scale;
+        if (zoom < 0) {
+            zoom = 0;
+        }
+
+        int tileSize = TILE_SIZE / (1 << zoom);
+
+        int dx = (theLevel.getGuyX() - scrollX) * tileSize;
+        int dy = (theLevel.getGuyY() - scrollY) * tileSize;
 
         int sx, sy;
         switch (guyDir) {
@@ -346,57 +301,36 @@ public class EscapeLevelView extends JComponent {
             sy = 0;
             break;
         case Level.DIR_UP:
-            sx = TILE_SIZE;
+            sx = tileSize;
             sy = 0;
             break;
         case Level.DIR_RIGHT:
-            sx = TILE_SIZE;
-            sy = TILE_SIZE;
+            sx = tileSize;
+            sy = tileSize;
             break;
         case Level.DIR_DOWN:
         default:
             sx = 0;
-            sy = TILE_SIZE;
+            sy = tileSize;
             break;
         }
 
-        g2.drawImage(guy, dx, dy, dx + TILE_SIZE, dy + TILE_SIZE, sx, sy, sx
-                + TILE_SIZE, sy + TILE_SIZE, this);
+        g2.drawImage(guy[zoom], dx, dy, dx + tileSize, dy + tileSize, sx, sy,
+                sx + tileSize, sy + tileSize, this);
     }
 
-    private void paintLevel(Graphics2D g2) {
-        for (int j = 0; j < theLevel.getHeight(); j++) {
-            for (int i = 0; i < theLevel.getWidth(); i++) {
-                int dx = i * TILE_SIZE;
-                int dy = j * TILE_SIZE;
-
-                Rectangle clip = g2.getClipBounds();
-                if (clip == null
-                        || clip.intersects(dx, dy, TILE_SIZE, TILE_SIZE)) {
-                    int tile = theLevel.tileAt(i, j);
-
-                    int sx = tile % TILES_ACROSS * TILE_SIZE;
-                    int sy = tile / TILES_ACROSS * TILE_SIZE;
-
-                    g2.drawImage(tiles, dx, dy, dx + TILE_SIZE, dy + TILE_SIZE,
-                            sx, sy, sx + TILE_SIZE, sy + TILE_SIZE, this);
-                }
-            }
-        }
-    }
-
-    private void paintLaser(Graphics2D g2, IntTriple laser) {
+    private void paintLaser(Graphics2D g2) {
         if (laser == null) {
             return;
         }
 
         int d = laser.getD();
 
-        int gx = theLevel.getGuyX() * TILE_SIZE + (TILE_SIZE >> 1);
-        int gy = theLevel.getGuyY() * TILE_SIZE + (TILE_SIZE >> 1);
+        int gx = (theLevel.getGuyX() - scrollX) * TILE_SIZE + (TILE_SIZE >> 1);
+        int gy = (theLevel.getGuyY() - scrollY) * TILE_SIZE + (TILE_SIZE >> 1);
 
-        int lx = laser.getX() * TILE_SIZE;
-        int ly = laser.getY() * TILE_SIZE;
+        int lx = (laser.getX() - scrollX) * TILE_SIZE;
+        int ly = (laser.getY() - scrollY) * TILE_SIZE;
 
         Rectangle outer, inner;
 
@@ -453,17 +387,114 @@ public class EscapeLevelView extends JComponent {
         g2.fill(inner);
     }
 
+    private void paintLevel(Graphics2D g2) {
+        int zoom = scale;
+        if (zoom < 0) {
+            zoom = 0;
+        }
+        
+        int tileSize = TILE_SIZE / (1 << zoom);
+
+        for (int j = 0; j < paintedTilesDown; j++) {
+            for (int i = 0; i < paintedTilesAcross; i++) {
+                int dx = i * tileSize;
+                int dy = j * tileSize;
+
+                int tile;
+                if (showBizarro) {
+                    tile = theLevel.oTileAt(i + scrollX, j + scrollY);
+                } else {
+                    tile = theLevel.tileAt(i + scrollX, j + scrollY);
+                }
+
+                int sx = tile % TILES_ACROSS * tileSize;
+                int sy = tile / TILES_ACROSS * tileSize;
+
+                g2.drawImage(tiles[zoom], dx, dy, dx + tileSize, dy + tileSize,
+                        sx, sy, sx + tileSize, sy + tileSize, this);
+            }
+        }
+        if (scrollX > 0) {
+            // left arrow
+        }
+        if (scrollY > 0) {
+            // top arrow
+        }
+        if (paintedTilesAcross < theLevel.getWidth()) {
+            // right arrow
+        }
+        if (paintedTilesDown < theLevel.getHeight()) {
+            // down arrow
+        }
+    }
+
+    private void paintTitle(Graphics2D g2) {
+        String text = theLevel.getTitle() + " " + Characters.GRAY + "by "
+                + Characters.POP + Characters.BLUE + theLevel.getAuthor()
+                + Characters.POP;
+
+        drawString(g2, text);
+    }
+
     void repairDamage() {
-        //        for (int j = 0; j < theLevel.getHeight(); j++) {
-        //            for (int i = 0; i < theLevel.getWidth(); i++) {
-        //                if (theLevel.isDirty(i, j)) {
-        //                    repaint(getTileBounds(i, j));
-        //                }
-        //            }
-        //        }
-        //        // RepaintManager.currentManager(this).paintDirtyRegions();
         bufferPaint();
         repaint();
         theLevel.clearDirty();
+    }
+
+    void updateScroll() {
+        // keep at least LEVEL_MARGIN everywhere
+        paintedTilesAcross = (int) ((getWidth() - (2 * LEVEL_MARGIN)) / (TILE_SIZE * scaleVal));
+        paintedTilesDown = (int) ((getHeight() - (2 * LEVEL_MARGIN)) / (TILE_SIZE * scaleVal));
+
+        int w = theLevel.getWidth();
+        int h = theLevel.getHeight();
+        if (paintedTilesAcross > w) {
+            paintedTilesAcross = w;
+        }
+        if (paintedTilesDown > h) {
+            paintedTilesDown = h;
+        }
+
+        System.out.println("pta: " + paintedTilesAcross + ", ptd: "
+                + paintedTilesDown);
+    }
+
+    /**
+     * @param dir
+     *            The dir to set.
+     */
+    public void setGuyDir(int dir) {
+        if (dir != Level.DIR_DOWN && dir != Level.DIR_LEFT
+                && dir != Level.DIR_RIGHT && dir != Level.DIR_UP) {
+            throw new IllegalArgumentException("Bad direction");
+        }
+        this.guyDir = dir;
+    }
+
+    private void setupKeys() {
+        // moving
+        addAction("LEFT", "goLeft", new Mover(Level.DIR_LEFT));
+        addAction("DOWN", "goDown", new Mover(Level.DIR_DOWN));
+        addAction("RIGHT", "goRight", new Mover(Level.DIR_RIGHT));
+        addAction("UP", "goUp", new Mover(Level.DIR_UP));
+
+        // scaling
+        addAction("CLOSE_BRACKET", "scaleUp", new Scaler(false));
+        addAction("OPEN_BRACKET", "scaleDown", new Scaler(true));
+
+        // bizarro
+        addAction("Y", "toggleAlt", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                showBizarro = !showBizarro;
+                repairDamage();
+            }
+        });
+    }
+
+    private void addAction(String keyStroke, String name, Action a) {
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(keyStroke), name);
+        getActionMap().put(name, a);
     }
 }

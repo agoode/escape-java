@@ -990,6 +990,8 @@ public class Level {
         width = getIntFromStream(in);
         height = getIntFromStream(in);
 
+//        System.out.println("width: " + width + ", height: " + height);
+        
         int size;
 
         size = getIntFromStream(in);

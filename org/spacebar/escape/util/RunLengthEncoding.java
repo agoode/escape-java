@@ -29,7 +29,9 @@ public class RunLengthEncoding {
         int bits;
         int framebits = 8;
         if ((bytecount & 128) == 128) {
+//            System.out.println("bytecount has bit 8 set");
             if ((bytecount & 64) == 64) {
+//                System.out.println("bytecount has bit 7 set");
                 framebits = in.readBits(5);
             }
             bits = bytecount & 63;
@@ -52,33 +54,30 @@ public class RunLengthEncoding {
             if (run == 0) {
                 // anti-run
                 run = in.readBits(framebits);
-                //                System.out.println();
-                //                System.out.print("skipping " + run + ": ");
-                //                System.out.flush();
+//                System.out.println();
+//                System.out.print("skipping " + run + ": ");
+//                System.out.flush();
                 for (int i = 0; i < run; i++) {
                     ch = in.readBits(bits);
-                    //                    System.out.print(ch + " ");
-                    //                    System.out.flush();
+//                    System.out.print(ch + " ");
+//                    System.out.flush();
                     result[ri++] = ch;
                 }
             } else {
                 // run
-                if (bytecount == 1) {
-                    ch = in.read();
-                } else {
-                    ch = 0;
-                }
-                //                System.out.println();
-                //                System.out.print(run + " " + ch + "\'s: ");
-                //                System.out.flush();
+                ch = in.readBits(bits);
+//                System.out.println();
+//                System.out.print(run + " " + ch + "\'s: ");
+//                System.out.flush();
                 for (int i = 0; i < run; i++) {
-                    //                    System.out.print(ch + " ");
-                    //                    System.out.flush();
+//                    System.out.print(ch + " ");
+//                    System.out.flush();
                     result[ri++] = ch;
                 }
             }
         }
 
+        in.readRestOfByte();
         return result;
     }
 

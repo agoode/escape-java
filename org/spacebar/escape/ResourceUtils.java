@@ -51,6 +51,30 @@ public class ResourceUtils {
         return clip;
     }
 
+    public static BufferedImage[] loadScaledImages(String name, int scales) {
+        if (scales < 1) {
+            throw new IllegalArgumentException("scales must be > 0");
+        }
+        BufferedImage imgs[] = new BufferedImage[scales];
+        imgs[0] = loadImage(name);
+        for (int i = 1; i < scales; i++) {
+            BufferedImage img = imgs[i - 1];
+            int w = img.getWidth() >> 1;
+            int h = img.getHeight() >> 1;
+
+            imgs[i] = createCompatibleImage(w, h, img.getTransparency());
+
+            Graphics2D g = imgs[i].createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.scale(0.5, 0.5);
+            g.drawImage(img, 0, 0, null);
+            g.dispose();
+        }
+
+        return imgs;
+    }
+
     public static BufferedImage loadImage(String name) {
         InputStream in = ResourceUtils.getLocalResourceAsStream(name);
         BufferedImage img = null;
@@ -60,17 +84,26 @@ public class ResourceUtils {
             e.printStackTrace();
         }
 
-        GraphicsEnvironment ge = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        GraphicsConfiguration gc = gd.getDefaultConfiguration();
-        BufferedImage img2 = gc.createCompatibleImage(img.getWidth(), img
+        BufferedImage img2 = createCompatibleImage(img.getWidth(), img
                 .getHeight(), img.getTransparency());
 
         Graphics2D g = img2.createGraphics();
         g.drawImage(img, 0, 0, null);
         g.dispose();
 
+        System.out.println(img2);
+
         return img2;
+    }
+
+    private static BufferedImage createCompatibleImage(int width, int height,
+            int transparency) {
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        GraphicsConfiguration gc = gd.getDefaultConfiguration();
+        BufferedImage img = gc.createCompatibleImage(width, height,
+                transparency);
+        return img;
     }
 }

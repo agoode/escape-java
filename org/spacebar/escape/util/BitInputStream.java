@@ -32,7 +32,8 @@ public class BitInputStream extends InputStream {
 
     public int readBits(int bits) throws IOException {
         int result = 0;
-
+//        System.out.print("readBits: bits " + bits);
+        
         while(bits > 0) {
             result <<= 1;
             try {
@@ -44,7 +45,7 @@ public class BitInputStream extends InputStream {
             }
             bits--;
         }
-        
+//        System.out.println(": " + Integer.toHexString(result));
         return result;
     }
 
@@ -63,5 +64,9 @@ public class BitInputStream extends InputStream {
         bitsLeftInByte--;
         
         return result;
+    }
+    
+    public int readRestOfByte() throws IOException {
+        return readBits(bitsLeftInByte);
     }
 }
