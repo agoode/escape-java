@@ -6,15 +6,18 @@ public class Level {
 
     public static class MetaData {
         final public int width;
+
         final public int height;
+
         final public String title;
+
         final public String author;
-        
+
         public MetaData(int width, int height, String title, String author) {
             this.width = width;
             this.height = height;
             this.title = title;
-            this.author = author;           
+            this.author = author;
         }
     }
 
@@ -63,6 +66,8 @@ public class Level {
     public final static int TF_ROPANELL = 16;
 
     public final static int TF_ROPANELH = 32;
+
+    public final static int TF_TEMP = 64; // used for swapping during play
 
     // panels
     public final static int T_FLOOR = 0;
@@ -167,7 +172,20 @@ public class Level {
 
     public final static int T_GPANEL = 50;
 
-    public final static int LAST_T = 50;
+    public final static int T_STEEL = 50;
+
+    public final static int T_BSTEEL = 51;
+
+    public final static int T_RSTEEL = 52;
+
+    public final static int T_GSTEEL = 53;
+
+    /* bots */
+    public final static int B_BROKEN = 0;
+
+    public final static int B_DALEK = 1;
+
+    public final static int B_HUGBOT = 2;
 
     /**
      * @return Returns the author.
@@ -214,7 +232,6 @@ public class Level {
     public int getWidth() {
         return width;
     }
-
 
     // static functions
     static int turnLeft(int d) {
@@ -337,15 +354,19 @@ public class Level {
     // has a panel (under a pushable block)? etc.
     private final int flags[];
 
+    // bots
+    private final int botI[]; // positions of bots
+
+    private final int botT[]; // types of bots
+
     // dirty
     public final DirtyList dirty;
-    
+
     // cached laser
     private IntTriple laser;
 
-
     // the meat
-    void warp(int targX, int targY) {
+    private void warp(int targX, int targY) {
         checkStepOff(playerX, playerY);
         playerX = targX;
         playerY = targY;
@@ -359,21 +380,21 @@ public class Level {
         }
     }
 
-    IntPair where(int idx) {
+    private IntPair where(int idx) {
         int x = idx % width;
         int y = idx / width;
 
         return new IntPair(x, y);
     }
 
-    int index(int x, int y) {
+    private int index(int x, int y) {
         return (y * width) + x;
     }
 
     public int tileAt(int i) {
         return tiles[i];
     }
-    
+
     public int tileAt(int x, int y) {
         return tiles[y * width + x];
     }
@@ -382,35 +403,35 @@ public class Level {
         return oTiles[y * width + x];
     }
 
-    void setTile(int i, int t) {
+    private void setTile(int i, int t) {
         tiles[i] = t;
         dirty.setDirty(i);
     }
 
-    void setTile(int x, int y, int t) {
+    private void setTile(int x, int y, int t) {
         setTile(y * width + x, t);
     }
 
-    void oSetTile(int x, int y, int t) {
+    private void oSetTile(int x, int y, int t) {
         oTiles[y * width + x] = t;
     }
 
-    void setDest(int x, int y, int xd, int yd) {
+    private void setDest(int x, int y, int xd, int yd) {
         dests[y * width + x] = yd * width + xd;
     }
 
-    int destAt(int x, int y) {
+    private int destAt(int x, int y) {
         return dests[y * width + x];
     }
 
-    IntPair getDest(int x, int y) {
+    private IntPair getDest(int x, int y) {
         int xd = dests[y * width + x] % width;
         int yd = dests[y * width + x] / width;
 
         return new IntPair(xd, yd);
     }
 
-    int flagAt(int x, int y) {
+    private int flagAt(int x, int y) {
         return flags[y * width + x];
     }
 
@@ -551,6 +572,10 @@ public class Level {
     private boolean isSphere(int t) {
         return (t == T_SPHERE || t == T_RSPHERE || t == T_GSPHERE || t == T_BSPHERE);
     }
+    
+    private boolean isSteel(int t) {
+        return (t == T_STEEL || t == T_RSTEEL || t == T_GSTEEL || t == T_BSTEEL);
+    }
 
     private void swapTiles(int t1, int t2) {
         for (int i = (width * height) - 1; i >= 0; i--) {
@@ -558,12 +583,6 @@ public class Level {
                 setTile(i, t2);
             else if (tiles[i] == t2)
                 setTile(i, t1);
-        }
-    }
-
-    void clearFlag(int fl) {
-        for (int i = (width * height) - 1; i >= 0; i--) {
-            flags[i] &= ~fl;
         }
     }
 
@@ -1009,7 +1028,7 @@ public class Level {
 
         width = m.width;
         height = m.height;
-        
+
         author = m.author;
         title = m.title;
 
@@ -1021,13 +1040,28 @@ public class Level {
         dests = RunLengthEncoding.decode(in, width * height);
         flags = RunLengthEncoding.decode(in, width * height);
 
+        // load bots if in file
+        int bots;
+        try {
+            bots = getIntFromStream(in);
+        } catch (EOFException e) {
+            bots = 0;
+        }
+
+        if (bots == 0) {
+            botI = new int[bots];
+            botT = new int[bots];
+        } else {
+            botI = RunLengthEncoding.decode(in, bots);
+            botT = RunLengthEncoding.decode(in, bots);
+        }
+
         dirty = new DirtyList();
         dirty.setAllDirty();
 
         isDead(); // calculate laser cache
     }
 
-    
     public static MetaData getMetaData(BitInputStream in) throws IOException {
         String magic = getStringFromStream(in, 4);
         if (!magic.equals("ESXL")) {
@@ -1046,16 +1080,17 @@ public class Level {
 
         size = getIntFromStream(in);
         String author = getStringFromStream(in, size);
-        
+
         return new MetaData(width, height, title, author);
     }
-
 
     public class DirtyList {
         boolean allDirty;
 
         private final boolean dirty[];
+
         private final int dirtyList[];
+
         private int numDirty;
 
         DirtyList() {
@@ -1075,16 +1110,17 @@ public class Level {
         public void setDirty(int x, int y) {
             setDirty(index(x, y));
         }
+
         public void setDirty(int i) {
             if (dirty[i]) {
                 return;
             }
-            
+
             dirty[i] = true;
             dirtyList[numDirty] = i;
             numDirty++;
         }
-        
+
         public void setAllDirty() {
             allDirty = true;
         }
@@ -1092,16 +1128,16 @@ public class Level {
         public boolean isDirty(int i) {
             return allDirty || dirty[i];
         }
-        
+
         public boolean isDirty(int x, int y) {
             return allDirty || dirty[index(x, y)];
         }
-        
+
         public boolean isAnyDirty() {
             return allDirty || numDirty > 0;
         }
     }
-    
+
     public void print(PrintStream p) {
         p.println("\"" + title + "\" by " + author + " (" + width + ","
                 + height + ")" + " player: (" + playerX + "," + playerY + ")");
