@@ -45,8 +45,6 @@ public class PlayCanvas extends DoubleBufferCanvas {
                 // append to solution
                 addToSolution(dir);
             }
-            setPlayerDir(dir);
-
             if ((theLevel.isDead()) != null) {
                 effects.doLaser();
                 status = Characters.RED + "You died!" + Characters.POP;
@@ -71,19 +69,19 @@ public class PlayCanvas extends DoubleBufferCanvas {
                     int d = solution[i];
                     String s;
                     switch (d) {
-                    case Level.DIR_UP:
+                    case Entity.DIR_UP:
                         //                            s = "up";
                         s = "↑";
                         break;
-                    case Level.DIR_DOWN:
+                    case Entity.DIR_DOWN:
                         //                            s = "down";
                         s = "↓";
                         break;
-                    case Level.DIR_LEFT:
+                    case Entity.DIR_LEFT:
                         //                            s = "left";
                         s = "←";
                         break;
-                    case Level.DIR_RIGHT:
+                    case Entity.DIR_RIGHT:
                         //                            s = "right";
                         s = "→";
                         break;
@@ -159,8 +157,6 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
     boolean showBizarro;
 
-    private int playerDir;
-
     //    IntTriple laser;
 
     final byte[] origLevel;
@@ -191,7 +187,6 @@ public class PlayCanvas extends DoubleBufferCanvas {
         System.arraycopy(theLevel, 0, origLevel, 0, theLevel.length);
         initLevel();
 
-        playerDir = Level.DIR_DOWN;
         setupKeys();
     }
 
@@ -236,13 +231,6 @@ public class PlayCanvas extends DoubleBufferCanvas {
     }
 
     /**
-     * @return Returns the dir.
-     */
-    public int getPlayerDir() {
-        return playerDir;
-    }
-
-    /**
      * @throws IOException
      * @throws FileNotFoundException
      */
@@ -263,8 +251,9 @@ public class PlayCanvas extends DoubleBufferCanvas {
     }
 
     private void paintAllLevel(Graphics2D g) {
-        Drawing.paintAllLevel(g, theLevel, xScroll, yScroll, showBizarro,
-                playerDir, scale);
+        Drawing
+                .paintAllLevel(g, theLevel, xScroll, yScroll, showBizarro,
+                        scale);
     }
 
     private void paintArrows(Graphics2D g) {
@@ -402,18 +391,6 @@ public class PlayCanvas extends DoubleBufferCanvas {
         //                + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
     }
 
-    /**
-     * @param dir
-     *            The dir to set.
-     */
-    void setPlayerDir(int dir) {
-        if (dir != Level.DIR_DOWN && dir != Level.DIR_LEFT
-                && dir != Level.DIR_RIGHT && dir != Level.DIR_UP) {
-            throw new IllegalArgumentException("Bad direction");
-        }
-        this.playerDir = dir;
-    }
-
     void addToSolution(int dir) {
         if (solution == null) {
             solution = new byte[16];
@@ -433,10 +410,10 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
     private void setupKeys() {
         // moving
-        addAction("LEFT", "goLeft", new Mover(Level.DIR_LEFT));
-        addAction("DOWN", "goDown", new Mover(Level.DIR_DOWN));
-        addAction("RIGHT", "goRight", new Mover(Level.DIR_RIGHT));
-        addAction("UP", "goUp", new Mover(Level.DIR_UP));
+        addAction("LEFT", "goLeft", new Mover(Entity.DIR_LEFT));
+        addAction("DOWN", "goDown", new Mover(Entity.DIR_DOWN));
+        addAction("RIGHT", "goRight", new Mover(Entity.DIR_RIGHT));
+        addAction("UP", "goUp", new Mover(Entity.DIR_UP));
 
         // scaling
         addAction("CLOSE_BRACKET", "scaleUp", new Scaler(false));

@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import javax.microedition.lcdui.*;
 
+import org.spacebar.escape.common.*;
 import org.spacebar.escape.common.BitInputStream;
 import org.spacebar.escape.common.Continuation;
 import org.spacebar.escape.common.IntTriple;
@@ -72,7 +73,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         theWayOut = c;
         display = Display.getDisplay(theApp);
         origLevel = level;
-        playerDir = Level.DIR_DOWN;
+        playerDir = Entity.DIR_DOWN;
 
         setCommandListener(this);
 
@@ -228,19 +229,19 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         int sy = 0;
 
         switch (playerDir) {
-        case Level.DIR_LEFT:
+        case Entity.DIR_LEFT:
             sx = 0;
             sy = 0;
             break;
-        case Level.DIR_UP:
+        case Entity.DIR_UP:
             sx = -TILE_SIZE;
             sy = 0;
             break;
-        case Level.DIR_DOWN:
+        case Entity.DIR_DOWN:
             sx = 0;
             sy = -TILE_SIZE;
             break;
-        case Level.DIR_RIGHT:
+        case Entity.DIR_RIGHT:
             sx = -TILE_SIZE;
             sy = -TILE_SIZE;
             break;
@@ -272,16 +273,16 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         int py = theLevel.getPlayerY() * TILE_SIZE + TILE_SIZE / 2;
 
         switch (laser.d) {
-        case Level.DIR_DOWN:
+        case Entity.DIR_DOWN:
             ly += TILE_SIZE / 2;
             break;
-        case Level.DIR_UP:
+        case Entity.DIR_UP:
             ly -= TILE_SIZE / 2;
             break;
-        case Level.DIR_RIGHT:
+        case Entity.DIR_RIGHT:
             lx += TILE_SIZE / 2;
             break;
-        case Level.DIR_LEFT:
+        case Entity.DIR_LEFT:
             lx -= TILE_SIZE / 2;
             break;
         }
@@ -293,16 +294,16 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     protected void keyPressed(int keyCode) {
         switch (getGameAction(keyCode)) {
         case LEFT:
-            doMove(Level.DIR_LEFT);
+            doMove(Entity.DIR_LEFT);
             break;
         case RIGHT:
-            doMove(Level.DIR_RIGHT);
+            doMove(Entity.DIR_RIGHT);
             break;
         case UP:
-            doMove(Level.DIR_UP);
+            doMove(Entity.DIR_UP);
             break;
         case DOWN:
-            doMove(Level.DIR_DOWN);
+            doMove(Entity.DIR_DOWN);
             break;
         //        case FIRE:
         //            initLevel();

@@ -166,8 +166,7 @@ public class ResourceUtil {
 
         BufferedImage newImg = createCompatibleImage(maxWidth * imgs.length, height,
                 transparency);
-        System.out.println(newImg);
-        System.out.println(transparency);
+//        System.out.println(newImg);
         Graphics2D g2 = newImg.createGraphics();
         int dx = 0;
         for (int i = 0; i < imgs.length; i++) {

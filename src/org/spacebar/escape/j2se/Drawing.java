@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import org.spacebar.escape.common.*;
 import org.spacebar.escape.common.Characters;
 import org.spacebar.escape.common.IntTriple;
 import org.spacebar.escape.common.Level;
@@ -113,9 +114,9 @@ public class Drawing {
     }
 
     static public void paintAllLevel(Graphics2D g, Level theLevel, int xScroll,
-            int yScroll, boolean showBizarro, int playerDir, int scale) {
+            int yScroll, boolean showBizarro, int scale) {
         paintLevel(g, theLevel, xScroll, yScroll, showBizarro, scale);
-        paintSprites(g, theLevel, xScroll, yScroll, playerDir, scale);
+        paintSprites(g, theLevel, xScroll, yScroll, scale);
         paintLaser(g, theLevel, xScroll, yScroll, scale);
     }
 
@@ -128,7 +129,7 @@ public class Drawing {
      * @param scale
      */
     private static void paintSprites(Graphics2D g, Level theLevel, int xScroll,
-            int yScroll, int playerDir, int scale) {
+            int yScroll, int scale) {
         int spriteCount = 1 + theLevel.getBotCount();
 
         // y is z
@@ -138,7 +139,7 @@ public class Drawing {
         s[theLevel.getPlayerY()][0] = 999; // 1000 - 1
         for (int i = 0; i < theLevel.getBotCount(); i++) {
             int z = 1000 + i; // avoid re-initializing array
-            int y = theLevel.getSpriteY(i);
+            int y = theLevel.getBotY(i);
 
             int row[] = s[y];
             for (int j = 0; j < row.length; j++) {
@@ -159,7 +160,7 @@ public class Drawing {
                 }
 
                 int index = row[j] - 1000;
-                paintSprite(g, theLevel, xScroll, yScroll, playerDir, index,
+                paintSprite(g, theLevel, xScroll, yScroll, index,
                         scale);
             }
         }
@@ -188,7 +189,7 @@ public class Drawing {
         Rectangle outer, inner;
 
         switch (d) {
-        case Level.DIR_DOWN:
+        case Entity.DIR_DOWN:
             lx += TILE_SIZE >> 1;
             ly += TILE_SIZE;
 
@@ -200,7 +201,7 @@ public class Drawing {
             outer = new Rectangle(lx - 1, ly, 3, gy - ly);
             inner = new Rectangle(lx, ly, 1, gy - ly);
             break;
-        case Level.DIR_UP:
+        case Entity.DIR_UP:
             lx *= scaleVal;
             ly *= scaleVal;
             gx *= scaleVal;
@@ -209,7 +210,7 @@ public class Drawing {
             outer = new Rectangle(gx - 1, gy + 1, 3, ly - gy);
             inner = new Rectangle(gx, gy + 1, 1, ly - gy);
             break;
-        case Level.DIR_RIGHT:
+        case Entity.DIR_RIGHT:
             lx += TILE_SIZE;
             ly += TILE_SIZE >> 1;
 
@@ -221,7 +222,7 @@ public class Drawing {
             outer = new Rectangle(lx, ly - 1, gx - lx, 3);
             inner = new Rectangle(lx, ly, gx - lx, 1);
             break;
-        case Level.DIR_LEFT:
+        case Entity.DIR_LEFT:
             lx *= scaleVal;
             ly *= scaleVal;
             gx *= scaleVal;
@@ -271,16 +272,16 @@ public class Drawing {
     }
 
     static private void paintSprite(Graphics2D g2, Level theLevel, int xScroll,
-            int yScroll, int dir, int spriteIndex, int scale) {
+            int yScroll, int spriteIndex, int scale) {
         if (spriteIndex == -1) {
-            paintPlayer(g2, theLevel, xScroll, yScroll, dir, scale);
+            paintPlayer(g2, theLevel, xScroll, yScroll, scale);
         } else {
-            paintBot(g2, theLevel, xScroll, yScroll, dir, spriteIndex, scale);
+            paintBot(g2, theLevel, xScroll, yScroll, spriteIndex, scale);
         }
     }
 
     private static void paintBot(Graphics2D g2, Level theLevel, int xScroll,
-            int yScroll, int dir, int botIndex, int scale) {
+            int yScroll, int botIndex, int scale) {
         int zoom = getZoomIndex(scale);
         int tileSize = getTileSize(scale);
 
@@ -288,16 +289,16 @@ public class Drawing {
 
         int height = bots[botType][zoom].getHeight();
 
-        int dx = (theLevel.getSpriteX(botIndex) - xScroll) * tileSize;
-        int dy = (theLevel.getSpriteY(botIndex) - yScroll) * tileSize
+        int dx = (theLevel.getBotX(botIndex) - xScroll) * tileSize;
+        int dy = (theLevel.getBotY(botIndex) - yScroll) * tileSize
                 - (height - tileSize);
 
         int sx;
-        switch (dir) {
-        case Level.DIR_DOWN:
-        case Level.DIR_RIGHT:
-        case Level.DIR_LEFT:
-        case Level.DIR_UP:
+        switch (theLevel.getBotDir(botIndex)) {
+        case Entity.DIR_DOWN:
+        case Entity.DIR_RIGHT:
+        case Entity.DIR_LEFT:
+        case Entity.DIR_UP:
         default:
             sx = 0;
             break;
@@ -308,7 +309,7 @@ public class Drawing {
     }
 
     static private void paintPlayer(Graphics2D g2, Level theLevel, int xScroll,
-            int yScroll, int playerDir, int scale) {
+            int yScroll, int scale) {
         int zoom = getZoomIndex(scale);
         int tileSize = getTileSize(scale);
         int height = player[zoom].getHeight();
@@ -318,17 +319,17 @@ public class Drawing {
                 - (height - tileSize);
 
         int sx;
-        switch (playerDir) {
-        case Level.DIR_DOWN:
+        switch (theLevel.getPlayerDir()) {
+        case Entity.DIR_DOWN:
             sx = 0;
             break;
-        case Level.DIR_RIGHT:
+        case Entity.DIR_RIGHT:
             sx = PLAYER_FRAMES * tileSize;
             break;
-        case Level.DIR_LEFT:
+        case Entity.DIR_LEFT:
             sx = 2 * PLAYER_FRAMES * tileSize;
             break;
-        case Level.DIR_UP:
+        case Entity.DIR_UP:
         default:
             sx = 3 * PLAYER_FRAMES * tileSize;
             break;

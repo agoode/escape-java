@@ -21,21 +21,6 @@ public class Level {
         }
     }
 
-    // directions
-    public final static int DIR_NONE = 0;
-
-    public final static int FIRST_DIR = 1;
-
-    public final static int DIR_UP = 1;
-
-    public final static int DIR_DOWN = 2;
-
-    public final static int DIR_LEFT = 3;
-
-    public final static int DIR_RIGHT = 4;
-
-    public final static int LAST_DIR = 4;
-
     // panel colors
     public final static int PANEL_REGULAR = 0;
 
@@ -189,7 +174,7 @@ public class Level {
 
     /**
      * @param author
-     *            The author to set.
+     *           The author to set.
      */
     public void setAuthor(String author) {
         this.author = author;
@@ -204,26 +189,30 @@ public class Level {
 
     /**
      * @param title
-     *            The title to set.
+     *           The title to set.
      */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public int getSpriteX(int index) {
-        return botI[index] % width;
+    public int getBotX(int index) {
+        return bots[index].getX();
     }
-    
-    public int getSpriteY(int index) {
-        return botI[index] / width;
+
+    public int getBotY(int index) {
+        return bots[index].getY();
+    }
+
+    public int getBotType(int index) {
+        return bots[index].getBotType();
     }
     
     public int getPlayerX() {
-        return playerX;
+        return p.getX();
     }
 
     public int getPlayerY() {
-        return playerY;
+        return p.getY();
     }
 
     public int getHeight() {
@@ -235,66 +224,58 @@ public class Level {
     }
 
     public int getBotCount() {
-        return botI.length;
+        return bots.length;
     }
-    
-    public int getBotIndex(int i) {
-        return botI[i];
-    }
-    
-    public int getBotType(int i) {
-        return botT[i];
-    }
-    
+
     // static functions
     static int turnLeft(int d) {
         switch (d) {
-        case DIR_UP:
-            return DIR_LEFT;
-        case DIR_DOWN:
-            return DIR_RIGHT;
-        case DIR_RIGHT:
-            return DIR_UP;
-        case DIR_LEFT:
-            return DIR_DOWN;
+        case Entity.DIR_UP:
+            return Entity.DIR_LEFT;
+        case Entity.DIR_DOWN:
+            return Entity.DIR_RIGHT;
+        case Entity.DIR_RIGHT:
+            return Entity.DIR_UP;
+        case Entity.DIR_LEFT:
+            return Entity.DIR_DOWN;
         default:
-        case DIR_NONE:
-            return DIR_NONE; /* ? */
+        case Entity.DIR_NONE:
+            return Entity.DIR_NONE; /* ? */
         }
     }
 
     static int turnRight(int d) {
         switch (d) {
-        case DIR_UP:
-            return DIR_RIGHT;
-        case DIR_DOWN:
-            return DIR_LEFT;
-        case DIR_RIGHT:
-            return DIR_DOWN;
-        case DIR_LEFT:
-            return DIR_UP;
+        case Entity.DIR_UP:
+            return Entity.DIR_RIGHT;
+        case Entity.DIR_DOWN:
+            return Entity.DIR_LEFT;
+        case Entity.DIR_RIGHT:
+            return Entity.DIR_DOWN;
+        case Entity.DIR_LEFT:
+            return Entity.DIR_UP;
         default:
-        case DIR_NONE:
-            return DIR_NONE; /* ? */
+        case Entity.DIR_NONE:
+            return Entity.DIR_NONE; /* ? */
         }
     }
 
     static IntPair dirChange(int d) {
         int dx, dy;
         switch (d) {
-        case DIR_UP:
+        case Entity.DIR_UP:
             dx = 0;
             dy = -1;
             break;
-        case DIR_LEFT:
+        case Entity.DIR_LEFT:
             dx = -1;
             dy = 0;
             break;
-        case DIR_RIGHT:
+        case Entity.DIR_RIGHT:
             dx = 1;
             dy = 0;
             break;
-        case DIR_DOWN:
+        case Entity.DIR_DOWN:
             dx = 0;
             dy = 1;
             break;
@@ -307,15 +288,15 @@ public class Level {
 
     static String dirString(int d) {
         switch (d) {
-        case DIR_UP:
+        case Entity.DIR_UP:
             return "up";
-        case DIR_LEFT:
+        case Entity.DIR_LEFT:
             return "left";
-        case DIR_RIGHT:
+        case Entity.DIR_RIGHT:
             return "right";
-        case DIR_DOWN:
+        case Entity.DIR_DOWN:
             return "down";
-        case DIR_NONE:
+        case Entity.DIR_NONE:
             return "none";
         default:
             return "??";
@@ -324,17 +305,17 @@ public class Level {
 
     static int dirReverse(int d) {
         switch (d) {
-        case DIR_UP:
-            return DIR_DOWN;
-        case DIR_LEFT:
-            return DIR_RIGHT;
-        case DIR_DOWN:
-            return DIR_UP;
-        case DIR_RIGHT:
-            return DIR_LEFT;
+        case Entity.DIR_UP:
+            return Entity.DIR_DOWN;
+        case Entity.DIR_LEFT:
+            return Entity.DIR_RIGHT;
+        case Entity.DIR_DOWN:
+            return Entity.DIR_UP;
+        case Entity.DIR_RIGHT:
+            return Entity.DIR_LEFT;
         default:
-        case DIR_NONE:
-            return DIR_NONE;
+        case Entity.DIR_NONE:
+            return Entity.DIR_NONE;
         }
     }
 
@@ -350,10 +331,7 @@ public class Level {
 
     final int height;
 
-    // location of player
-    private int playerX;
-
-    private int playerY;
+    final private Player p;
 
     // shown
     private final int tiles[];
@@ -367,11 +345,8 @@ public class Level {
     // has a panel (under a pushable block)? etc.
     private final int flags[];
 
-    // bots
-    private final int botI[]; // positions of bots
-
-    private final int botT[]; // types of bots
-
+    private Bot bots[];
+    
     // dirty
     public final DirtyList dirty;
 
@@ -379,10 +354,10 @@ public class Level {
     private IntTriple laser;
 
     // the meat
-    private void warp(int targX, int targY) {
-        checkStepOff(playerX, playerY);
-        playerX = targX;
-        playerY = targY;
+    private void warp(Entity ent, int targX, int targY) {
+        checkStepOff(ent.getX(), ent.getY());
+        ent.setX(targX);
+        ent.setY(targY);
 
         switch (tileAt(targX, targY)) {
         case T_PANEL:
@@ -400,7 +375,7 @@ public class Level {
         return new IntPair(x, y);
     }
 
-    private int index(int x, int y) {
+    int index(int x, int y) {
         return (y * width) + x;
     }
 
@@ -449,30 +424,30 @@ public class Level {
     }
 
     public boolean isWon() {
-        return tileAt(playerX, playerY) == T_EXIT;
+        return tileAt(p.getX(), p.getY()) == T_EXIT;
     }
 
     private IntPair travel(int x, int y, int d) {
         switch (d) {
-        case DIR_UP:
+        case Entity.DIR_UP:
             if (y == 0) {
                 return null;
             } else {
                 return new IntPair(x, y - 1);
             }
-        case DIR_DOWN:
+        case Entity.DIR_DOWN:
             if (y == (height - 1)) {
                 return null;
             } else {
                 return new IntPair(x, y + 1);
             }
-        case DIR_LEFT:
+        case Entity.DIR_LEFT:
             if (x == 0) {
                 return null;
             } else {
                 return new IntPair(x - 1, y);
             }
-        case DIR_RIGHT:
+        case Entity.DIR_RIGHT:
             if (x == (width - 1)) {
                 return null;
             } else {
@@ -490,8 +465,8 @@ public class Level {
         }
 
         // easiest way is to look for lasers from the current dude.
-        for (int dd = FIRST_DIR; dd <= LAST_DIR; dd++) {
-            int lx = playerX, ly = playerY;
+        for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
+            int lx = p.getX(), ly = p.getY();
 
             IntPair r;
             while ((r = travel(lx, ly, dd)) != null) {
@@ -585,7 +560,7 @@ public class Level {
     private boolean isSphere(int t) {
         return (t == T_SPHERE || t == T_RSPHERE || t == T_GSPHERE || t == T_BSPHERE);
     }
-    
+
     private boolean isSteel(int t) {
         return (t == T_STEEL || t == T_RSTEEL || t == T_GSTEEL || t == T_BSTEEL);
     }
@@ -604,11 +579,27 @@ public class Level {
     }
 
     public boolean move(int d, Effects e) {
-        boolean result = realMove(d, e);
+        p.setDir(d);  // always set dir
+        boolean result = realMove(p, d, e);
 
         if (result) {
             if (e != null) {
                 e.doStep();
+            }
+            
+            // move bots
+            for (int i = 0; i < bots.length; i++) {
+                Bot b = bots[i];
+                IntPair dirs = b.getDirChoices(p);
+                
+                if (dirs.x != Entity.DIR_NONE) {
+                    boolean bm = realMove(b, dirs.x, e);
+
+                    // no good? try 2nd move
+                    if (!bm && dirs.y != Entity.DIR_NONE) {
+                        realMove(b, dirs.y, e);
+                    }
+                }
             }
         } else {
             if (e != null) {
@@ -620,11 +611,10 @@ public class Level {
         return result;
     }
 
-    private boolean realMove(int d, Effects e) {
-
+    private boolean realMove(Entity ent, int d, Effects e) {
         int target;
         IntPair newP;
-        if ((newP = travel(playerX, playerY, d)) != null) {
+        if ((newP = travel(ent.getX(), ent.getY(), d)) != null) {
             switch (target = tileAt(newP.x, newP.y)) {
 
             /* these aren't pressed by the player so act like floor */
@@ -643,9 +633,9 @@ public class Level {
             case T_GDOWN:
             case T_EXIT: /* now we allow player to walk onto exit */
 
-                checkStepOff(playerX, playerY);
-                playerX = newP.x;
-                playerY = newP.y;
+                checkStepOff(ent.getX(), ent.getY());
+                ent.setX(newP.x);
+                ent.setY(newP.y);
                 return true;
 
             case T_ON: {
@@ -797,85 +787,85 @@ public class Level {
                 if (e != null) {
                     e.doTransport();
                 }
-                warp(targ.x, targ.y);
+                warp(ent, targ.x, targ.y);
 
                 return true;
             }
             case T_BUTTON: {
 
-                for (int dd = FIRST_DIR; dd <= LAST_DIR; dd++) {
+                for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
                     /* send a pulse in that direction. */
                     IntPair pulse = newP;
                     int pd = dd;
 
-                    while (pd != DIR_NONE
+                    while (pd != Entity.DIR_NONE
                             && (pulse = travel(pulse.x, pulse.y, pd)) != null) {
                         switch (tileAt(pulse.x, pulse.y)) {
                         case T_BLIGHT:
                             swapTiles(T_BUP, T_BDOWN);
-                            pd = DIR_NONE;
+                            pd = Entity.DIR_NONE;
                             break;
                         case T_RLIGHT:
                             swapTiles(T_RUP, T_RDOWN);
-                            pd = DIR_NONE;
+                            pd = Entity.DIR_NONE;
                             break;
                         case T_GLIGHT:
                             swapTiles(T_GUP, T_GDOWN);
-                            pd = DIR_NONE;
+                            pd = Entity.DIR_NONE;
                             break;
 
                         case T_NS:
-                            if (pd == DIR_UP || pd == DIR_DOWN)
+                            if (pd == Entity.DIR_UP || pd == Entity.DIR_DOWN)
                                 continue;
                             else
-                                pd = DIR_NONE;
+                                pd = Entity.DIR_NONE;
                             break;
 
                         case T_WE:
-                            if (pd == DIR_LEFT || pd == DIR_RIGHT)
+                            if (pd == Entity.DIR_LEFT || pd == Entity.DIR_RIGHT)
                                 continue;
                             else
-                                pd = DIR_NONE;
+                                pd = Entity.DIR_NONE;
                             break;
 
                         case T_NW:
-                            if (pd == DIR_DOWN)
-                                pd = DIR_LEFT;
-                            else if (pd == DIR_RIGHT)
-                                pd = DIR_UP;
+                            if (pd == Entity.DIR_DOWN)
+                                pd = Entity.DIR_LEFT;
+                            else if (pd == Entity.DIR_RIGHT)
+                                pd = Entity.DIR_UP;
                             else
-                                pd = DIR_NONE;
+                                pd = Entity.DIR_NONE;
                             break;
 
                         case T_SW:
-                            if (pd == DIR_UP)
-                                pd = DIR_LEFT;
-                            else if (pd == DIR_RIGHT)
-                                pd = DIR_DOWN;
+                            if (pd == Entity.DIR_UP)
+                                pd = Entity.DIR_LEFT;
+                            else if (pd == Entity.DIR_RIGHT)
+                                pd = Entity.DIR_DOWN;
                             else
-                                pd = DIR_NONE;
+                                pd = Entity.DIR_NONE;
                             break;
 
                         case T_NE:
-                            if (pd == DIR_DOWN)
-                                pd = DIR_RIGHT;
-                            else if (pd == DIR_LEFT)
-                                pd = DIR_UP;
+                            if (pd == Entity.DIR_DOWN)
+                                pd = Entity.DIR_RIGHT;
+                            else if (pd == Entity.DIR_LEFT)
+                                pd = Entity.DIR_UP;
                             else
-                                pd = DIR_NONE;
+                                pd = Entity.DIR_NONE;
                             break;
 
                         case T_SE:
-                            if (pd == DIR_UP)
-                                pd = DIR_RIGHT;
-                            else if (pd == DIR_LEFT)
-                                pd = DIR_DOWN;
+                            if (pd == Entity.DIR_UP)
+                                pd = Entity.DIR_RIGHT;
+                            else if (pd == Entity.DIR_LEFT)
+                                pd = Entity.DIR_DOWN;
                             else
-                                pd = DIR_NONE;
+                                pd = Entity.DIR_NONE;
                             break;
 
                         default:
-                            pd = DIR_NONE;
+                            pd = Entity.DIR_NONE;
                         }
                     }
                 }
@@ -894,9 +884,9 @@ public class Level {
 
             case T_PANEL:
                 swapO(destAt(newP.x, newP.y));
-                checkStepOff(playerX, playerY);
-                playerX = newP.x;
-                playerY = newP.y;
+                checkStepOff(ent.getX(), ent.getY());
+                ent.setX(newP.x);
+                ent.setY(newP.y);
                 return true;
 
             case T_GREEN: {
@@ -906,9 +896,9 @@ public class Level {
                         setTile(dest.x, dest.y, T_BLUE);
                         setTile(newP.x, newP.y, T_FLOOR);
 
-                        checkStepOff(playerX, playerY);
-                        playerX = newP.x;
-                        playerY = newP.y;
+                        checkStepOff(ent.getX(), ent.getY());
+                        ent.setX(newP.x);
+                        ent.setY(newP.y);
                         return true;
                     } else
                         return false;
@@ -930,9 +920,11 @@ public class Level {
 
             case T_GREY: {
 
-                if (target == T_LR && (d == DIR_UP || d == DIR_DOWN))
+                if (target == T_LR
+                        && (d == Entity.DIR_UP || d == Entity.DIR_DOWN))
                     return false;
-                if (target == T_UD && (d == DIR_LEFT || d == DIR_RIGHT))
+                if (target == T_UD
+                        && (d == Entity.DIR_LEFT || d == Entity.DIR_RIGHT))
                     return false;
 
                 boolean doSwap = false;
@@ -999,12 +991,12 @@ public class Level {
                     default:
                         return false;
                     }
-                    checkStepOff(playerX, playerY);
+                    checkStepOff(ent.getX(), ent.getY());
 
                     if (doSwap)
                         swapO(destAt(dest.x, dest.y));
-                    playerX = newP.x;
-                    playerY = newP.y;
+                    ent.setX(newP.x);
+                    ent.setY(newP.y);
                     return true;
                 } else
                     return false;
@@ -1045,9 +1037,11 @@ public class Level {
         author = m.author;
         title = m.title;
 
-        playerX = getIntFromStream(in);
-        playerY = getIntFromStream(in);
+        int playerX = getIntFromStream(in);
+        int playerY = getIntFromStream(in);
 
+        p = new Player(playerX, playerY, Entity.DIR_DOWN);
+        
         tiles = RunLengthEncoding.decode(in, width * height);
         oTiles = RunLengthEncoding.decode(in, width * height);
         dests = RunLengthEncoding.decode(in, width * height);
@@ -1061,12 +1055,14 @@ public class Level {
             bots = 0;
         }
 
-        if (bots == 0) {
-            botI = new int[bots];
-            botT = new int[bots];
-        } else {
-            botI = RunLengthEncoding.decode(in, bots);
-            botT = RunLengthEncoding.decode(in, bots);
+        this.bots = new Bot[bots];
+
+        int botI[] = RunLengthEncoding.decode(in, bots);
+        int botT[] = RunLengthEncoding.decode(in, bots);
+        for (int i = 0; i < this.bots.length; i++) {
+            int x = botI[i] % width;
+            int y = botI[i] / width;
+            this.bots[i] = Bot.createBotFromType(x, y, Entity.DIR_DOWN, botT[i]);
         }
 
         dirty = new DirtyList();
@@ -1153,7 +1149,8 @@ public class Level {
 
     public void print(PrintStream p) {
         p.println("\"" + title + "\" by " + author + " (" + width + ","
-                + height + ")" + " player: (" + playerX + "," + playerY + ")");
+                + height + ")" + " player: (" + this.p.getX() + ","
+                + this.p.getY() + ")");
         p.println();
         p.println("tiles");
         printM(p, tiles, width);
@@ -1185,7 +1182,7 @@ public class Level {
 
     private static int getIntFromStream(InputStream in) throws IOException {
         int r = 0;
-        
+
         r += eofRead(in) << 24;
         r += eofRead(in) << 16;
         r += eofRead(in) << 8;
@@ -1201,7 +1198,7 @@ public class Level {
         }
         return i;
     }
-    
+
     private static String getStringFromStream(InputStream in, int size)
             throws IOException {
         byte buf[] = new byte[size];
@@ -1210,5 +1207,13 @@ public class Level {
 
         String result = new String(buf);
         return (result);
+    }
+
+    public int getBotDir(int botIndex) {
+        return bots[botIndex].getDir();
+    }
+
+    public int getPlayerDir() {
+        return p.getDir();
     }
 }

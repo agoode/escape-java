@@ -15,10 +15,13 @@ package org.spacebar.escape.common;
 public class Hugbot extends Bot {
 
     public Hugbot(int x, int y, int d) {
-        super(x, y, d);
+        super(x, y, d, B_HUGBOT);
 
         iPushPlayer();
         iPushBots();
     }
 
+    IntPair getDirChoices(Entity e) {
+        return getMoveToDirChoices(e);
+    }
 }

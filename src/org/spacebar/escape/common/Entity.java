@@ -13,12 +13,6 @@ package org.spacebar.escape.common;
  * Preferences - Java - Code Style - Code Templates
  */
 abstract public class Entity {
-    public final static int B_BROKEN = 0;
-
-    public final static int B_DALEK = 1;
-
-    public final static int B_HUGBOT = 2;
-
     protected final void iCanTeleport() {
         this.canTeleportB = true;
     }
@@ -57,6 +51,20 @@ abstract public class Entity {
 
     private int y;
 
+    // directions
+    public final static int DIR_NONE = 0;
+
+    public final static int FIRST_DIR = 1;
+    public final static int DIR_UP = 1;
+
+    public final static int DIR_DOWN = 2;
+
+    public final static int DIR_LEFT = 3;
+
+    public final static int DIR_RIGHT = 4;
+    public final static int LAST_DIR = 4;
+
+    
     public Entity(int x, int y, int d) {
         this.x = x;
         this.y = y;
@@ -134,5 +142,18 @@ abstract public class Entity {
 
     final public boolean zapsSelf() {
         return zapSelfB;
+    }
+    
+    public String toString() {
+        String s = getClass().getName() + ": (" + x + "," + y + "," + d + ") [";
+        if (isPlayer()) s += " isPlayer";
+        if (canTeleport()) s += " canTeleport";
+        if (crushesPlayer()) s += " crushesPlayer";
+        if (walksIntoBots()) s += " walksIntoBots";
+        if (pushesPlayer()) s += " pushesPlayer";
+        if (zapsSelf()) s += " zapsSelf";
+        if (pushesBots()) s += " pushesBots";
+        s += " ]";
+        return s;
     }
 }
