@@ -52,7 +52,7 @@ public class LevelCanvas extends DoubleBufferCanvas {
 
     //    double scaleVal = 1.0;
 
-    Level theLevel;
+    ListenableLevel theLevel;
 
     String status;
 
@@ -68,14 +68,12 @@ public class LevelCanvas extends DoubleBufferCanvas {
 
     public LevelCanvas(Level l) {
         super();
-        theLevel = l;
-        initLevel();
+        setLevel(l);
     }
 
     public LevelCanvas(Level l, Continuation c) {
         super(c);
-        theLevel = l;
-        initLevel();
+        setLevel(l);
     }
 
     synchronized protected void bufferPaint(Graphics2D g) {
@@ -311,7 +309,12 @@ public class LevelCanvas extends DoubleBufferCanvas {
     }
 
     public void setLevel(Level l) {
-        this.theLevel = l;
+        this.theLevel = new ListenableLevel(l);
+        theLevel.addMoveListener(new MoveListener() {
+            public void moveOccurred(boolean success) {
+                bufferRepaint();
+            }
+        });
 
         initLevel();
     }

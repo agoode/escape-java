@@ -37,11 +37,11 @@ abstract public class DoubleBufferCanvas extends JComponent {
     abstract protected void bufferPaint(Graphics2D g);
 
     public void bufferRepaint() {
-        if (backBuffer == null) {
-            return;
-        } else {
+        if (backBuffer != null) {
             renderOffscreen();
-            repaint();
+//            repaint();
+            paintImmediately(getBounds());
+            getToolkit().sync();
         }
     }
 

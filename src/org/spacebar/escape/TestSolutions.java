@@ -13,6 +13,7 @@ import org.spacebar.escape.common.Level;
 import org.spacebar.escape.common.Misc;
 import org.spacebar.escape.common.Solution;
 import org.spacebar.escape.common.hash.MD5;
+import org.spacebar.escape.j2se.EscapeFrame;
 import org.spacebar.escape.j2se.PlayerInfo;
 
 public class TestSolutions {
@@ -49,10 +50,11 @@ public class TestSolutions {
             // given a directory, search all player files and all level
             // files and try the solutions on all of them
             Map levels = new HashMap();
+            Map levelsToFiles = new HashMap();
 
             System.out.print("Loading...");
             System.out.flush();
-            getAllStuff(f, levels);
+            getAllStuff(f, levels, levelsToFiles);
             System.out.println(" " + levels.size() + " levels loaded");
 
             int maxLevelString = 0;
@@ -83,9 +85,11 @@ public class TestSolutions {
 
                     List sols = (List) s.get(md5);
                     levelsToSolutions.put(l, sols);
-                    maxLevelString = Math.max(maxLevelString, l.toString()
-                            .length());
+                    String str = getStringForLevel(l, levelsToFiles);
+                    maxLevelString = Math.max(maxLevelString, str.length());
                 }
+
+                final int mls = maxLevelString;
 
                 // the solutions for this level
                 for (Iterator i = levelsToSolutions.keySet().iterator(); i
@@ -94,16 +98,16 @@ public class TestSolutions {
                     List sols = (List) levelsToSolutions.get(l);
 
                     for (Iterator iter = sols.iterator(); iter.hasNext();) {
-                        Solution sol = (Solution) iter.next();
+                        final Solution sol = (Solution) iter.next();
 
-                        String ls = l.toString();
+                        final String ls = getStringForLevel(l, levelsToFiles);
                         System.out.print(" " + ls);
                         System.out.flush();
 
-                        //                        DrawnLevel d = new DrawnLevel(l);
-                        int result = sol.verify(l);
+                        Level l2 = new Level(l);
+                        int result = sol.verify(l2);
 
-                        int pad = maxLevelString - ls.length() + 5;
+                        int pad = mls - ls.length() + 5;
                         while (pad-- > 0) {
                             System.out.print(" ");
                         }
@@ -115,11 +119,12 @@ public class TestSolutions {
                             System.out.println("BAD at " + sol.length()
                                     + " (end)");
                             bad++;
+                            new EscapeFrame(l2);
                         } else {
                             System.out.println("BAD at " + result);
                             bad++;
+                            new EscapeFrame(l2);
                         }
-                        //                        d.dispose();
                     }
                 }
             }
@@ -131,12 +136,18 @@ public class TestSolutions {
         }
     }
 
-    private static void getAllStuff(File f, Map levels) throws IOException {
+    private static String getStringForLevel(Level l, Map levelsToFiles) {
+        File f = (File) levelsToFiles.get(l);
+        return l.toString() + " [" + f.getName() + "]";
+    }
+
+    private static void getAllStuff(File f, Map levels, Map levelsToFiles)
+            throws IOException {
         if (f.isDirectory()) {
             File files[] = f.listFiles(ff);
 
             for (int i = 0; i < files.length; i++) {
-                getAllStuff(files[i], levels);
+                getAllStuff(files[i], levels, levelsToFiles);
             }
         } else {
             // level
@@ -150,8 +161,10 @@ public class TestSolutions {
             }
 
             MD5 md5 = new MD5(m.digest(l));
-            levels.put(md5, new Level(new BitInputStream(
-                    new ByteArrayInputStream(l))));
+            Level ll = new Level(
+                    new BitInputStream(new ByteArrayInputStream(l)));
+            levels.put(md5, ll);
+            levelsToFiles.put(ll, f);
         }
     }
 }

@@ -114,8 +114,6 @@ public class PlayCanvas extends LevelCanvas {
                         theWayOut.invoke();
                     }
                 }.start();
-            } else {
-                bufferRepaint();
             }
         }
     }
