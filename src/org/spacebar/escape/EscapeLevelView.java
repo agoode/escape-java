@@ -463,19 +463,28 @@ public class EscapeLevelView extends JComponent {
                 int dy = j * tileSize;
 
                 int tile;
+                tile = theLevel.tileAt(i + xScroll, j + yScroll);
+
+                paintTile(g2, zoom, tileSize, dx, dy, tile, 1.0f);
                 if (showBizarro) {
                     tile = theLevel.oTileAt(i + xScroll, j + yScroll);
-                } else {
-                    tile = theLevel.tileAt(i + xScroll, j + yScroll);
+                    paintTile(g2, zoom, tileSize, dx, dy, tile, 0.5f);
                 }
-
-                int sx = tile % TILES_ACROSS * tileSize;
-                int sy = tile / TILES_ACROSS * tileSize;
-
-                g2.drawImage(tiles[zoom], dx, dy, dx + tileSize, dy + tileSize,
-                        sx, sy, sx + tileSize, sy + tileSize, this);
             }
         }
+    }
+
+    private void paintTile(Graphics2D g2, int zoom, int tileSize, int dx,
+            int dy, int tile, float alpha) {
+        int sx = tile % TILES_ACROSS * tileSize;
+        int sy = tile / TILES_ACROSS * tileSize;
+
+        Composite c = g2.getComposite();
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                alpha));
+        g2.drawImage(tiles[zoom], dx, dy, dx + tileSize, dy + tileSize, sx, sy,
+                sx + tileSize, sy + tileSize, this);
+        g2.setComposite(c);
     }
 
     private int getTileSize() {
