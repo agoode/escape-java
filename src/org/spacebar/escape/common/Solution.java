@@ -2,6 +2,7 @@ package org.spacebar.escape.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Date;
 
 public class Solution {
@@ -90,28 +91,7 @@ public class Solution {
 
         sb.append("[");
         for (int i = 0; i < size; i++) {
-            int d = solution[i];
-            String s;
-            switch (d) {
-            case Entity.DIR_UP:
-                //                            s = "up";
-                s = "↑";
-                break;
-            case Entity.DIR_DOWN:
-                //                            s = "down";
-                s = "↓";
-                break;
-            case Entity.DIR_LEFT:
-                //                            s = "left";
-                s = "←";
-                break;
-            case Entity.DIR_RIGHT:
-                //                            s = "right";
-                s = "→";
-                break;
-            default:
-                s = "?";
-            }
+            String s = Entity.directionToString(solution[i]);
             sb.append(s);
             if (i != size - 1) {
                 sb.append(" ");
@@ -139,27 +119,47 @@ public class Solution {
     }
 
     public int verify(Level l) {
+        return verify(l, 0, null);
+    }
+    
+    /**
+     * @param l
+     * @return
+     */
+    public int verify(Level l, long sleepTime, PrintStream p) {
         for (int i = 0; i < size; i++) {
             int d = solution[i];
 
+            if (p != null) {
+                p.print(Entity.directionToString(d) + " ");
+                p.flush();
+            }
+            
             // bad move is bad
             if (!l.move(d)) {
-                //                    System.out.println("bad move");
+                System.out.print(" bad move ");
                 return i;
             }
 
             // death is bad
             if (l.isDead()) {
-                //                    System.out.println("bad dead");
+                System.out.print(" bad dead ");
                 return i;
             }
 
             // early winning is bad
             if (l.isWon() && i != (size - 1)) {
-                //                    System.out.println("early win");
+                System.out.print(" early win ");
                 return i;
             }
             //                System.out.println(d);
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         if (l.isWon() && !l.isDead()) {
             return size;           // perfect
@@ -167,8 +167,7 @@ public class Solution {
             return -1;             // failed at last move
         }
     }
-    
-    
+
     public String getAuthor() {
         return author;
     }

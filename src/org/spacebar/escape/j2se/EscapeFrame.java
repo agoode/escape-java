@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 
 import org.spacebar.escape.common.Continuation;
 import org.spacebar.escape.common.Level;
+import org.spacebar.escape.common.Solution;
 
 /**
  * @author adam
@@ -63,6 +64,20 @@ public class EscapeFrame extends Frame {
 
         setLevel(l);
         setVisible(true);
+    }
+    
+    public EscapeFrame(Level l, Solution s) {
+        super("Escape");
+        initFrame();
+
+        setLevel(l);
+        setSolution(s);
+        setVisible(true);
+
+    }
+
+    private void setSolution(Solution s) {
+        pc.setSolution(s);
     }
 
     private WindowAdapter escapeSimulator;

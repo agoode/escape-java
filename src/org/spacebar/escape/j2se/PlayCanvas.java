@@ -21,6 +21,8 @@ import org.spacebar.escape.common.*;
 public class PlayCanvas extends LevelCanvas {
 
     Solution solution = new Solution();
+    
+    Solution playbackSolution;
 
     public PlayCanvas(Level theLevel, Continuation c) {
         super(theLevel, c);
@@ -54,6 +56,9 @@ public class PlayCanvas extends LevelCanvas {
         addAction("ENTER", "restart", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 reset();
+                if (playbackSolution != null) {
+                    playSolution();
+                }
             }
         });
     
@@ -63,6 +68,11 @@ public class PlayCanvas extends LevelCanvas {
                 theWayOut.invoke();
             }
         });
+    }
+
+    protected void playSolution() {
+        playbackSolution.verify(theLevel, 50, System.out);
+        bufferRepaint();
     }
 
     protected void reset() {
@@ -78,7 +88,10 @@ public class PlayCanvas extends LevelCanvas {
         }
     
         public void actionPerformed(ActionEvent e) {
-    
+            if (playbackSolution != null) {
+                return;
+            }
+            
             if (theLevel.move(dir, effects)) {
                 // append to solution
                 solution.addToSolution(dir);
@@ -137,5 +150,10 @@ public class PlayCanvas extends LevelCanvas {
     
             bufferRepaint();
         }
+    }
+
+    public void setSolution(Solution s) {
+        // kill the normal interaction, replace with one thing
+        playbackSolution = s;
     }
 }

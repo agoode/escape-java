@@ -89,6 +89,32 @@ abstract public class Entity {
 
     public final static int LAST_DIR = 4;
 
+    static public String directionToString(int dir) {
+        String s;
+        
+        switch (dir) {
+        case DIR_UP:
+            //                            s = "up";
+            s = "↑";
+            break;
+        case DIR_DOWN:
+            //                            s = "down";
+            s = "↓";
+            break;
+        case DIR_LEFT:
+            //                            s = "left";
+            s = "←";
+            break;
+        case DIR_RIGHT:
+            //                            s = "right";
+            s = "→";
+            break;
+        default:
+            s = "?";
+        }
+        return s;
+    }
+
     public Entity(int x, int y, int d) {
         this.x = x;
         this.y = y;
@@ -196,7 +222,7 @@ abstract public class Entity {
         if (this == obj) {
             return true;
         }
-        
+
         if (obj instanceof Entity) {
             Entity e = (Entity) obj;
 

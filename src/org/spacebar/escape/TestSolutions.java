@@ -37,10 +37,6 @@ public class TestSolutions {
         }
 
         File f = new File(args[0]);
-        if (!f.isDirectory()) {
-            System.out.println("Please specify a directory with levels");
-            System.exit(1);
-        }
 
         int good = 0;
         int bad = 0;
@@ -101,13 +97,13 @@ public class TestSolutions {
                         final Solution sol = (Solution) iter.next();
 
                         final String ls = getStringForLevel(l, levelsToFiles);
-                        System.out.print(" " + ls);
+                        System.out.print(" " + ls + " " + sol.length() + " moves");
                         System.out.flush();
 
                         Level l2 = new Level(l);
                         int result = sol.verify(l2);
 
-                        int pad = mls - ls.length() + 5;
+                        int pad = mls - ls.length() + 10;
                         while (pad-- > 0) {
                             System.out.print(" ");
                         }
@@ -119,11 +115,11 @@ public class TestSolutions {
                             System.out.println("BAD at " + sol.length()
                                     + " (end)");
                             bad++;
-//                            new EscapeFrame(l2);
+                            new EscapeFrame(l, sol);
                         } else {
                             System.out.println("BAD at " + result);
                             bad++;
-//                            new EscapeFrame(l2);
+                            new EscapeFrame(l, sol);
                         }
                     }
                 }
