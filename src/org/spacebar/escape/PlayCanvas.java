@@ -6,7 +6,10 @@
  */
 package org.spacebar.escape;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import java.io.File;
@@ -38,57 +41,73 @@ public class PlayCanvas extends DoubleBufferCanvas {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (done) {
-                
-            } else {
-                if (theLevel.move(dir, effects)) {
-                    // append to solution
-                    addToSolution(dir);
-                }
-                setPlayerDir(dir);
 
-                if ((theLevel.isDead()) != null) {
-                    effects.doLaser();
-                    status = Characters.RED + "You died!" + Characters.POP;
-                    done = true;
-                } else if (theLevel.isWon()) {
-                    effects.doExit();
-                    status = Characters.GREEN + "Solved!" + Characters.POP;
-                    System.out.println("won in " + solutionCount + " steps");
-                    System.out.print("solution: [");
-                    for (int i = 0; i < solutionCount; i++) {
-                        int d = solution[i];
-                        String s;
-                        switch (d) {
-                        case Level.DIR_UP:
-                            //                            s = "up";
-                            s = "↑";
-                            break;
-                        case Level.DIR_DOWN:
-                            //                            s = "down";
-                            s = "↓";
-                            break;
-                        case Level.DIR_LEFT:
-                            //                            s = "left";
-                            s = "←";
-                            break;
-                        case Level.DIR_RIGHT:
-                            //                            s = "right";
-                            s = "→";
-                            break;
-                        default:
-                            s = "?";
-                        }
-                        System.out.print(s);
-                        if (i != solutionCount - 1) {
-                            System.out.print(" ");
+            if (theLevel.move(dir, effects)) {
+                // append to solution
+                addToSolution(dir);
+            }
+            setPlayerDir(dir);
+
+            if ((theLevel.isDead()) != null) {
+                effects.doLaser();
+                status = Characters.RED + "You died!" + Characters.POP;
+
+                new Thread() {
+                    public void run() {
+                        if (Message.quick(PlayCanvas.this, "You've died.",
+                                -Characters.FONT_HEIGHT * 8, "Try again",
+                                "Quit", Characters.PICS + Characters.SKULLICON)) {
+                            initLevel();
+                        } else {
+                            exitPlayCanvas();
                         }
                     }
-                    System.out.println("]");
-                    done = true;
+                }.start();
+            } else if (theLevel.isWon()) {
+                effects.doExit();
+                status = Characters.GREEN + "Solved!" + Characters.POP;
+                System.out.println("won in " + solutionCount + " steps");
+                System.out.print("solution: [");
+                for (int i = 0; i < solutionCount; i++) {
+                    int d = solution[i];
+                    String s;
+                    switch (d) {
+                    case Level.DIR_UP:
+                        //                            s = "up";
+                        s = "↑";
+                        break;
+                    case Level.DIR_DOWN:
+                        //                            s = "down";
+                        s = "↓";
+                        break;
+                    case Level.DIR_LEFT:
+                        //                            s = "left";
+                        s = "←";
+                        break;
+                    case Level.DIR_RIGHT:
+                        //                            s = "right";
+                        s = "→";
+                        break;
+                    default:
+                        s = "?";
+                    }
+                    System.out.print(s);
+                    if (i != solutionCount - 1) {
+                        System.out.print(" ");
+                    }
                 }
-                bufferRepaint();
+                System.out.println("]");
+
+                new Thread() {
+                    public void run() {
+                        Message.quick(PlayCanvas.this, "You solved it!!",
+                                -Characters.FONT_HEIGHT * 8, "Continue", null,
+                                Characters.PICS + Characters.THUMBICON);
+                        exitPlayCanvas();
+                    }
+                }.start();
             }
+            bufferRepaint();
         }
     }
 
@@ -136,7 +155,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
         effects = e;
     }
 
-    boolean done;
+    //    boolean done;
 
     boolean showBizarro;
 
@@ -208,8 +227,10 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
         // restore transform and draw status
         g.setTransform(origAT);
-        g.translate(FONT_MARGIN, h - LevelDraw.FONT_HEIGHT - 1);
+        g.translate(FONT_MARGIN, h - Characters.FONT_HEIGHT - 1);
         paintStatus(g);
+
+        g.setTransform(origAT);
     }
 
     /**
@@ -233,7 +254,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
             e.printStackTrace();
         }
 
-        done = false;
+        //        done = false;
         showBizarro = false;
         solution = null;
         solutionCount = 0;
@@ -431,13 +452,9 @@ public class PlayCanvas extends DoubleBufferCanvas {
         });
 
         // restart
-        addAction("ENTER", "restartOrExit", new AbstractAction() {
+        addAction("ENTER", "restart", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                if (theLevel.isWon()) {
-                    exitPlayCanvas();
-                } else {
-                    initLevel();
-                }
+                initLevel();
             }
         });
 
@@ -452,7 +469,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
     void exitPlayCanvas() {
         System.exit(0);
     }
-    
+
     private void addAction(String keyStroke, String name, Action a) {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(keyStroke), name);

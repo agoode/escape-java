@@ -7,6 +7,8 @@
 package org.spacebar.escape;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +31,7 @@ public class EscapeMain extends JFrame {
     public EscapeMain(File f) {
         super("Escape");
         setBackground(Color.BLACK);
-        
+
         // icon
         InputStream in = ResourceUtils.getLocalResourceAsStream("icon.png");
         try {
@@ -38,15 +40,22 @@ public class EscapeMain extends JFrame {
             e.printStackTrace();
         }
 
-        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(STARTW, STARTH);
         getContentPane().setBackground(Color.BLACK);
         getRootPane().setDoubleBuffered(false);
 
+        Insets insets;
+        insets = getInsets();
+        setSize(new Dimension(STARTW + insets.left + insets.right, STARTH
+                + insets.top + insets.bottom));
+        setVisible(true);
+        insets = getInsets();
+        setSize(new Dimension(STARTW + insets.left + insets.right, STARTH
+                + insets.top + insets.bottom));
+
         PlayCanvas pc = new PlayCanvas(f);
         setContentPane(pc);
-        setVisible(true);
+        validate();
     }
 
     public static void main(String[] args) {

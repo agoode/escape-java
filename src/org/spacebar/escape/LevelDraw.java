@@ -39,13 +39,7 @@ public class LevelDraw {
     private final static int TILES_ACROSS = 16;
 
     private final static BufferedImage font = ResourceUtils
-    .loadImage("font.png");
-
-    final static int FONT_HEIGHT = 16;
-
-    final static int FONT_SPACE = 1;
-
-    final static int FONT_WIDTH = 8;
+            .loadImage("font.png");
 
     static double getScaleVal(int scale) {
         double scaleVal;
@@ -224,9 +218,9 @@ public class LevelDraw {
 
     static public void drawString(Graphics2D g2, String text) {
         StyleStack s = new StyleStack();
-    
+
         Composite ac = g2.getComposite();
-    
+
         int dx = 0;
         int dy = 0;
         for (int i = 0; i < text.length(); i++) {
@@ -243,17 +237,22 @@ public class LevelDraw {
                 default:
                     s.push(ch);
                 }
+            } else if (ch == '\n'){
+                dx = 0;
+                dy += Characters.FONT_HEIGHT;
             } else {
                 int tile = Characters.getIndexForChar(text.charAt(i));
-    
-                int sx = tile * (FONT_WIDTH + FONT_SPACE);
-                int sy = s.getColor() * (FONT_HEIGHT);
-    
+
+                int sx = tile * (Characters.FONT_WIDTH);
+                int sy = s.getColor() * (Characters.FONT_HEIGHT);
+
                 g2.setComposite(AlphaComposite.getInstance(
                         AlphaComposite.SRC_OVER, s.getAlphaValue()));
-                g2.drawImage(font, dx, dy, dx + FONT_WIDTH, dy + FONT_HEIGHT,
-                        sx, sy, sx + FONT_WIDTH, sy + FONT_HEIGHT, null);
-                dx += FONT_WIDTH;
+                g2.drawImage(font, dx, dy, dx + Characters.FONT_WIDTH, dy
+                        + Characters.FONT_HEIGHT, sx, sy, sx
+                        + Characters.FONT_WIDTH, sy + Characters.FONT_HEIGHT,
+                        null);
+                dx += Characters.FONT_ADVANCE;
             }
         }
         g2.setComposite(ac);

@@ -23,15 +23,20 @@ abstract public class DoubleBufferCanvas extends JComponent {
 
     private VolatileImage backBuffer;
 
+    private Overlay overlay;
+
     DoubleBufferCanvas() {
         super();
         setBackground(Color.BLACK);
         setOpaque(true);
     }
 
-    private void synchronizedBufferPaint(Graphics2D g) {
+    final private void myBufferPaint(Graphics2D g) {
         synchronized (backBuffer) {
             bufferPaint(g);
+            if (overlay != null) {
+                overlay.draw(g, getWidth(), getHeight());
+            }
         }
     }
 
@@ -46,26 +51,34 @@ abstract public class DoubleBufferCanvas extends JComponent {
         }
     }
 
-    private void initBackBuffer() {
+    public void setOverlay(Overlay o) {
+        overlay = o;
+        bufferRepaint();
+    }
+
+    public Overlay getOverlay() {
+        return overlay;
+    }
+
+    final private void initBackBuffer() {
         //        System.out.println("*** initializing back buffer");
         backBuffer = createVolatileImage(getWidth(), getHeight());
         //        System.out.println("backBuffer: " + backBuffer);
     }
 
-    private void renderOffscreen() {
+    final private void renderOffscreen() {
         do {
             if (backBuffer.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE) {
                 initBackBuffer();
             }
             Graphics2D g = backBuffer.createGraphics();
-            synchronizedBufferPaint(g);
+            myBufferPaint(g);
             g.dispose();
         } while (backBuffer.contentsLost());
     }
 
-    protected void paintComponent(Graphics g) {
-        if (backBuffer == null || backBuffer.getHeight() != getHeight()
-                || backBuffer.getWidth() != getWidth()) {
+    final protected void paintComponent(Graphics g) {
+        if (backBuffer == null) {
             initBackBuffer();
             renderOffscreen();
         }
@@ -84,5 +97,12 @@ abstract public class DoubleBufferCanvas extends JComponent {
                 g.drawImage(backBuffer, 0, 0, this);
             }
         } while (backBuffer.contentsLost());
+
+        // avoid horrible flickering
+        if (backBuffer.getHeight() != getHeight()
+                || backBuffer.getWidth() != getWidth()) {
+            initBackBuffer();
+            bufferRepaint();
+        }
     }
 }
