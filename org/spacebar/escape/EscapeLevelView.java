@@ -6,10 +6,7 @@
  */
 package org.spacebar.escape;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
@@ -45,17 +42,26 @@ public class EscapeLevelView extends JComponent {
             .loadImage("font.png");
 
     static {
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        GraphicsConfiguration gc = gd.getDefaultConfiguration();
+        BufferCapabilities bc = gc.getBufferCapabilities();
+
+        System.out.println("page flipping available: " + bc.isPageFlipping());
+        System.out.println("multi buffer available: " + bc.isMultiBufferAvailable());
+        
         System.out.println("tiles: " + tiles);
         System.out.println("guy: " + guy);
         System.out.println("font: " + font);
     }
-    
+
     final static Effects effects;
     static {
-//        Effects e1 = new NESEffects();
+        //        Effects e1 = new NESEffects();
         Effects e2 = new TextEffects();
         CompoundEffects e = new CompoundEffects();
-//        e.add(e1);
+        //        e.add(e1);
         e.add(e2);
         effects = e;
     }
@@ -87,6 +93,8 @@ public class EscapeLevelView extends JComponent {
     private int guyDir;
 
     private BufferedImage backBuffer;
+
+    int scale = 0;
 
     /**
      * @return Returns the dir.
@@ -126,17 +134,27 @@ public class EscapeLevelView extends JComponent {
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "goRight");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "goUp");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_CLOSE_BRACKET, 0),
+                        "scaleUp");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_OPEN_BRACKET, 0),
+                "scaleDown");
 
-        Action m;
+        Action a;
 
-        m = new Mover(Level.DIR_DOWN);
-        getActionMap().put("goDown", m);
-        m = new Mover(Level.DIR_LEFT);
-        getActionMap().put("goLeft", m);
-        m = new Mover(Level.DIR_RIGHT);
-        getActionMap().put("goRight", m);
-        m = new Mover(Level.DIR_UP);
-        getActionMap().put("goUp", m);
+        a = new Mover(Level.DIR_DOWN);
+        getActionMap().put("goDown", a);
+        a = new Mover(Level.DIR_LEFT);
+        getActionMap().put("goLeft", a);
+        a = new Mover(Level.DIR_RIGHT);
+        getActionMap().put("goRight", a);
+        a = new Mover(Level.DIR_UP);
+        getActionMap().put("goUp", a);
+        a = new Scaler(false);
+        getActionMap().put("scaleUp", a);
+        a = new Scaler(true);
+        getActionMap().put("scaleDown", a);
     }
 
     /**
@@ -187,12 +205,37 @@ public class EscapeLevelView extends JComponent {
         }
     }
 
+    private class Scaler extends AbstractAction {
+        final boolean smaller;
+
+        public Scaler(boolean smaller) {
+            this.smaller = smaller;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (smaller) {
+                scale++;
+                if (scale > 8) {
+                    scale = 8;
+                }
+            } else {
+                scale--;
+                if (scale < 0) {
+                    scale = 0;
+                }
+            }
+            bufferPaint();
+            repaint();
+        }
+    }
+
     protected void paintComponent(Graphics g) {
         if (backBuffer == null || backBuffer.getHeight() != getHeight()
                 || backBuffer.getWidth() != getWidth()) {
             initBackBuffer();
             bufferPaint();
         }
+
         g.drawImage(backBuffer, 0, 0, this);
     }
 
@@ -202,21 +245,34 @@ public class EscapeLevelView extends JComponent {
         System.out.println("backBuffer: " + backBuffer);
     }
 
-    private void bufferPaint() {
+    void bufferPaint() {
+        bufferPaint(null);
+    }
+
+    private void bufferPaint(Rectangle clip) {
         Graphics2D g2 = backBuffer.createGraphics();
+        g2.clip(clip);
+
+        g2.setBackground(Color.BLACK);
+        g2.clearRect(0, 0, backBuffer.getWidth(), backBuffer.getHeight());
 
         AffineTransform trans = g2.getTransform();
 
         g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        double scaleVal = 1 / (double) (1 << scale);
+        System.out.println("scaleVal: " + scaleVal);
+        g2.scale(scaleVal, scaleVal);
         paintLevel(g2);
         paintGuy(g2);
         paintLaser(g2, laser);
 
         g2.setTransform(trans);
-
         g2.translate(FONT_X_MARGIN, FONT_Y_MARGIN);
         paintTitle(g2);
-        g2.setTransform(trans);
 
         g2.dispose();
     }
