@@ -19,32 +19,32 @@ import org.spacebar.escape.common.Effects;
  */
 public class NESEffects implements Effects {
 
-    private static final Clip step = ResourceUtils.loadClip("nes/step.wav");
+    private static final Clip step = ResourceUtil.loadClip("nes/step.wav");
 
-    private static final Clip broken = ResourceUtils.loadClip("nes/broken.wav");
+    private static final Clip broken = ResourceUtil.loadClip("nes/broken.wav");
 
-    private static final Clip electricOff = ResourceUtils
+    private static final Clip electricOff = ResourceUtil
             .loadClip("nes/electric-off.wav");
 
-    private static final Clip exit = ResourceUtils.loadClip("nes/exit.wav");
+    private static final Clip exit = ResourceUtil.loadClip("nes/exit.wav");
 
-    private static final Clip hole = ResourceUtils.loadClip("nes/hole.wav");
+    private static final Clip hole = ResourceUtil.loadClip("nes/hole.wav");
 
-    private static final Clip laser = ResourceUtils.loadClip("nes/laser.wav");
+    private static final Clip laser = ResourceUtil.loadClip("nes/laser.wav");
 
-    private static final Clip noStep = ResourceUtils
+    private static final Clip noStep = ResourceUtil
             .loadClip("nes/no-step.wav");
 
-    private static final Clip pulse = ResourceUtils.loadClip("nes/pulse.wav");
+    private static final Clip pulse = ResourceUtil.loadClip("nes/pulse.wav");
 
-    private static final Clip slide = ResourceUtils.loadClip("nes/slide.wav");
+    private static final Clip slide = ResourceUtil.loadClip("nes/slide.wav");
 
-    private static final Clip swap = ResourceUtils.loadClip("nes/swap.wav");
+    private static final Clip swap = ResourceUtil.loadClip("nes/swap.wav");
 
-    private static final Clip transport = ResourceUtils
+    private static final Clip transport = ResourceUtil
             .loadClip("nes/transport.wav");
 
-    private static final Clip zap = ResourceUtils.loadClip("nes/zap.wav");
+    private static final Clip zap = ResourceUtil.loadClip("nes/zap.wav");
 
     static {
         Mixer m = AudioSystem.getMixer(null);

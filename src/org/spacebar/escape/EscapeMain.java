@@ -20,7 +20,7 @@ import javax.imageio.ImageIO;
 import org.spacebar.escape.common.Misc;
 import org.spacebar.escape.j2se.Continuation;
 import org.spacebar.escape.j2se.PlayCanvas;
-import org.spacebar.escape.j2se.ResourceUtils;
+import org.spacebar.escape.j2se.ResourceUtil;
 
 public class EscapeMain extends Frame {
 
@@ -33,7 +33,7 @@ public class EscapeMain extends Frame {
         setBackground(Color.BLACK);
 
         // icon
-        InputStream in = ResourceUtils.getLocalResourceAsStream("icon.png");
+        InputStream in = ResourceUtil.getLocalResourceAsStream("icon.png");
         try {
             setIconImage(ImageIO.read(in));
         } catch (IOException e) {

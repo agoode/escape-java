@@ -30,16 +30,16 @@ public class Drawing {
 
     private final static int TILE_SIZE = 32;
 
-    private final static BufferedImage[] player = ResourceUtils
+    private final static BufferedImage[] player = ResourceUtil
             .loadScaledImages("player.png", SCALE_DOWN_FACTORS,
                     SCALE_UP_FACTORS);
 
-    private final static BufferedImage[] tiles = ResourceUtils
+    private final static BufferedImage[] tiles = ResourceUtil
             .loadScaledImages("tiles.png", SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
 
     private final static int TILES_ACROSS = 16;
 
-    private final static BufferedImage font = ResourceUtils
+    private final static BufferedImage font = ResourceUtil
             .loadImage("font.png");
 
     static double getScaleVal(int scale) {

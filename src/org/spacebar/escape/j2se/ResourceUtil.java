@@ -15,11 +15,11 @@ import javax.sound.sampled.*;
 /**
  * @author adam
  */
-public class ResourceUtils {
+public class ResourceUtil {
     //    private final static Mixer mixer = AudioSystem.getMixer(null);
 
     public static InputStream getLocalResourceAsStream(String name) {
-        return ResourceUtils.class.getResourceAsStream("resources/" + name);
+        return ResourceUtil.class.getResourceAsStream("resources/" + name);
     }
 
     public static Clip loadClip(String name) {
@@ -113,7 +113,7 @@ public class ResourceUtils {
     }
 
     public static BufferedImage loadImage(String name) {
-        InputStream in = ResourceUtils.getLocalResourceAsStream(name);
+        InputStream in = ResourceUtil.getLocalResourceAsStream(name);
         BufferedImage img = null;
         try {
             img = ImageIO.read(in);
