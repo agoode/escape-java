@@ -160,9 +160,9 @@ public class Level {
 
     public Object clone() throws CloneNotSupportedException {
         Level newL = new Level(width, height, title, author, guyX, guyY);
-        
+
         newL.replaceWith(this);
-        
+
         return newL;
     }
 
@@ -182,48 +182,58 @@ public class Level {
     public String getAuthor() {
         return author;
     }
+
     /**
-     * @param author The author to set.
+     * @param author
+     *            The author to set.
      */
     public void setAuthor(String author) {
         this.author = author;
     }
+
     /**
      * @return Returns the title.
      */
     public String getTitle() {
         return title;
     }
+
     /**
-     * @param title The title to set.
+     * @param title
+     *            The title to set.
      */
     public void setTitle(String title) {
         this.title = title;
     }
+
     /**
      * @return Returns the guyX.
      */
     public int getGuyX() {
         return guyX;
     }
+
     /**
      * @return Returns the guyY.
      */
     public int getGuyY() {
         return guyY;
     }
+
     /**
      * @return Returns the height.
      */
     public int getHeight() {
         return height;
     }
+
     /**
      * @return Returns the width.
      */
     public int getWidth() {
         return width;
     }
+
     // static functions
     static int turnLeft(int d) {
         switch (d) {
@@ -451,7 +461,7 @@ public class Level {
             while ((r = travel(lx, ly, dd)) != null) {
                 lx = r.getX();
                 ly = r.getY();
-                
+
                 if (tileAt(lx, ly) == T_LASER) {
                     int tileX = r.getX();
                     int tileY = r.getY();
@@ -553,7 +563,19 @@ public class Level {
         }
     }
 
-    boolean move(int d) {
+    boolean move(int d, Effects e) {
+        boolean result = realMove(d, e);
+        
+        if (result) {
+            e.doStep();
+        } else {
+            e.doNoStep();
+        }
+        
+        return result;
+    }
+    
+    private boolean realMove(int d, Effects e) {
 
         int target;
         IntPair newP;
@@ -582,6 +604,7 @@ public class Level {
                 return true;
 
             case T_ON: {
+                e.doElectricOff();
                 for (int i = 0; i < width * height; i++) {
                     if (tiles[i] == T_ELECTRIC)
                         tiles[i] = T_FLOOR;
@@ -591,7 +614,8 @@ public class Level {
             }
             case T_0:
             case T_1: {
-
+                e.doSwap();
+                
                 int opp = (target == T_0 ? T_1 : T_0);
 
                 swapTiles(T_UD, T_LR);
@@ -944,56 +968,55 @@ public class Level {
             return false;
     }
 
-    
     public Level(BitInputStream in) throws IOException {
         String magic = getStringFromStream(in, 4);
         if (!magic.equals("ESXL")) {
             throw new IOException("Bad magic");
         }
-        
+
         width = getIntFromStream(in);
         height = getIntFromStream(in);
-        
+
         int size;
-        
+
         size = getIntFromStream(in);
         title = getStringFromStream(in, size);
-        
+
         size = getIntFromStream(in);
         author = getStringFromStream(in, size);
-        
+
         guyX = getIntFromStream(in);
         guyY = getIntFromStream(in);
-        
-        tiles = RunLengthEncoding.decode(in, width*height);
-        oTiles = RunLengthEncoding.decode(in, width*height);
-        dests = RunLengthEncoding.decode(in, width*height);
-        flags = RunLengthEncoding.decode(in, width*height);
+
+        tiles = RunLengthEncoding.decode(in, width * height);
+        oTiles = RunLengthEncoding.decode(in, width * height);
+        dests = RunLengthEncoding.decode(in, width * height);
+        flags = RunLengthEncoding.decode(in, width * height);
     }
-    
+
     private Level(int w, int h, String title, String author, int guyX, int guyY) {
         this.width = w;
         this.height = h;
-        
+
         this.title = title;
         this.author = author;
-        
+
         this.guyX = guyX;
         this.guyY = guyY;
-        
-        tiles = new int[width*height];
-        oTiles = new int[width*height];
-        dests = new int[width*height];
-        flags = new int[width*height];
+
+        tiles = new int[width * height];
+        oTiles = new int[width * height];
+        dests = new int[width * height];
+        flags = new int[width * height];
     }
-    
+
     public void print(PrintStream p) {
-        p.println("\"" + title + "\" by " + author + " (" + width + "," + height + ")" +
-                " guy: (" + guyX + "," + guyY + ")");
+        p.println("\"" + title + "\" by " + author + " (" + width + ","
+                + height + ")" + " guy: (" + guyX + "," + guyY + ")");
         p.println();
         p.println("tiles");
         printM(p, tiles, width);
-        
+
         p.println();
         p.println("oTiles");
         printM(p, oTiles, width);
@@ -1006,11 +1029,11 @@ public class Level {
         p.println("flags");
         printM(p, flags, width);
     }
-    
+
     private void printM(PrintStream p, int[] m, int w) {
         int l = 0;
         for (int i = 0; i < m.length; i++) {
-            p.print((char) (m[i]+32));
+            p.print((char) (m[i] + 32));
             l++;
             if (l == w) {
                 p.println();
@@ -1018,26 +1041,27 @@ public class Level {
             }
         }
     }
-    
+
     private int getIntFromStream(InputStream in) throws IOException {
         int r = 0;
         r += in.read() << 24;
         r += in.read() << 16;
         r += in.read() << 8;
         r += in.read();
-        
+
         return r;
     }
-    
-    private String getStringFromStream(InputStream in, int size) throws IOException {
+
+    private String getStringFromStream(InputStream in, int size)
+            throws IOException {
         byte buf[] = new byte[size];
-        
+
         in.read(buf);
-        
+
         String result = new String(buf);
-        return(result);
+        return (result);
     }
-    
+
     public static void main(String args[]) {
         File f = new File(args[0]);
         try {

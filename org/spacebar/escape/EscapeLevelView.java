@@ -57,6 +57,8 @@ public class EscapeLevelView extends JPanel {
         }
         guy = myGuy;
     }
+    
+    final static Effects effects = new NESEffects();
 
     private final static int TILE_SIZE = 32;
 
@@ -149,7 +151,7 @@ public class EscapeLevelView extends JPanel {
                 initLevel();
             }
             
-            theLevel.move(dir);
+            theLevel.move(dir, effects);
             setGuyDir(dir);
             IntTriple laser = theLevel.isDead();
             if (laser != null) {
