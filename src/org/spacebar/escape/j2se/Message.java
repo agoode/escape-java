@@ -28,7 +28,7 @@ public class Message implements Overlay {
     private static final String defaultIcon = Characters.PICS
             + Characters.EXCICON + Characters.POP;
 
-    static public void bug(DoubleBufferCanvas dbc, String title) {
+    static public void bug(BufferCanvas dbc, String title) {
         String ok = Characters.RED + "I'll file a bug report!" + Characters.POP;
         String t = Characters.PICS + Characters.BUGICON + Characters.POP
                 + Characters.RED + " BUG: " + Characters.POP + Characters.WHITE
@@ -37,7 +37,7 @@ public class Message implements Overlay {
         m.ask();
     }
 
-    static public void no(DoubleBufferCanvas dbc, String title) {
+    static public void no(BufferCanvas dbc, String title) {
         String t = Characters.PICS + Characters.XICON + Characters.POP
                 + Characters.WHITE + " " + title;
         Message m = new Message(dbc, t, 0, true, "OK", null);
@@ -45,12 +45,12 @@ public class Message implements Overlay {
     }
 
     // set position, with negative being from bottom of screen
-    static public boolean quick(DoubleBufferCanvas dbc, String title, int yPos,
+    static public boolean quick(BufferCanvas dbc, String title, int yPos,
             String ok, String cancel) {
         return quick(dbc, title, yPos, ok, cancel, defaultIcon);
     }
 
-    static public boolean quick(DoubleBufferCanvas dbc, String title, int yPos,
+    static public boolean quick(BufferCanvas dbc, String title, int yPos,
             String ok, String cancel, String icon) {
 
         String t = icon + Characters.WHITE + " " + title;
@@ -59,12 +59,12 @@ public class Message implements Overlay {
     }
 
     // auto position
-    static public boolean quick(DoubleBufferCanvas dbc, String title,
+    static public boolean quick(BufferCanvas dbc, String title,
             String ok, String cancel) {
         return quick(dbc, title, ok, cancel, defaultIcon);
     }
 
-    static public boolean quick(DoubleBufferCanvas dbc, String title,
+    static public boolean quick(BufferCanvas dbc, String title,
             String ok, String cancel, String icon) {
         String t = icon + Characters.WHITE + " " + title;
         Message m = new Message(dbc, t, 0, true, ok, cancel);
@@ -73,7 +73,7 @@ public class Message implements Overlay {
 
     final private String cancel;
 
-    final private DoubleBufferCanvas dbc;
+    final private BufferCanvas dbc;
 
     final private String ok;
 
@@ -85,7 +85,7 @@ public class Message implements Overlay {
 
     boolean result;
 
-    private Message(DoubleBufferCanvas dbc, String title, int yPos,
+    private Message(BufferCanvas dbc, String title, int yPos,
             boolean autoYPos, String ok, String cancel) {
         this.dbc = dbc;
         this.title = title;

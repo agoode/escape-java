@@ -127,7 +127,7 @@ public class LevelCanvas extends DoubleBufferCanvas {
             initLevelSurface();
             theLevel.dirty.setAllDirty();
         }
-        System.out.println(theLevel.dirty);
+//        System.out.println(theLevel.dirty);
         if (theLevel.dirty.isAnyDirty()) {
             paintLevelToSurface();
         }
@@ -138,11 +138,11 @@ public class LevelCanvas extends DoubleBufferCanvas {
         int sx2 = sx1 + w;
         int sy2 = sy1 + h;
         
-        System.out.print("drawImage... ");
-        System.out.flush();
-        long t = System.currentTimeMillis();
+//        System.out.print("drawImage... ");
+//        System.out.flush();
+//        long t = System.currentTimeMillis();
         g.drawImage(levelSurface, 0, 0, w, h, sx1, sy1, sx2, sy2, null);
-        System.out.println("done in " + (System.currentTimeMillis() - t));
+//        System.out.println("done in " + (System.currentTimeMillis() - t));
     }
 
     private void initLevelSurface() {

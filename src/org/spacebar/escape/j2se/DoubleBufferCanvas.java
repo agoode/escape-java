@@ -7,32 +7,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.VolatileImage;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-
 import org.spacebar.escape.common.Continuation;
 
-abstract public class DoubleBufferCanvas extends JComponent {
+abstract public class DoubleBufferCanvas extends BufferCanvas {
 
-    private VolatileImage backBuffer;
-
-    private Overlay overlay;
-
-    protected Continuation theWayOut;
-    
     DoubleBufferCanvas() {
-        super();
-        setDoubleBuffered(false);
-        setOpaque(true);
+        this(null);
     };
       
     DoubleBufferCanvas(Continuation c) {
-        this();
-        theWayOut = c;
+        super(c);
     }
-
-    abstract protected void bufferPaint(Graphics2D g);
 
     public void bufferRepaint() {
         if (backBuffer != null) {
@@ -41,10 +26,6 @@ abstract public class DoubleBufferCanvas extends JComponent {
             paintImmediately(getBounds());
             getToolkit().sync();
         }
-    }
-
-    public Overlay getOverlay() {
-        return overlay;
     }
 
     final private void initBackBuffer() {
@@ -94,16 +75,5 @@ abstract public class DoubleBufferCanvas extends JComponent {
             myBufferPaint(g);
             g.dispose();
         } while (backBuffer.contentsLost());
-    }
-
-    public void setOverlay(Overlay o) {
-        overlay = o;
-        bufferRepaint();
-    }
-
-    protected void addAction(String keyStroke, String name, Action a) {
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(keyStroke), name);
-        getActionMap().put(name, a);
     }
 }
