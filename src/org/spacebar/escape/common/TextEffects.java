@@ -1,6 +1,5 @@
-package org.spacebar.escape;
+package org.spacebar.escape.common;
 
-import org.spacebar.escape.common.Effects;
 
 /**
  * @author adam

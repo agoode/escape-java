@@ -4,9 +4,8 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package org.spacebar.escape;
+package org.spacebar.escape.common;
 
-import org.spacebar.escape.common.Effects;
 
 
 /**
@@ -21,7 +20,7 @@ public class CompoundEffects implements Effects {
     int count;
     Effects theEffects[];
 
-    CompoundEffects() {
+    public CompoundEffects() {
         clear();  // initalize
     }
     
