@@ -188,30 +188,18 @@ public class Level {
         this.title = title;
     }
 
-    /**
-     * @return Returns the guyX.
-     */
-    public int getGuyX() {
-        return guyX;
+    public int getPlayerX() {
+        return playerX;
     }
 
-    /**
-     * @return Returns the guyY.
-     */
-    public int getGuyY() {
-        return guyY;
+    public int getPlayerY() {
+        return playerY;
     }
 
-    /**
-     * @return Returns the height.
-     */
     public int getHeight() {
         return height;
     }
 
-    /**
-     * @return Returns the width.
-     */
     public int getWidth() {
         return width;
     }
@@ -335,10 +323,10 @@ public class Level {
 
     private final int height;
 
-    // location of guy
-    private int guyX;
+    // location of player
+    private int playerX;
 
-    private int guyY;
+    private int playerY;
 
     // shown
     private final int tiles[];
@@ -357,9 +345,9 @@ public class Level {
     
     // the meat
     void warp(int targX, int targY) {
-        checkStepOff(guyX, guyY);
-        guyX = targX;
-        guyY = targY;
+        checkStepOff(playerX, playerY);
+        playerX = targX;
+        playerY = targY;
 
         switch (tileAt(targX, targY)) {
         case T_PANEL:
@@ -422,7 +410,7 @@ public class Level {
     }
 
     boolean isWon() {
-        return tileAt(guyX, guyY) == T_EXIT;
+        return tileAt(playerX, playerY) == T_EXIT;
     }
 
     private IntPair travel(int x, int y, int d) {
@@ -460,7 +448,7 @@ public class Level {
     IntTriple isDead() {
         // easiest way is to look for lasers from the current dude.
         for (int dd = FIRST_DIR; dd <= LAST_DIR; dd++) {
-            int lx = guyX, ly = guyY;
+            int lx = playerX, ly = playerY;
 
             IntPair r;
             while ((r = travel(lx, ly, dd)) != null) {
@@ -569,11 +557,11 @@ public class Level {
     }
 
     boolean move(int d, Effects e) {
-        setDirty(guyX, guyY);
+        setDirty(playerX, playerY);
         boolean result = realMove(d, e);
         
         if (result) {
-            setDirty(guyX, guyY);
+            setDirty(playerX, playerY);
             e.doStep();
         } else {
             e.doNoStep();
@@ -586,7 +574,7 @@ public class Level {
 
         int target;
         IntPair newP;
-        if ((newP = travel(guyX, guyY, d)) != null) {
+        if ((newP = travel(playerX, playerY, d)) != null) {
             switch (target = tileAt(newP.getX(), newP.getY())) {
 
             /* these aren't pressed by the player so act like floor */
@@ -605,9 +593,9 @@ public class Level {
             case T_GDOWN:
             case T_EXIT: /* now we allow player to walk onto exit */
 
-                checkStepOff(guyX, guyY);
-                guyX = newP.getX();
-                guyY = newP.getY();
+                checkStepOff(playerX, playerY);
+                playerX = newP.getX();
+                playerY = newP.getY();
                 return true;
 
             case T_ON: {
@@ -842,9 +830,9 @@ public class Level {
 
             case T_PANEL:
                 swapO(destAt(newP.getX(), newP.getY()));
-                checkStepOff(guyX, guyY);
-                guyX = newP.getX();
-                guyY = newP.getY();
+                checkStepOff(playerX, playerY);
+                playerX = newP.getX();
+                playerY = newP.getY();
                 return true;
 
             case T_GREEN: {
@@ -854,9 +842,9 @@ public class Level {
                         setTile(dest.getX(), dest.getY(), T_BLUE);
                         setTile(newP.getX(), newP.getY(), T_FLOOR);
 
-                        checkStepOff(guyX, guyY);
-                        guyX = newP.getX();
-                        guyY = newP.getY();
+                        checkStepOff(playerX, playerY);
+                        playerX = newP.getX();
+                        playerY = newP.getY();
                         return true;
                     } else
                         return false;
@@ -944,12 +932,12 @@ public class Level {
                     default:
                         return false;
                     }
-                    checkStepOff(guyX, guyY);
+                    checkStepOff(playerX, playerY);
 
                     if (doSwap)
                         swapO(destAt(dest.getX(), dest.getY()));
-                    guyX = newP.getX();
-                    guyY = newP.getY();
+                    playerX = newP.getX();
+                    playerY = newP.getY();
                     return true;
                 } else
                     return false;
@@ -1000,8 +988,8 @@ public class Level {
         size = getIntFromStream(in);
         author = getStringFromStream(in, size);
 
-        guyX = getIntFromStream(in);
-        guyY = getIntFromStream(in);
+        playerX = getIntFromStream(in);
+        playerY = getIntFromStream(in);
 
         tiles = RunLengthEncoding.decode(in, width * height);
         oTiles = RunLengthEncoding.decode(in, width * height);
@@ -1012,7 +1000,7 @@ public class Level {
 
     public void print(PrintStream p) {
         p.println("\"" + title + "\" by " + author + " (" + width + ","
-                + height + ")" + " guy: (" + guyX + "," + guyY + ")");
+                + height + ")" + " player: (" + playerX + "," + playerY + ")");
         p.println();
         p.println("tiles");
         printM(p, tiles, width);
