@@ -48,7 +48,7 @@ public class EscapeLevelView extends JComponent {
                 }
                 setPlayerDir(dir);
 
-                if ((laser = theLevel.isDead()) != null) {
+                if ((theLevel.isDead()) != null) {
                     effects.doLaser();
                     System.out.println("dead");
                     done = true;
@@ -112,12 +112,6 @@ public class EscapeLevelView extends JComponent {
                 }
             }
 
-            if (scale < 0) {
-                scaleVal = 1 * (double) (1 << -scale);
-            } else {
-                scaleVal = 1 / (double) (1 << scale);
-            }
-
             //            System.out.println("scale: " + scale + ", scaleVal: " +
             // scaleVal);
 
@@ -175,13 +169,13 @@ public class EscapeLevelView extends JComponent {
 
     private int playerDir;
 
-    IntTriple laser;
+    //    IntTriple laser;
 
     final File levelFile;
 
     int scale = 0;
 
-    double scaleVal = 1.0;
+    //    double scaleVal = 1.0;
 
     Level theLevel;
 
@@ -236,13 +230,7 @@ public class EscapeLevelView extends JComponent {
         g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
 
         // paint things within boundaries of level
-        paintLevel(g2);
-        paintPlayer(g2);
-
-        // undo scale and draw laser
-        g2.setTransform(origAT);
-        g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
-        paintLaser(g2);
+        paintAllLevel(g2);
 
         // restore clip and draw the rest
         g2.setClip(clip);
@@ -323,7 +311,6 @@ public class EscapeLevelView extends JComponent {
 
         done = false;
         showBizarro = false;
-        laser = theLevel.isDead();
         solution = null;
         solutionCount = 0;
 
@@ -341,9 +328,10 @@ public class EscapeLevelView extends JComponent {
         g.drawImage(backBuffer, 0, 0, this);
     }
 
-    private void paintPlayer(Graphics2D g2) {
-        int zoom = getZoomIndex();
-        int tileSize = getTileSize();
+    static private void paintPlayer(Graphics2D g2, Level theLevel, int xScroll,
+            int yScroll, int playerDir, int scale) {
+        int zoom = getZoomIndex(scale);
+        int tileSize = getTileSize(scale);
 
         int dx = (theLevel.getPlayerX() - xScroll) * tileSize;
         int dy = (theLevel.getPlayerY() - yScroll) * tileSize;
@@ -370,10 +358,10 @@ public class EscapeLevelView extends JComponent {
         }
 
         g2.drawImage(player[zoom], dx, dy, dx + tileSize, dy + tileSize, sx,
-                sy, sx + tileSize, sy + tileSize, this);
+                sy, sx + tileSize, sy + tileSize, null);
     }
 
-    private int getZoomIndex() {
+    static private int getZoomIndex(int scale) {
         int zoom = scale;
         if (zoom < 0) {
             zoom = -scale + SCALE_DOWN_FACTORS - 1;
@@ -381,10 +369,38 @@ public class EscapeLevelView extends JComponent {
         return zoom;
     }
 
-    private void paintLaser(Graphics2D g2) {
+    static private double getScaleVal(int scale) {
+        double scaleVal;
+
+        if (scale < 0) {
+            scaleVal = 1 * (double) (1 << -scale);
+        } else {
+            scaleVal = 1 / (double) (1 << scale);
+        }
+        return scaleVal;
+    }
+
+    private void paintAllLevel(Graphics2D g) {
+        paintAllLevel(g, theLevel, xScroll, yScroll, showBizarro, playerDir,
+                scale);
+    }
+
+    static public void paintAllLevel(Graphics2D g, Level theLevel, int xScroll,
+            int yScroll, boolean showBizarro, int playerDir, int scale) {
+        paintLevel(g, theLevel, xScroll, yScroll, showBizarro, scale);
+        paintPlayer(g, theLevel, xScroll, yScroll, playerDir, scale);
+        paintLaser(g, theLevel, xScroll, yScroll, scale);
+    }
+
+    static private void paintLaser(Graphics2D g2, Level theLevel, int xScroll,
+            int yScroll, int scale) {
+        IntTriple laser = theLevel.isDead();
+
         if (laser == null) {
             return;
         }
+
+        double scaleVal = getScaleVal(scale);
 
         int d = laser.getD();
 
@@ -451,9 +467,10 @@ public class EscapeLevelView extends JComponent {
         g2.fill(inner);
     }
 
-    private void paintLevel(Graphics2D g2) {
-        int zoom = getZoomIndex();
-        int tileSize = getTileSize();
+    static private void paintLevel(Graphics2D g2, Level theLevel, int xScroll,
+            int yScroll, boolean showBizarro, int scale) {
+        int zoom = getZoomIndex(scale);
+        int tileSize = getTileSize(scale);
         //        System.out.println("tilesize: " + tileSize);
         //        System.out.println("zoom: " + zoom);
 
@@ -474,16 +491,16 @@ public class EscapeLevelView extends JComponent {
         }
     }
 
-    private void paintTile(Graphics2D g2, int zoom, int tileSize, int dx,
-            int dy, int tile) {
+    static private void paintTile(Graphics2D g2, int zoom, int tileSize,
+            int dx, int dy, int tile) {
         int sx = tile % TILES_ACROSS * tileSize;
         int sy = tile / TILES_ACROSS * tileSize;
 
         g2.drawImage(tiles[zoom], dx, dy, dx + tileSize, dy + tileSize, sx, sy,
-                sx + tileSize, sy + tileSize, this);
+                sx + tileSize, sy + tileSize, null);
     }
 
-    private int getTileSize() {
+    static private int getTileSize(int scale) {
         if (scale < 0) {
             return TILE_SIZE * (1 << -scale);
         } else {
@@ -545,6 +562,8 @@ public class EscapeLevelView extends JComponent {
     }
 
     void updateScroll() {
+        double scaleVal = getScaleVal(scale);
+
         // keep at least LEVEL_MARGIN everywhere
         paintedTilesAcross = (int) ((getWidth() - (2 * LEVEL_MARGIN)) / (TILE_SIZE * scaleVal));
         paintedTilesDown = (int) ((getHeight() - (2 * LEVEL_MARGIN)) / (TILE_SIZE * scaleVal));

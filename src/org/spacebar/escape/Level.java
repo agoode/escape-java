@@ -340,6 +340,9 @@ public class Level {
     // has a panel (under a pushable block)? etc.
     private final int flags[];
     
+    // cached laser
+    private IntTriple laser;
+    
     // dirty list
 //    private final boolean dirty[];
     
@@ -409,7 +412,7 @@ public class Level {
         return flags[y * width + x];
     }
 
-    boolean isWon() {
+    public boolean isWon() {
         return tileAt(playerX, playerY) == T_EXIT;
     }
 
@@ -445,7 +448,11 @@ public class Level {
     }
 
     // Return true if a laser can 'see' the player.
-    IntTriple isDead() {
+    public IntTriple isDead() {
+        if (laser != null) {
+            return laser;
+        }
+        
         // easiest way is to look for lasers from the current dude.
         for (int dd = FIRST_DIR; dd <= LAST_DIR; dd++) {
             int lx = playerX, ly = playerY;
@@ -460,7 +467,8 @@ public class Level {
                     int tileY = r.getY();
                     int d = dirReverse(dd);
 
-                    return new IntTriple(tileX, tileY, d);
+                    laser = new IntTriple(tileX, tileY, d);
+                    return laser;
                 }
                 int tt = tileAt(lx, ly);
                 if (tt != T_FLOOR && tt != T_ELECTRIC && tt != T_ROUGH
@@ -471,6 +479,7 @@ public class Level {
                     break;
             }
         }
+        laser = null;
         return null;
     }
 
@@ -556,7 +565,7 @@ public class Level {
         }
     }
 
-    boolean move(int d, Effects e) {
+    public boolean move(int d, Effects e) {
 //        setDirty(playerX, playerY);
         boolean result = realMove(d, e);
         
@@ -567,6 +576,7 @@ public class Level {
             e.doNoStep();
         }
         
+        isDead();   // update laser cache
         return result;
     }
     
@@ -996,6 +1006,8 @@ public class Level {
         dests = RunLengthEncoding.decode(in, width * height);
         flags = RunLengthEncoding.decode(in, width * height);
 //        dirty = new boolean[width * height];
+        
+        isDead();   // calculate laser cache
     }
 
     public void print(PrintStream p) {
