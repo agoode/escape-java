@@ -1432,6 +1432,8 @@ public class Level {
        }
         
         dirty = new DirtyList();
+        
+        isDead();
     }
     
     public Level(BitInputStream in) throws IOException {
