@@ -1079,6 +1079,10 @@ public class Level {
      * @return
      */
     private boolean doButtonMove(Effects e, IntPair newP) {
+        if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+            return false;
+        }
+
         for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
             /* send a pulse in that direction. */
             IntPair pulse = new IntPair(newP);
