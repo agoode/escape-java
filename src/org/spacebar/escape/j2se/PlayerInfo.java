@@ -1,11 +1,15 @@
-package org.spacebar.escape.common;
+package org.spacebar.escape.j2se;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.spacebar.escape.common.BitInputStream;
+import org.spacebar.escape.common.Level;
+import org.spacebar.escape.common.Misc;
 import org.spacebar.escape.common.Level.Solution;
 import org.spacebar.escape.common.hash.MD5;
 
@@ -77,6 +81,7 @@ public class PlayerInfo {
             }
             
             // XXX XXX
+            StringTokenizer st = new StringTokenizer(s);
             // md5
             MD5 md5 = new MD5(in);
 

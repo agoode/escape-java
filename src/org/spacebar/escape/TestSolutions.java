@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.spacebar.escape.common.BitInputStream;
-import org.spacebar.escape.common.PlayerInfo;
+import org.spacebar.escape.j2se.PlayerInfo;
 
 public class TestSolutions {
     public static void main(String[] args) {
