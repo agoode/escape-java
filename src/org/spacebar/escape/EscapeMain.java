@@ -42,7 +42,7 @@ public class EscapeMain extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(STARTW, STARTH);
 
-        setContentPane(new EscapeLevelView(f));
+        setContentPane(new PlayCanvas(f));
         getRootPane().setDoubleBuffered(false);
     }
 

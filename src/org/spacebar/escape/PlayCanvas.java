@@ -22,7 +22,6 @@ import javax.swing.KeyStroke;
 
 import org.spacebar.escape.util.BitInputStream;
 import org.spacebar.escape.util.Characters;
-import org.spacebar.escape.util.IntTriple;
 import org.spacebar.escape.util.StyleStack;
 
 /**
@@ -31,7 +30,7 @@ import org.spacebar.escape.util.StyleStack;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class EscapeLevelView extends JComponent {
+public class PlayCanvas extends DoubleBufferCanvas {
 
     private class Mover extends AbstractAction {
         final int dir;
@@ -87,7 +86,7 @@ public class EscapeLevelView extends JComponent {
                     System.out.println("]");
                     done = true;
                 }
-                repairDamage();
+                bufferRepaint();
             }
         }
     }
@@ -102,21 +101,20 @@ public class EscapeLevelView extends JComponent {
         public void actionPerformed(ActionEvent e) {
             if (smaller) {
                 scale++;
-                if (scale > SCALE_DOWN_FACTORS - 1) {
-                    scale = SCALE_DOWN_FACTORS - 1;
+                if (scale > LevelDraw.SCALE_DOWN_FACTORS - 1) {
+                    scale = LevelDraw.SCALE_DOWN_FACTORS - 1;
                 }
             } else {
                 scale--;
-                if (scale < -SCALE_UP_FACTORS) {
-                    scale = -SCALE_UP_FACTORS;
+                if (scale < -LevelDraw.SCALE_UP_FACTORS) {
+                    scale = -LevelDraw.SCALE_UP_FACTORS;
                 }
             }
 
             //            System.out.println("scale: " + scale + ", scaleVal: " +
             // scaleVal);
 
-            bufferPaint();
-            repaint();
+            bufferRepaint();
         }
     }
 
@@ -133,24 +131,9 @@ public class EscapeLevelView extends JComponent {
 
     private final static int FONT_MARGIN = 2;
 
-    private final static int SCALE_DOWN_FACTORS = 5;
-
-    private final static int SCALE_UP_FACTORS = 2;
-
-    private final static BufferedImage[] player = ResourceUtils
-            .loadScaledImages("player.png", SCALE_DOWN_FACTORS,
-                    SCALE_UP_FACTORS);
-
     private final static int PLAYER_BORDER = 2;
 
     private final static int LEVEL_MARGIN = 12;
-
-    private final static int TILE_SIZE = 32;
-
-    private final static BufferedImage[] tiles = ResourceUtils
-            .loadScaledImages("tiles.png", SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
-
-    private final static int TILES_ACROSS = 16;
 
     static {
         //        Effects e1 = new NESEffects();
@@ -160,8 +143,6 @@ public class EscapeLevelView extends JComponent {
         e.add(e2);
         effects = e;
     }
-
-    private BufferedImage backBuffer;
 
     boolean done;
 
@@ -191,10 +172,8 @@ public class EscapeLevelView extends JComponent {
 
     int solutionCount;
 
-    public EscapeLevelView(File f) {
+    public PlayCanvas(File f) {
         super();
-
-        setOpaque(true);
 
         levelFile = f;
         initLevel();
@@ -204,48 +183,40 @@ public class EscapeLevelView extends JComponent {
         setupKeys();
     }
 
-    void bufferPaint() {
-        if (backBuffer == null) {
-            return;
-        }
-
-        int w = backBuffer.getWidth();
-        int h = backBuffer.getHeight();
+    protected void bufferPaint(Graphics2D g) {
+        int w = getWidth();
+        int h = getHeight();
 
         updateScroll();
 
-        Graphics2D g2 = backBuffer.createGraphics();
-
         // clear
-        g2.setBackground(Color.BLACK);
-        g2.clearRect(0, 0, w, h);
+        g.setBackground(Color.BLACK);
+        g.clearRect(0, 0, w, h);
 
         // save clip, setup for drawing level
-        Shape clip = g2.getClip();
-        g2.clip(new Rectangle(LEVEL_MARGIN, LEVEL_MARGIN, w - 2 * LEVEL_MARGIN,
+        Shape clip = g.getClip();
+        g.clip(new Rectangle(LEVEL_MARGIN, LEVEL_MARGIN, w - 2 * LEVEL_MARGIN,
                 h - 2 * LEVEL_MARGIN));
 
         // save transform and translate
-        AffineTransform origAT = g2.getTransform();
-        g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
+        AffineTransform origAT = g.getTransform();
+        g.translate(LEVEL_MARGIN, LEVEL_MARGIN);
 
         // paint things within boundaries of level
-        paintAllLevel(g2);
+        paintAllLevel(g);
 
         // restore clip and draw the rest
-        g2.setClip(clip);
-        g2.setTransform(origAT);
-        paintArrows(g2);
+        g.setClip(clip);
+        g.setTransform(origAT);
+        paintArrows(g);
 
         // restore transform and draw title
-        g2.setTransform(origAT);
-        g2.translate(FONT_MARGIN, FONT_MARGIN);
-        paintTitle(g2);
-
-        g2.dispose();
+        g.setTransform(origAT);
+        g.translate(FONT_MARGIN, FONT_MARGIN);
+        paintTitle(g);
     }
 
-    private void drawString(Graphics2D g2, String text) {
+    static private void drawString(Graphics2D g2, String text) {
         StyleStack s = new StyleStack();
 
         Composite ac = g2.getComposite();
@@ -275,7 +246,7 @@ public class EscapeLevelView extends JComponent {
                 g2.setComposite(AlphaComposite.getInstance(
                         AlphaComposite.SRC_OVER, s.getAlphaValue()));
                 g2.drawImage(font, dx, dy, dx + FONT_WIDTH, dy + FONT_HEIGHT,
-                        sx, sy, sx + FONT_WIDTH, sy + FONT_HEIGHT, this);
+                        sx, sy, sx + FONT_WIDTH, sy + FONT_HEIGHT, null);
                 dx += FONT_WIDTH;
             }
         }
@@ -287,12 +258,6 @@ public class EscapeLevelView extends JComponent {
      */
     public int getPlayerDir() {
         return playerDir;
-    }
-
-    private void initBackBuffer() {
-        //        System.out.println("initializing back buffer");
-        backBuffer = (BufferedImage) createImage(getWidth(), getHeight());
-        //        System.out.println("backBuffer: " + backBuffer);
     }
 
     /**
@@ -314,203 +279,17 @@ public class EscapeLevelView extends JComponent {
         solution = null;
         solutionCount = 0;
 
-        bufferPaint();
-        repaint();
-    }
-
-    protected void paintComponent(Graphics g) {
-        if (backBuffer == null || backBuffer.getHeight() != getHeight()
-                || backBuffer.getWidth() != getWidth()) {
-            initBackBuffer();
-            bufferPaint();
-        }
-
-        g.drawImage(backBuffer, 0, 0, this);
-    }
-
-    static private void paintPlayer(Graphics2D g2, Level theLevel, int xScroll,
-            int yScroll, int playerDir, int scale) {
-        int zoom = getZoomIndex(scale);
-        int tileSize = getTileSize(scale);
-
-        int dx = (theLevel.getPlayerX() - xScroll) * tileSize;
-        int dy = (theLevel.getPlayerY() - yScroll) * tileSize;
-
-        int sx, sy;
-        switch (playerDir) {
-        case Level.DIR_LEFT:
-            sx = 0;
-            sy = 0;
-            break;
-        case Level.DIR_UP:
-            sx = tileSize;
-            sy = 0;
-            break;
-        case Level.DIR_RIGHT:
-            sx = tileSize;
-            sy = tileSize;
-            break;
-        case Level.DIR_DOWN:
-        default:
-            sx = 0;
-            sy = tileSize;
-            break;
-        }
-
-        g2.drawImage(player[zoom], dx, dy, dx + tileSize, dy + tileSize, sx,
-                sy, sx + tileSize, sy + tileSize, null);
-    }
-
-    static private int getZoomIndex(int scale) {
-        int zoom = scale;
-        if (zoom < 0) {
-            zoom = -scale + SCALE_DOWN_FACTORS - 1;
-        }
-        return zoom;
-    }
-
-    static private double getScaleVal(int scale) {
-        double scaleVal;
-
-        if (scale < 0) {
-            scaleVal = 1 * (double) (1 << -scale);
-        } else {
-            scaleVal = 1 / (double) (1 << scale);
-        }
-        return scaleVal;
+        bufferRepaint();
     }
 
     private void paintAllLevel(Graphics2D g) {
-        paintAllLevel(g, theLevel, xScroll, yScroll, showBizarro, playerDir,
-                scale);
-    }
-
-    static public void paintAllLevel(Graphics2D g, Level theLevel, int xScroll,
-            int yScroll, boolean showBizarro, int playerDir, int scale) {
-        paintLevel(g, theLevel, xScroll, yScroll, showBizarro, scale);
-        paintPlayer(g, theLevel, xScroll, yScroll, playerDir, scale);
-        paintLaser(g, theLevel, xScroll, yScroll, scale);
-    }
-
-    static private void paintLaser(Graphics2D g2, Level theLevel, int xScroll,
-            int yScroll, int scale) {
-        IntTriple laser = theLevel.isDead();
-
-        if (laser == null) {
-            return;
-        }
-
-        double scaleVal = getScaleVal(scale);
-
-        int d = laser.getD();
-
-        int gx = (theLevel.getPlayerX() - xScroll) * TILE_SIZE
-                + (TILE_SIZE >> 1);
-        int gy = (theLevel.getPlayerY() - yScroll) * TILE_SIZE
-                + (TILE_SIZE >> 1);
-
-        int lx = (laser.getX() - xScroll) * TILE_SIZE;
-        int ly = (laser.getY() - yScroll) * TILE_SIZE;
-
-        Rectangle outer, inner;
-
-        switch (d) {
-        case Level.DIR_DOWN:
-            lx += TILE_SIZE >> 1;
-            ly += TILE_SIZE;
-
-            lx *= scaleVal;
-            ly *= scaleVal;
-            gx *= scaleVal;
-            gy *= scaleVal;
-
-            outer = new Rectangle(lx - 1, ly, 3, gy - ly);
-            inner = new Rectangle(lx, ly, 1, gy - ly);
-            break;
-        case Level.DIR_UP:
-            lx *= scaleVal;
-            ly *= scaleVal;
-            gx *= scaleVal;
-            gy *= scaleVal;
-
-            outer = new Rectangle(gx - 1, gy + 1, 3, ly - gy);
-            inner = new Rectangle(gx, gy + 1, 1, ly - gy);
-            break;
-        case Level.DIR_RIGHT:
-            lx += TILE_SIZE;
-            ly += TILE_SIZE >> 1;
-
-            lx *= scaleVal;
-            ly *= scaleVal;
-            gx *= scaleVal;
-            gy *= scaleVal;
-
-            outer = new Rectangle(lx, ly - 1, gx - lx, 3);
-            inner = new Rectangle(lx, ly, gx - lx, 1);
-            break;
-        case Level.DIR_LEFT:
-            lx *= scaleVal;
-            ly *= scaleVal;
-            gx *= scaleVal;
-            gy *= scaleVal;
-
-            outer = new Rectangle(gx + 1, gy - 1, lx - gx, 3);
-            inner = new Rectangle(gx + 1, gy, lx - gx, 1);
-            break;
-        default:
-            outer = inner = null;
-        }
-
-        g2.setColor(Color.RED);
-        g2.fill(outer);
-        g2.setColor(Color.WHITE);
-        g2.fill(inner);
-    }
-
-    static private void paintLevel(Graphics2D g2, Level theLevel, int xScroll,
-            int yScroll, boolean showBizarro, int scale) {
-        int zoom = getZoomIndex(scale);
-        int tileSize = getTileSize(scale);
-        //        System.out.println("tilesize: " + tileSize);
-        //        System.out.println("zoom: " + zoom);
-
-        for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
-            for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
-                int dx = i * tileSize;
-                int dy = j * tileSize;
-
-                int tile;
-                if (showBizarro) {
-                    tile = theLevel.oTileAt(i + xScroll, j + yScroll);
-                } else {
-                    tile = theLevel.tileAt(i + xScroll, j + yScroll);
-                }
-
-                paintTile(g2, zoom, tileSize, dx, dy, tile);
-            }
-        }
-    }
-
-    static private void paintTile(Graphics2D g2, int zoom, int tileSize,
-            int dx, int dy, int tile) {
-        int sx = tile % TILES_ACROSS * tileSize;
-        int sy = tile / TILES_ACROSS * tileSize;
-
-        g2.drawImage(tiles[zoom], dx, dy, dx + tileSize, dy + tileSize, sx, sy,
-                sx + tileSize, sy + tileSize, null);
-    }
-
-    static private int getTileSize(int scale) {
-        if (scale < 0) {
-            return TILE_SIZE * (1 << -scale);
-        } else {
-            return TILE_SIZE / (1 << scale);
-        }
+        LevelDraw.paintAllLevel(g, theLevel, xScroll, yScroll, showBizarro,
+                playerDir, scale);
     }
 
     private void paintArrows(Graphics2D g) {
-        int h = backBuffer.getHeight();
-        int w = backBuffer.getWidth();
+        int h = getHeight();
+        int w = getWidth();
 
         AffineTransform t = g.getTransform();
 
@@ -556,17 +335,12 @@ public class EscapeLevelView extends JComponent {
         drawString(g2, text);
     }
 
-    void repairDamage() {
-        bufferPaint();
-        repaint();
-    }
-
     void updateScroll() {
-        double scaleVal = getScaleVal(scale);
+        int tileSize = LevelDraw.getTileSize(scale);
 
         // keep at least LEVEL_MARGIN everywhere
-        paintedTilesAcross = (int) ((getWidth() - (2 * LEVEL_MARGIN)) / (TILE_SIZE * scaleVal));
-        paintedTilesDown = (int) ((getHeight() - (2 * LEVEL_MARGIN)) / (TILE_SIZE * scaleVal));
+        paintedTilesAcross = (int) ((getWidth() - (2 * LEVEL_MARGIN)) / tileSize);
+        paintedTilesDown = (int) ((getHeight() - (2 * LEVEL_MARGIN)) / tileSize);
 
         int w = theLevel.getWidth();
         int h = theLevel.getHeight();
@@ -682,7 +456,7 @@ public class EscapeLevelView extends JComponent {
         addAction("Y", "toggleAlt", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 showBizarro = !showBizarro;
-                repairDamage();
+                bufferRepaint();
             }
         });
 

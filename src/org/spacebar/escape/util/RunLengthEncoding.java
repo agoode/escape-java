@@ -8,7 +8,6 @@ package org.spacebar.escape.util;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * @author adam
@@ -79,9 +78,5 @@ public class RunLengthEncoding {
 
         in.readRestOfByte();
         return result;
-    }
-
-    public static void encode(OutputStream out, int[] data) {
-
     }
 }
