@@ -158,6 +158,24 @@ public class Level {
 
     public final static int T_GPANEL = 50;
 
+    public Object clone() throws CloneNotSupportedException {
+        Level newL = new Level(width, height, title, author, guyX, guyY);
+        
+        newL.replaceWith(this);
+        
+        return newL;
+    }
+
+    /**
+     * @param newL
+     */
+    private void replaceWith(Level newL) {
+        System.arraycopy(newL.tiles, 0, tiles, 0, tiles.length);
+        System.arraycopy(newL.oTiles, 0, oTiles, 0, oTiles.length);
+        System.arraycopy(newL.dests, 0, dests, 0, dests.length);
+        System.arraycopy(newL.flags, 0, flags, 0, flags.length);
+    }
+
     /**
      * @return Returns the author.
      */
@@ -392,7 +410,7 @@ public class Level {
         return tileAt(guyX, guyY) == T_EXIT;
     }
 
-    IntPair travel(int x, int y, int d) {
+    private IntPair travel(int x, int y, int d) {
         switch (d) {
         case DIR_UP:
             if (y == 0) {
@@ -431,6 +449,9 @@ public class Level {
 
             IntPair r;
             while ((r = travel(lx, ly, dd)) != null) {
+                lx = r.getX();
+                ly = r.getY();
+                
                 if (tileAt(lx, ly) == T_LASER) {
                     int tileX = r.getX();
                     int tileY = r.getY();
@@ -450,7 +471,7 @@ public class Level {
         return null;
     }
 
-    void swapO(int idx) {
+    private void swapO(int idx) {
         int tmp = tiles[idx];
         tiles[idx] = oTiles[idx];
         oTiles[idx] = tmp;
@@ -481,7 +502,7 @@ public class Level {
     /*
      * after stepping off a tile, deactivate a panel if there was one there.
      */
-    void checkLeavePanel(int x, int y) {
+    private void checkLeavePanel(int x, int y) {
         /* nb: only for regular panels */
         if (tileAt(x, y) == T_PANEL) {
             swapO(destAt(x, y));
@@ -489,7 +510,7 @@ public class Level {
     }
 
     /* actions on the player stepping off of a tile */
-    void checkStepOff(int x, int y) {
+    private void checkStepOff(int x, int y) {
         /* nb: only for regular panels */
         checkLeavePanel(x, y);
         if (tileAt(x, y) == T_TRAP1) {
@@ -499,7 +520,7 @@ public class Level {
         }
     }
 
-    static int realPanel(int f) {
+    private static int realPanel(int f) {
         if ((f & TF_RPANELH) != 0) {
             if ((f & TF_RPANELL) != 0)
                 return T_RPANEL;
@@ -513,11 +534,11 @@ public class Level {
         }
     }
 
-    boolean isSphere(int t) {
+    private boolean isSphere(int t) {
         return (t == T_SPHERE || t == T_RSPHERE || t == T_GSPHERE || t == T_BSPHERE);
     }
 
-    void swapTiles(int t1, int t2) {
+    private void swapTiles(int t1, int t2) {
         for (int i = 0; i < width * height; i++) {
             if (tiles[i] == t1)
                 tiles[i] = t2;
@@ -948,6 +969,22 @@ public class Level {
         oTiles = RunLengthEncoding.decode(in, width*height);
         dests = RunLengthEncoding.decode(in, width*height);
         flags = RunLengthEncoding.decode(in, width*height);
+    }
+    
+    private Level(int w, int h, String title, String author, int guyX, int guyY) {
+        this.width = w;
+        this.height = h;
+        
+        this.title = title;
+        this.author = author;
+        
+        this.guyX = guyX;
+        this.guyY = guyY;
+        
+        tiles = new int[width*height];
+        oTiles = new int[width*height];
+        dests = new int[width*height];
+        flags = new int[width*height];
     }
     
     public void print(PrintStream p) {
