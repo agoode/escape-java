@@ -175,7 +175,9 @@ abstract public class Entity {
             Entity e = (Entity) obj;
             
             for (int i = 0; i < capabilities.length; i++) {
-                
+                if (capabilities[i] != e.capabilities[i]) {
+                    return false;
+                }
             }
         }
         return false;
