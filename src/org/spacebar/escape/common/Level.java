@@ -180,15 +180,6 @@ public class Level {
 
     public final static int T_GSTEEL = 53;
 
-    /* bots */
-    public final static int B_BROKEN = 0;
-
-    public final static int B_DALEK = 1;
-
-    public final static int B_HUGBOT = 2;
-
-    public final static int B_PLAYER = -1;  // not really a bot!
-    
     /**
      * @return Returns the author.
      */

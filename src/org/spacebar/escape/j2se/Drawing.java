@@ -115,11 +115,54 @@ public class Drawing {
     static public void paintAllLevel(Graphics2D g, Level theLevel, int xScroll,
             int yScroll, boolean showBizarro, int playerDir, int scale) {
         paintLevel(g, theLevel, xScroll, yScroll, showBizarro, scale);
-        paintSprite(g, theLevel, xScroll, yScroll, playerDir, -1, scale);
-        for (int i = 0; i < theLevel.getBotCount(); i++) {
-            paintSprite(g, theLevel, xScroll, yScroll, playerDir, i, scale);
-        }
+        paintSprites(g, theLevel, xScroll, yScroll, playerDir, scale);
         paintLaser(g, theLevel, xScroll, yScroll, scale);
+    }
+
+    /**
+     * @param g
+     * @param theLevel
+     * @param xScroll
+     * @param yScroll
+     * @param playerDir
+     * @param scale
+     */
+    private static void paintSprites(Graphics2D g, Level theLevel, int xScroll,
+            int yScroll, int playerDir, int scale) {
+        int spriteCount = 1 + theLevel.getBotCount();
+
+        // y is z
+        int s[][] = new int[theLevel.getHeight()][spriteCount];
+
+        // compute z-ordering based on y
+        s[theLevel.getPlayerY()][0] = 999; // 1000 - 1
+        for (int i = 0; i < theLevel.getBotCount(); i++) {
+            int z = 1000 + i; // avoid re-initializing array
+            int y = theLevel.getSpriteY(i);
+
+            int row[] = s[y];
+            for (int j = 0; j < row.length; j++) {
+                if (row[j] == 0) {
+                    row[j] = z; // don't clobber sprites (but wasteful of
+                                // memory)
+                    break;
+                }
+            }
+        }
+
+        // now draw in the correct order
+        for (int i = 0; i < s.length; i++) {
+            int row[] = s[i];
+            for (int j = 0; j < row.length; j++) {
+                if (row[j] == 0) {
+                    continue;
+                }
+
+                int index = row[j] - 1000;
+                paintSprite(g, theLevel, xScroll, yScroll, playerDir, index,
+                        scale);
+            }
+        }
     }
 
     static private void paintLaser(Graphics2D g2, Level theLevel, int xScroll,
@@ -229,9 +272,6 @@ public class Drawing {
 
     static private void paintSprite(Graphics2D g2, Level theLevel, int xScroll,
             int yScroll, int dir, int spriteIndex, int scale) {
-        // y is z
-        int s[] = new int[1 + theLevel.getBotCount()];
-        
         if (spriteIndex == -1) {
             paintPlayer(g2, theLevel, xScroll, yScroll, dir, scale);
         } else {
