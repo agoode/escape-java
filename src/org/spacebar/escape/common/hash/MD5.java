@@ -11,8 +11,9 @@ public class MD5 {
             throw new IllegalArgumentException("String must be exactly 32 characters");
         }
         for (int i = 0; i < data.length; i++) {
-            String str = s.substring(2 * i, 2 * i + 1);
-            data[i] = Byte.parseByte(str, 16);
+            int idx = 2 * i;
+            String str = s.substring(idx, idx + 2);
+            data[i] = (byte) (Integer.parseInt(str, 16) & 0xFF);
         }
     }
     

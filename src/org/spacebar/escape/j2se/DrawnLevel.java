@@ -49,7 +49,7 @@ public class DrawnLevel extends Level {
     private void afterMove() {
         lc.bufferRepaint();
         try {
-            Thread.sleep(20);
+            Thread.sleep(1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

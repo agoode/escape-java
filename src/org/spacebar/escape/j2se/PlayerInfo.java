@@ -8,7 +8,7 @@ import java.util.*;
 
 import org.spacebar.escape.common.BitInputStream;
 import org.spacebar.escape.common.Misc;
-import org.spacebar.escape.common.Level.Solution;
+import org.spacebar.escape.common.Solution;
 import org.spacebar.escape.common.hash.MD5;
 
 public class PlayerInfo {
@@ -34,14 +34,13 @@ public class PlayerInfo {
 
     Map solutions = new HashMap();
 
-    
     /**
      * @return Returns the solutions.
      */
     public Map getSolutions() {
         return solutions;
     }
-    
+
     public PlayerInfo(BitInputStream in) throws IOException {
         // read magic
         String magic = Misc.getStringFromData(in, 4);
@@ -58,7 +57,7 @@ public class PlayerInfo {
 
     private void decodeTextFormat(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        
+
         String s;
 
         // get line after magic
@@ -84,26 +83,26 @@ public class PlayerInfo {
 
         for (;;) {
             s = br.readLine();
-//            System.out.println("'" + s + "'");
+            //            System.out.println("'" + s + "'");
             if (s.equals(RAT_MARKER)) {
                 break;
             }
-            
+
             // XXX XXX
             StringTokenizer st = new StringTokenizer(s);
             // md5
             String str = st.nextToken();
             MD5 md5 = new MD5(str);
-            
+
             str = st.nextToken();
-            
+
             if (str.equals("*")) {
                 // named, and multiple solutions, ending with "!"
                 str = st.nextToken();
                 addSolution(md5, new Solution(str, true), true);
-                
+
                 // read rest of lines until !
-                while(!(s = br.readLine().trim()).equals("!")) {
+                while (!(s = br.readLine().trim()).equals("!")) {
                     addSolution(md5, new Solution(s, true), true);
                 }
             } else {
@@ -157,21 +156,8 @@ public class PlayerInfo {
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-
-        for (Iterator iter = solutions.keySet().iterator(); iter.hasNext();) {
-            MD5 md5 = (MD5) iter.next();
-
-            sb.append(md5 + " -> ");
-
-            List v = (List) solutions.get(md5);
-            for (int i = 0; i < v.size(); i++) {
-                Solution s = (Solution) v.get(i);
-                sb.append(s.toString() + " ");
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
+        return getName() + " #" + getWebID() + ", " + getSolutions().size()
+                + " solutions";
     }
 
     private void addSolution(MD5 md5, Solution s, boolean append) {
@@ -188,5 +174,37 @@ public class PlayerInfo {
 
         // add the item to the front
         v.add(0, s);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getWebID() {
+        return webID;
+    }
+
+    public void setWebID(int webID) {
+        this.webID = webID;
+    }
+
+    public int getWebSeqH() {
+        return webSeqH;
+    }
+
+    public void setWebSeqH(int webSeqH) {
+        this.webSeqH = webSeqH;
+    }
+
+    public int getWebSeqL() {
+        return webSeqL;
+    }
+
+    public void setWebSeqL(int webSeqL) {
+        this.webSeqL = webSeqL;
     }
 }
