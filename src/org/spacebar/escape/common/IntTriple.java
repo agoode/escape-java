@@ -13,17 +13,10 @@ package org.spacebar.escape.common;
  * Preferences - Java - Code Style - Code Templates
  */
 public class IntTriple extends IntPair {
-    private final int d;
+    final public int d;
 
     public IntTriple(int x, int y, int d) {
         super(x, y);
         this.d = d;
-    }
-
-    /**
-     * @return Returns the D.
-     */
-    public int getD() {
-        return d;
     }
 }

@@ -86,15 +86,15 @@ public class Drawing {
 
         double scaleVal = getScaleVal(scale);
 
-        int d = laser.getD();
+        int d = laser.d;
 
         int gx = (theLevel.getPlayerX() - xScroll) * TILE_SIZE
                 + (TILE_SIZE >> 1);
         int gy = (theLevel.getPlayerY() - yScroll) * TILE_SIZE
                 + (TILE_SIZE >> 1);
 
-        int lx = (laser.getX() - xScroll) * TILE_SIZE;
-        int ly = (laser.getY() - yScroll) * TILE_SIZE;
+        int lx = (laser.x - xScroll) * TILE_SIZE;
+        int ly = (laser.y - yScroll) * TILE_SIZE;
 
         Rectangle outer, inner;
 

@@ -2,7 +2,6 @@ package org.spacebar.escape.common;
 
 import java.io.*;
 
-
 public class Level {
 
     // directions
@@ -153,7 +152,7 @@ public class Level {
     public final static int T_RPANEL = 49;
 
     public final static int T_GPANEL = 50;
-    
+
     public final static int LAST_T = 50;
 
     /**
@@ -202,21 +201,7 @@ public class Level {
         return width;
     }
 
-//    // dirty?
-//    public boolean isDirty(int x, int y) {
-//        return dirty[index(x, y)];
-//    }
-//
-//    public void clearDirty() {
-//        for (int i = 0; i < dirty.length; i++) {
-//            dirty[i] = false;
-//        }
-//    }
-//    
-//    private void setDirty(int x, int y) {
-//        dirty[index(x, y)] = true;
-//    }
-    
+
     // static functions
     static int turnLeft(int d) {
         switch (d) {
@@ -317,9 +302,9 @@ public class Level {
     private String author;
 
     // width, height
-    private final int width;
+    final int width;
 
-    private final int height;
+    final int height;
 
     // location of player
     private int playerX;
@@ -337,13 +322,13 @@ public class Level {
 
     // has a panel (under a pushable block)? etc.
     private final int flags[];
+
+    // dirty
+    public final DirtyList dirty;
     
     // cached laser
     private IntTriple laser;
-    
-    // dirty list
-//    private final boolean dirty[];
-    
+
     // the meat
     void warp(int targX, int targY) {
         checkStepOff(playerX, playerY);
@@ -380,9 +365,9 @@ public class Level {
 
     void setTile(int i, int t) {
         tiles[i] = t;
-//        dirty[i] = true;
+        dirty.setDirty(i);
     }
-    
+
     void setTile(int x, int y, int t) {
         setTile(y * width + x, t);
     }
@@ -450,19 +435,19 @@ public class Level {
         if (laser != null) {
             return laser;
         }
-        
+
         // easiest way is to look for lasers from the current dude.
         for (int dd = FIRST_DIR; dd <= LAST_DIR; dd++) {
             int lx = playerX, ly = playerY;
 
             IntPair r;
             while ((r = travel(lx, ly, dd)) != null) {
-                lx = r.getX();
-                ly = r.getY();
+                lx = r.x;
+                ly = r.y;
 
                 if (tileAt(lx, ly) == T_LASER) {
-                    int tileX = r.getX();
-                    int tileY = r.getY();
+                    int tileX = r.x;
+                    int tileY = r.y;
                     int d = dirReverse(dd);
 
                     laser = new IntTriple(tileX, tileY, d);
@@ -563,27 +548,33 @@ public class Level {
         }
     }
 
+    public boolean move(int d) {
+        return move(d, null);
+    }
+
     public boolean move(int d, Effects e) {
-//        setDirty(playerX, playerY);
         boolean result = realMove(d, e);
-        
+
         if (result) {
-//            setDirty(playerX, playerY);
-            e.doStep();
+            if (e != null) {
+                e.doStep();
+            }
         } else {
-            e.doNoStep();
+            if (e != null) {
+                e.doNoStep();
+            }
         }
-        
-        isDead();   // update laser cache
+
+        isDead(); // update laser cache
         return result;
     }
-    
+
     private boolean realMove(int d, Effects e) {
 
         int target;
         IntPair newP;
         if ((newP = travel(playerX, playerY, d)) != null) {
-            switch (target = tileAt(newP.getX(), newP.getY())) {
+            switch (target = tileAt(newP.x, newP.y)) {
 
             /* these aren't pressed by the player so act like floor */
             case T_BPANEL:
@@ -602,17 +593,19 @@ public class Level {
             case T_EXIT: /* now we allow player to walk onto exit */
 
                 checkStepOff(playerX, playerY);
-                playerX = newP.getX();
-                playerY = newP.getY();
+                playerX = newP.x;
+                playerY = newP.y;
                 return true;
 
             case T_ON: {
-                e.doElectricOff();
+                if (e != null) {
+                    e.doElectricOff();
+                }
                 for (int i = (width * height) - 1; i >= 0; i--) {
                     if (tiles[i] == T_ELECTRIC)
                         setTile(i, T_FLOOR);
                 }
-                setTile(newP.getX(), newP.getY(), T_OFF);
+                setTile(newP.x, newP.y, T_OFF);
                 return true;
             }
             case T_0:
@@ -621,8 +614,10 @@ public class Level {
 
                 swapTiles(T_UD, T_LR);
 
-                e.doSwap();
-                setTile(newP.getX(), newP.getY(), opp);
+                if (e != null) {
+                    e.doSwap();
+                }
+                setTile(newP.x, newP.y, opp);
 
                 return true;
             }
@@ -640,14 +635,14 @@ public class Level {
                  * direction is a sphere of any sort.
                  */
                 IntPair t;
-                while (isSphere(tileAt(newP.getX(), newP.getY()))
-                        && (t = travel(newP.getX(), newP.getY(), d)) != null
-                        && isSphere(tileAt(t.getX(), t.getY()))) {
+                while (isSphere(tileAt(newP.x, newP.y))
+                        && (t = travel(newP.x, newP.y, d)) != null
+                        && isSphere(tileAt(t.x, t.y))) {
                     newP = t;
-                    target = tileAt(t.getX(), t.getY());
+                    target = tileAt(t.x, t.y);
                 }
 
-                int goldX = newP.getX(), goldY = newP.getY();
+                int goldX = newP.x, goldY = newP.y;
 
                 /* remove gold block */
                 if ((flagAt(goldX, goldY) & TF_HASPANEL) != 0) {
@@ -659,28 +654,28 @@ public class Level {
                 IntPair tGold;
                 while ((tGold = travel(goldX, goldY, d)) != null) {
 
-                    int next = tileAt(tGold.getX(), tGold.getY());
+                    int next = tileAt(tGold.x, tGold.y);
                     if (next != T_ELECTRIC && next != T_PANEL
                             && next != T_BPANEL && next != T_RPANEL
                             && next != T_GPANEL && next != T_FLOOR)
                         break;
 
-                    goldX = tGold.getX();
-                    goldY = tGold.getY();
+                    goldX = tGold.x;
+                    goldY = tGold.y;
 
                     if (next == T_ELECTRIC)
                         break;
                 }
 
                 /* goldx is dest, newx is source */
-                if (goldX != newP.getX() || goldY != newP.getY()) {
+                if (goldX != newP.x || goldY != newP.y) {
 
                     int landOn = tileAt(goldX, goldY);
                     boolean doSwap = false;
 
                     /* untrigger from source */
-                    if ((flagAt(newP.getX(), newP.getY()) & TF_HASPANEL) != 0) {
-                        int pan = realPanel(flagAt(newP.getX(), newP.getY()));
+                    if ((flagAt(newP.x, newP.y) & TF_HASPANEL) != 0) {
+                        int pan = realPanel(flagAt(newP.x, newP.y));
                         /* any */
                         if (pan == T_PANEL ||
                         /* colors */
@@ -716,7 +711,9 @@ public class Level {
                     default:
                         ;
                     }
-                    e.doSlide();
+                    if (e != null) {
+                        e.doSlide();
+                    }
                     setTile(goldX, goldY, target);
 
                     if (landOn == T_ELECTRIC) {
@@ -726,26 +723,30 @@ public class Level {
                          * swapped into the o world (along with the gold). So
                          * swap there.
                          */
-                        e.doZap();
+                        if (e != null) {
+                            e.doZap();
+                        }
                         setTile(goldX, goldY, T_ELECTRIC);
                     }
                     if (doSwap)
-                        swapO(destAt(newP.getX(), newP.getY()));
+                        swapO(destAt(newP.x, newP.y));
 
                     return true;
 
                 } else {
                     /* didn't move; put it back */
-                    setTile(newP.getX(), newP.getY(), target);
+                    setTile(newP.x, newP.y, target);
                     return false;
                 }
             }
             case T_TRANSPORT: {
                 IntPair targ;
-                targ = where(dests[width * newP.getY() + newP.getX()]);
+                targ = where(dests[width * newP.y + newP.x]);
 
-                e.doTransport();
-                warp(targ.getX(), targ.getY());
+                if (e != null) {
+                    e.doTransport();
+                }
+                warp(targ.x, targ.y);
 
                 return true;
             }
@@ -757,8 +758,8 @@ public class Level {
                     int pd = dd;
 
                     while (pd != DIR_NONE
-                            && (pulse = travel(pulse.getX(), pulse.getY(), pd)) != null) {
-                        switch (tileAt(pulse.getX(), pulse.getY())) {
+                            && (pulse = travel(pulse.x, pulse.y, pd)) != null) {
+                        switch (tileAt(pulse.x, pulse.y)) {
                         case T_BLIGHT:
                             swapTiles(T_BUP, T_BDOWN);
                             pd = DIR_NONE;
@@ -828,31 +829,35 @@ public class Level {
                     }
                 }
 
-                e.doPulse();
+                if (e != null) {
+                    e.doPulse();
+                }
                 return true;
             }
             case T_BROKEN:
-                setTile(newP.getX(), newP.getY(), T_FLOOR);
-                e.doBroken();
+                setTile(newP.x, newP.y, T_FLOOR);
+                if (e != null) {
+                    e.doBroken();
+                }
                 return true;
 
             case T_PANEL:
-                swapO(destAt(newP.getX(), newP.getY()));
+                swapO(destAt(newP.x, newP.y));
                 checkStepOff(playerX, playerY);
-                playerX = newP.getX();
-                playerY = newP.getY();
+                playerX = newP.x;
+                playerY = newP.y;
                 return true;
 
             case T_GREEN: {
                 IntPair dest;
-                if ((dest = travel(newP.getX(), newP.getY(), d)) != null) {
-                    if (tileAt(dest.getX(), dest.getY()) == T_FLOOR) {
-                        setTile(dest.getX(), dest.getY(), T_BLUE);
-                        setTile(newP.getX(), newP.getY(), T_FLOOR);
+                if ((dest = travel(newP.x, newP.y, d)) != null) {
+                    if (tileAt(dest.x, dest.y) == T_FLOOR) {
+                        setTile(dest.x, dest.y, T_BLUE);
+                        setTile(newP.x, newP.y, T_FLOOR);
 
                         checkStepOff(playerX, playerY);
-                        playerX = newP.getX();
-                        playerY = newP.getY();
+                        playerX = newP.x;
+                        playerY = newP.y;
                         return true;
                     } else
                         return false;
@@ -881,7 +886,7 @@ public class Level {
 
                 boolean doSwap = false;
                 IntPair dest;
-                if ((dest = travel(newP.getX(), newP.getY(), d)) != null) {
+                if ((dest = travel(newP.x, newP.y, d)) != null) {
                     /*
                      * we're always stepping onto the panel that the block was
                      * on, so we don't need to change its state. (if it's a
@@ -890,41 +895,44 @@ public class Level {
                      * the man nor the block can activate it.) But we do need to
                      * put a panel there instead of floor.
                      */
-                    int replacement = (flagAt(newP.getX(), newP.getY()) & TF_HASPANEL) != 0 ? realPanel(flagAt(
-                            newP.getX(), newP.getY()))
+                    int replacement = (flagAt(newP.x, newP.y) & TF_HASPANEL) != 0 ? realPanel(flagAt(
+                            newP.x, newP.y))
                             : T_FLOOR;
 
-                    switch (tileAt(dest.getX(), dest.getY())) {
+                    switch (tileAt(dest.x, dest.y)) {
                     case T_FLOOR:
                         /* easy */
-                        setTile(dest.getX(), dest.getY(), target);
-                        setTile(newP.getX(), newP.getY(), replacement);
+                        setTile(dest.x, dest.y, target);
+                        setTile(newP.x, newP.y, replacement);
                         break;
                     case T_BPANEL:
                     case T_RPANEL:
                     case T_GPANEL:
                         /* anything but horiz/vert sliders */
                         if (target != T_LR && target != T_UD) {
-                            setTile(dest.getX(), dest.getY(), target);
-                            setTile(newP.getX(), newP.getY(), replacement);
+                            setTile(dest.x, dest.y, target);
+                            setTile(newP.x, newP.y, replacement);
                         } else
                             return false;
                         break;
                     case T_ELECTRIC:
                         /* Zap! */
                         if (target != T_LR && target != T_UD) {
-                            e.doZap();
-                            setTile(newP.getX(), newP.getY(), replacement);
-                        }
-                        else
+                            if (e != null) {
+                                e.doZap();
+                            }
+                            setTile(newP.x, newP.y, replacement);
+                        } else
                             return false;
                         break;
                     case T_HOLE:
                         /* only grey blocks into holes */
                         if (target == T_GREY) {
-                            e.doHole();
-                            setTile(dest.getX(), dest.getY(), T_FLOOR);
-                            setTile(newP.getX(), newP.getY(), replacement);
+                            if (e != null) {
+                                e.doHole();
+                            }
+                            setTile(dest.x, dest.y, T_FLOOR);
+                            setTile(newP.x, newP.y, replacement);
                             break;
                         } else
                             return false;
@@ -932,8 +940,8 @@ public class Level {
                         if (target != T_LR && target != T_UD) {
                             /* delay the swap */
                             doSwap = true;
-                            setTile(dest.getX(), dest.getY(), target);
-                            setTile(newP.getX(), newP.getY(), replacement);
+                            setTile(dest.x, dest.y, target);
+                            setTile(newP.x, newP.y, replacement);
                         } else
                             return false;
                         break;
@@ -943,9 +951,9 @@ public class Level {
                     checkStepOff(playerX, playerY);
 
                     if (doSwap)
-                        swapO(destAt(dest.getX(), dest.getY()));
-                    playerX = newP.getX();
-                    playerY = newP.getY();
+                        swapO(destAt(dest.x, dest.y));
+                    playerX = newP.x;
+                    playerY = newP.y;
                     return true;
                 } else
                     return false;
@@ -986,8 +994,8 @@ public class Level {
         width = getIntFromStream(in);
         height = getIntFromStream(in);
 
-//        System.out.println("width: " + width + ", height: " + height);
-        
+        //        System.out.println("width: " + width + ", height: " + height);
+
         int size;
 
         size = getIntFromStream(in);
@@ -1003,11 +1011,57 @@ public class Level {
         oTiles = RunLengthEncoding.decode(in, width * height);
         dests = RunLengthEncoding.decode(in, width * height);
         flags = RunLengthEncoding.decode(in, width * height);
-//        dirty = new boolean[width * height];
-        
-        isDead();   // calculate laser cache
+
+        dirty = new DirtyList();
+        dirty.setAllDirty();
+
+        isDead(); // calculate laser cache
     }
 
+    
+    public class DirtyList {
+        boolean allDirty;
+
+        private final boolean dirty[];
+        private final int dirtyList[];
+        private int numDirty;
+
+        DirtyList() {
+            int n = width * height;
+            dirty = new boolean[n];
+            dirtyList = new int[n];
+        }
+
+        public void clearDirty() {
+            for (int i = dirty.length - 1; i >= 0; i--) {
+                dirty[i] = false;
+            }
+            numDirty = 0;
+            allDirty = false;
+        }
+
+        public void setDirty(int x, int y) {
+            setDirty(index(x, y));
+        }
+        public void setDirty(int i) {
+            if (dirty[i]) {
+                return;
+            }
+            
+            dirty[i] = true;
+            dirtyList[numDirty] = i;
+            numDirty++;
+        }
+        
+        public void setAllDirty() {
+            allDirty = true;
+        }
+
+        public boolean isDirty(int x, int y) {
+            return (allDirty || dirty[index(x, y)]);
+        }
+    }
+    
     public void print(PrintStream p) {
         p.println("\"" + title + "\" by " + author + " (" + width + ","
                 + height + ")" + " player: (" + playerX + "," + playerY + ")");

@@ -8,23 +8,8 @@ package org.spacebar.escape.common;
 
 
 public class IntPair {
-    private final int x;
-
-    /**
-     * @return Returns the x.
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * @return Returns the y.
-     */
-    public int getY() {
-        return y;
-    }
-
-    final private int y;
+    final public int x;
+    final public int y;
 
     public IntPair(int x, int y) {
         this.x = x;

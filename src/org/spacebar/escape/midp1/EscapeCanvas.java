@@ -29,6 +29,8 @@ public class EscapeCanvas extends Canvas {
 
     private static final byte TILE_SIZE = 8;
 
+    private static final int TILES_BUFFERED = 8;
+
     private static final Font font = Font.getFont(Font.FACE_PROPORTIONAL,
             Font.STYLE_PLAIN, Font.SIZE_MEDIUM);
 
@@ -43,12 +45,14 @@ public class EscapeCanvas extends Canvas {
     final static Image player = ResourceUtil.loadImage("/player8x8i.png");
 
     private Image levelBuffer;
+
     private int bufW;
+
     private int bufH;
-    
+
     private boolean needsRedraw;
-    
-    private byte playerDir;
+
+    private int playerDir;
 
     EscapeCanvas(byte[] level) throws IOException {
         origLevel = level;
@@ -67,11 +71,10 @@ public class EscapeCanvas extends Canvas {
         int sx = tile % TILES_ACROSS * TILE_SIZE;
         int sy = tile / TILES_ACROSS * TILE_SIZE;
 
-//        int cx = g.getClipX();
-//        int cy = g.getClipY();
-//        int cw = g.getClipWidth();
-//        int ch = g.getClipHeight();
-
+        //        int cx = g.getClipX();
+        //        int cy = g.getClipY();
+        //        int cw = g.getClipWidth();
+        //        int ch = g.getClipHeight();
 
         g.setClip(0, 0, TILE_SIZE, TILE_SIZE);
         g.drawImage(tiles, -sx, -sy, Graphics.TOP | Graphics.LEFT);
@@ -88,7 +91,7 @@ public class EscapeCanvas extends Canvas {
         if (needsRedraw) {
             drawLevel();
         }
-        
+
         int h = getHeight();
         int w = getWidth();
 
@@ -107,22 +110,30 @@ public class EscapeCanvas extends Canvas {
     }
 
     private void initLevelBuffer() {
-        bufW = Math.min(theLevel.getWidth() * TILE_SIZE, getWidth() * 2);
-        bufH = Math.min(theLevel.getHeight() * TILE_SIZE, getHeight() * 2);
-        levelBuffer = Image.createImage(bufW, bufH);
-        
+        int w = getWidth();
+        int h = getHeight();
+
+        int tilesAcross = w / TILE_SIZE;
+        int tilesDown = h / TILE_SIZE;
+
+        // allocate either the size of the level or enough for the
+        // screen + more
+        bufW = Math.min(theLevel.getWidth(), tilesAcross + TILES_BUFFERED);
+        bufH = Math.min(theLevel.getHeight(), tilesDown + TILES_BUFFERED);
+        levelBuffer = Image.createImage(bufW * TILE_SIZE, bufH * TILE_SIZE);
+
         // clear
         Graphics g = levelBuffer.getGraphics();
         g.setColor(0);
-        g.fillRect(0, 0, bufW, bufH);
+        g.fillRect(0, 0, bufW * TILE_SIZE, bufH * TILE_SIZE);
     }
-    
+
     private void drawLevel() {
         int lw = theLevel.getWidth() - 1;
         int lh = theLevel.getHeight() - 1;
 
         Graphics g = levelBuffer.getGraphics();
-        
+
         // skip to end, and go in reverse
         g.translate((lw + 1) * TILE_SIZE, (lh + 1) * TILE_SIZE);
         int origX = g.getTranslateX();
@@ -130,11 +141,13 @@ public class EscapeCanvas extends Canvas {
             g.translate(origX - g.getTranslateX(), -TILE_SIZE);
             for (int i = lw; i >= 0; i--) {
                 g.translate(-TILE_SIZE, 0);
-                int t = theLevel.tileAt(i, j);
-                drawTile(g, t);
+                if (theLevel.dirty.isDirty(i, j)) {
+                    int t = theLevel.tileAt(i, j);
+                    drawTile(g, t);
+                }
             }
         }
-        
+
         needsRedraw = false;
     }
 
@@ -175,5 +188,35 @@ public class EscapeCanvas extends Canvas {
         g.clipRect(0, 0, TILE_SIZE, TILE_SIZE);
         g.drawImage(player, sx, sy, Graphics.TOP | Graphics.LEFT);
         g.setClip(cx, cy, cw, ch);
+    }
+
+    protected void keyPressed(int keyCode) {
+        switch (getGameAction(keyCode)) {
+        case LEFT:
+            doMove(Level.DIR_LEFT);
+            break;
+        case RIGHT:
+            doMove(Level.DIR_RIGHT);
+            break;
+        case UP:
+            doMove(Level.DIR_UP);
+            break;
+        case DOWN:
+            doMove(Level.DIR_DOWN);
+            break;
+        }
+    }
+
+    private void doMove(int dir) {
+        needsRedraw = true;
+        playerDir = dir;
+
+        theLevel.move(dir, null);
+
+        repaint();
+    }
+
+    protected void keyRepeated(int keyCode) {
+        keyPressed(keyCode);
     }
 }
