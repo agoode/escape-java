@@ -82,11 +82,11 @@ abstract public class Entity {
     }
     
     final public boolean canTeleport() {
-        return canTeleportB;
+        return capabilities[CAP_CAN_TELEPORT];
     }
 
     final public boolean crushesPlayer() {
-        return crushPlayerB;
+        return capabilities[CAP_CRUSH_PLAYER];
     }
 
     /**
@@ -111,15 +111,15 @@ abstract public class Entity {
     }
 
     final public boolean isPlayer() {
-        return isPlayerB;
+        return capabilities[CAP_IS_PLAYER];
     }
 
     final public boolean canPushBots() {
-        return pushBotsB;
+        return capabilities[CAP_PUSH_BOTS];
     }
     
     final public boolean canPushPlayer() {
-        return pushPlayerB;
+        return capabilities[CAP_PUSH_PLAYER];
     }
 
     /**
@@ -151,11 +151,11 @@ abstract public class Entity {
     }
     
     final public boolean walksIntoBots() {
-        return walkIntoBotsB;
+        return capabilities[CAP_WALK_INTO_BOTS];
     }
 
     final public boolean zapsSelf() {
-        return zapSelfB;
+        return capabilities[CAP_ZAP_SELF];
     }
     
     public String toString() {
@@ -174,7 +174,9 @@ abstract public class Entity {
         if (obj instanceof Entity) {
             Entity e = (Entity) obj;
             
-            
+            for (int i = 0; i < capabilities.length; i++) {
+                
+            }
         }
         return false;
     }
