@@ -22,8 +22,9 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import org.spacebar.escape.util.BitInputStream;
-import org.spacebar.escape.util.CharacterMap;
+import org.spacebar.escape.util.Characters;
 import org.spacebar.escape.util.IntTriple;
+import org.spacebar.escape.util.StyleStack;
 
 /**
  * @author adam
@@ -290,21 +291,48 @@ public class EscapeLevelView extends JComponent {
     }
 
     private void paintTitle(Graphics2D g2) {
-        String text = theLevel.getTitle() + " by " + theLevel.getAuthor();
+        String text = theLevel.getTitle() + " " + Characters.GRAY + "by "
+                + Characters.POP + Characters.BLUE + theLevel.getAuthor()
+                + Characters.POP;
+
+        drawString(g2, text);
+    }
+
+    private void drawString(Graphics2D g2, String text) {
+        StyleStack s = new StyleStack();
+
+        Composite ac = g2.getComposite();
 
         int dx = 0;
         int dy = 0;
         for (int i = 0; i < text.length(); i++) {
-            int ch = CharacterMap.getIndexForChar(text.charAt(i));
-            int tile = ch;
+            char ch = text.charAt(i);
+            if (ch == '^') {
+                i++;
+                ch = text.charAt(i);
+                switch (ch) {
+                case '^':
+                    break;
+                case '<':
+                    s.pop();
+                    break;
+                default:
+                    s.push(ch);
+                }
+            } else {
+                int tile = Characters.getIndexForChar(text.charAt(i));
 
-            int sx = tile * (FONT_WIDTH + FONT_SPACE);
-            int sy = 0;
+                int sx = tile * (FONT_WIDTH + FONT_SPACE);
+                int sy = s.getColor() * (FONT_HEIGHT);
 
-            g2.drawImage(font, dx, dy, dx + FONT_WIDTH, dy + FONT_HEIGHT, sx,
-                    sy, sx + FONT_WIDTH, sy + FONT_HEIGHT, this);
-            dx += FONT_WIDTH;
+                g2.setComposite(AlphaComposite.getInstance(
+                        AlphaComposite.SRC_OVER, s.getAlphaValue()));
+                g2.drawImage(font, dx, dy, dx + FONT_WIDTH, dy + FONT_HEIGHT,
+                        sx, sy, sx + FONT_WIDTH, sy + FONT_HEIGHT, this);
+                dx += FONT_WIDTH;
+            }
         }
+        g2.setComposite(ac);
     }
 
     private void paintGuy(Graphics2D g2) {
