@@ -13,7 +13,6 @@ import org.spacebar.escape.common.Level;
 import org.spacebar.escape.common.Misc;
 import org.spacebar.escape.common.Solution;
 import org.spacebar.escape.common.hash.MD5;
-import org.spacebar.escape.j2se.DrawnLevel;
 import org.spacebar.escape.j2se.PlayerInfo;
 
 public class TestSolutions {
@@ -41,6 +40,10 @@ public class TestSolutions {
             System.out.println("Please specify a directory with levels");
             System.exit(1);
         }
+
+        int good = 0;
+        int bad = 0;
+        int unknown = 0;
 
         try {
             // given a directory, search all player files and all level
@@ -74,6 +77,7 @@ public class TestSolutions {
 
                     if (l == null) {
                         System.out.println(" " + md5 + " ?");
+                        unknown++;
                         continue; // solution for unknown level?
                     }
 
@@ -96,27 +100,34 @@ public class TestSolutions {
                         System.out.print(" " + ls);
                         System.out.flush();
 
-//                        DrawnLevel d = new DrawnLevel(l);
+                        //                        DrawnLevel d = new DrawnLevel(l);
                         int result = sol.verify(l);
 
                         int pad = maxLevelString - ls.length() + 5;
                         while (pad-- > 0) {
                             System.out.print(" ");
                         }
-                        
+
                         if (result == sol.length()) {
                             System.out.println("OK");
+                            good++;
                         } else if (result == -1) {
-                            System.out.println("BAD at end");
+                            System.out.println("BAD at " + sol.length()
+                                    + " (end)");
+                            bad++;
                         } else {
                             System.out.println("BAD at " + result);
+                            bad++;
                         }
-//                        d.dispose();
+                        //                        d.dispose();
                     }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            System.out.println(good + " good, " + bad + " bad, " + unknown
+                    + " unknown");
         }
     }
 

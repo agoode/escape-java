@@ -306,34 +306,42 @@ public class Level {
         return tileAt(player.getX(), player.getY()) == T_EXIT;
     }
 
-    private IntPair travel(int x, int y, int d) {
+    private boolean travel(int x, int y, int d, IntPair result) {
         switch (d) {
         case Entity.DIR_UP:
             if (y == 0) {
-                return null;
+                return false;
             } else {
-                return new IntPair(x, y - 1);
+                result.x = x;
+                result.y = y - 1;
+                return true;
             }
         case Entity.DIR_DOWN:
             if (y == (height - 1)) {
-                return null;
+                return false;
             } else {
-                return new IntPair(x, y + 1);
+                result.x = x;
+                result.y = y + 1;
+                return true;
             }
         case Entity.DIR_LEFT:
             if (x == 0) {
-                return null;
+                return false;
             } else {
-                return new IntPair(x - 1, y);
+                result.x = x - 1;
+                result.y = y;
+                return true;
             }
         case Entity.DIR_RIGHT:
             if (x == (width - 1)) {
-                return null;
+                return false;
             } else {
-                return new IntPair(x + 1, y);
+                result.x = x + 1;
+                result.y = y;
+                return true;
             }
         default:
-            return null; /* ?? */
+            return false; /* ?? */
         }
     }
 
@@ -349,8 +357,8 @@ public class Level {
         for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
             int lx = player.getX(), ly = player.getY();
 
-            IntPair r;
-            while ((r = travel(lx, ly, dd)) != null) {
+            IntPair r = new IntPair();
+            while (travel(lx, ly, dd, r)) {
                 lx = r.x;
                 ly = r.y;
 
@@ -503,8 +511,8 @@ public class Level {
     }
 
     private boolean realMove(Entity ent, int d, Effects e) {
-        final IntPair newP;
-        if ((newP = travel(ent.getX(), ent.getY(), d)) != null) {
+        final IntPair newP = new IntPair();
+        if (travel(ent.getX(), ent.getY(), d, newP)) {
             return maybeDoMove(ent, d, e, newP);
         } else
             return false; // no move for sure
@@ -626,14 +634,12 @@ public class Level {
          * so keep travelling while the tile in the destination direction is a
          * sphere of any sort.
          */
-        IntPair t;
-
+        IntPair t = new IntPair();
         while (isSphere(tileAt(newP.x, newP.y))
                 && !(player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y))
-                && (t = travel(newP.x, newP.y, d)) != null
-                && isSphere(tileAt(t.x, t.y))) {
-            newP = t;
-            target = tileAt(t.x, t.y);
+                && travel(newP.x, newP.y, d, t) && isSphere(tileAt(t.x, t.y))) {
+            newP = new IntPair(t);
+            target = tileAt(newP.x, newP.y);
         }
 
         // can't push if entity there
@@ -650,8 +656,8 @@ public class Level {
             setTile(goldX, goldY, T_FLOOR);
         }
 
-        IntPair tGold;
-        while ((tGold = travel(goldX, goldY, d)) != null) {
+        IntPair tGold = new IntPair();
+        while (travel(goldX, goldY, d, tGold)) {
 
             int next = tileAt(tGold.x, tGold.y);
             if (!(next == T_ELECTRIC || next == T_PANEL || next == T_BPANEL
@@ -773,14 +779,14 @@ public class Level {
         boolean doSwap = false;
         //        boolean zap = false;
         //        boolean hole = false;
-        IntPair dest;
+        IntPair dest = new IntPair();
 
         if (target == T_LR && (d == Entity.DIR_UP || d == Entity.DIR_DOWN))
             return false;
         if (target == T_UD && (d == Entity.DIR_LEFT || d == Entity.DIR_RIGHT))
             return false;
 
-        if ((dest = travel(newP.x, newP.y, d)) != null) {
+        if (travel(newP.x, newP.y, d, dest)) {
             int destT = tileAt(dest.x, dest.y);
             if (player.isAt(dest.x, dest.y) || isBotAt(dest.x, dest.y)) {
                 return false;
@@ -863,7 +869,7 @@ public class Level {
              * go until not steel, or if we hit a robot anywhere along this, end
              */
             while (!isBotAt(curx, cury) && !player.isAt(curx, cury)
-                    && (dest = travel(curx, cury, d)) != null
+                    && travel(curx, cury, d, dest)
                     && isSteel(tileAt(dest.x, dest.y))) {
                 curx = dest.x;
                 cury = dest.y;
@@ -905,9 +911,9 @@ public class Level {
         /* move the steel blocks first. */
         {
             int moveX = dest.x, moveY = dest.y;
+            IntPair next = new IntPair();
             while (!(moveX == newP.x && moveY == newP.y)) {
-                IntPair next;
-                next = travel(moveX, moveY, revD);
+                travel(moveX, moveY, revD, next);
                 setTile(moveX, moveY, tileAt(next.x, next.y));
                 moveX = next.x;
                 moveY = next.y;
@@ -947,6 +953,7 @@ public class Level {
         {
             int lookX = dest.x, lookY = dest.y;
             int prevT = T_FLOOR; /* anything that doesn't trigger */
+            IntPair next = new IntPair();
             while (!(lookX == newP.x && lookY == newP.y)) {
 
                 int hereT = tileAt(lookX, lookY);
@@ -967,8 +974,7 @@ public class Level {
 
                 prevT = hereT;
 
-                IntPair next;
-                next = travel(lookX, lookY, revD);
+                travel(lookX, lookY, revD, next);
 
                 lookX = next.x;
                 lookY = next.y;
@@ -1005,6 +1011,7 @@ public class Level {
 
         {
             int lookx = dest.x, looky = dest.y;
+            IntPair next = new IntPair();
             while (!(lookx == newP.x && looky == newP.y)) {
 
                 if ((flagAt(lookx, looky) & TF_TEMP) == TF_TEMP) {
@@ -1013,8 +1020,7 @@ public class Level {
                 }
 
                 /* next */
-                IntPair next;
-                next = travel(lookx, looky, revD);
+                travel(lookx, looky, revD, next);
                 lookx = next.x;
                 looky = next.y;
             }
@@ -1034,8 +1040,8 @@ public class Level {
      * @return
      */
     private boolean doGreenBlockMove(Entity ent, int d, IntPair newP) {
-        IntPair dest;
-        if ((dest = travel(newP.x, newP.y, d)) != null) {
+        IntPair dest = new IntPair();
+        if (travel(newP.x, newP.y, d, dest)) {
             if (tileAt(dest.x, dest.y) == T_FLOOR && !isBotAt(dest.x, dest.y)
                     && !player.isAt(dest.x, dest.y)) {
                 setTile(dest.x, dest.y, T_BLUE);
@@ -1076,8 +1082,7 @@ public class Level {
             IntPair pulse = newP;
             int pd = dd;
 
-            while (pd != Entity.DIR_NONE
-                    && (pulse = travel(pulse.x, pulse.y, pd)) != null) {
+            while (pd != Entity.DIR_NONE && travel(pulse.x, pulse.y, pd, pulse)) {
                 switch (tileAt(pulse.x, pulse.y)) {
                 case T_BLIGHT:
                     swapTiles(T_BUP, T_BDOWN);
@@ -1274,8 +1279,8 @@ public class Level {
 
         if (pushee != null) {
             // we are pushing, do some sort of recursive push
-            IntPair far = travel(newP.x, newP.y, d);
-            if (far != null) {
+            IntPair far = new IntPair();
+            if (travel(newP.x, newP.y, d, far)) {
                 int fTarget = tileAt(far.x, far.y);
                 switch (fTarget) {
                 case T_ELECTRIC:
@@ -1409,33 +1414,33 @@ public class Level {
     public Level(Level l) {
         width = l.width;
         height = l.height;
-        
+
         author = l.author;
         title = l.title;
-        
+
         player = new Player(l.player.getX(), l.player.getY(), l.player.getDir());
-        
+
         tiles = new int[l.tiles.length];
         oTiles = new int[l.oTiles.length];
         dests = new int[l.dests.length];
         flags = new int[l.flags.length];
-        
+
         System.arraycopy(l.tiles, 0, tiles, 0, tiles.length);
         System.arraycopy(l.oTiles, 0, oTiles, 0, oTiles.length);
         System.arraycopy(l.dests, 0, dests, 0, dests.length);
         System.arraycopy(l.flags, 0, flags, 0, flags.length);
-        
+
         bots = new Bot[l.bots.length];
         for (int i = 0; i < l.bots.length; i++) {
             Bot b = l.bots[i];
             bots[i] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType());
-       }
-        
+        }
+
         dirty = new DirtyList();
-        
+
         isDead();
     }
-    
+
     public Level(BitInputStream in) throws IOException {
         MetaData m = getMetaData(in);
 
@@ -1515,7 +1520,7 @@ public class Level {
             int n = width * height;
             dirty = new boolean[n];
             dirtyList = new int[n];
-            
+
             setAllDirty();
         }
 
@@ -1559,11 +1564,11 @@ public class Level {
     }
 
     public String toString() {
-        return "[\"" + title + "\" by " + author + " (" + width + "x"
-                + height + ")" + " player: (" + this.player.getX() + ","
+        return "[\"" + title + "\" by " + author + " (" + width + "x" + height
+                + ")" + " player: (" + this.player.getX() + ","
                 + this.player.getY() + ")]";
     }
-    
+
     public void print(PrintStream p) {
         p.println(toString());
         p.println("\"" + title + "\" by " + author + " (" + width + ","
@@ -1670,17 +1675,17 @@ public class Level {
          */
 
         FNV32 hash = new FNV32();
-        
+
         // player
         hash.fnv32(player.getX());
         hash.fnv32(player.getY());
-        
+
         // tiles, oTiles
         for (int i = 0; i < tiles.length; i++) {
             hash.fnv32(tiles[i]);
             hash.fnv32(oTiles[i]);
         }
-        
+
         // bots
         for (int i = 0; i < bots.length; i++) {
             Bot b = bots[i];
@@ -1688,7 +1693,7 @@ public class Level {
             hash.fnv32(b.getX());
             hash.fnv32(b.getY());
         }
-        
+
         return hash.hval;
     }
 }

@@ -8,11 +8,16 @@ package org.spacebar.escape.common;
 
 
 public class IntPair {
-    final public int x;
-    final public int y;
+    public int x;
+    public int y;
 
     public IntPair(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+    public IntPair() {}
+    public IntPair(IntPair t) {
+        x = t.x;
+        y = t.y;
     }
 }
