@@ -26,23 +26,19 @@ public class ResourceUtils {
         System.out.print("loading " + name + "...");
         System.out.flush();
 
-        InputStream in = getLocalResourceAsStream(name);
-
         Clip clip = null;
         try {
-            AudioInputStream a = AudioSystem.getAudioInputStream(in);
+            AudioInputStream a = loadAudio(name);
             DataLine.Info dlInfo = new DataLine.Info(Clip.class, a.getFormat());
 
             clip = (Clip) mixer.getLine(dlInfo);
-            //            clip = (Clip) AudioSystem.getLine(dlInfo);
+//            clip = (Clip) AudioSystem.getLine(dlInfo);
             System.out.print(" " + clip.getLineInfo() + "...");
             System.out.flush();
             clip.open(a);
 
             System.out.println(" success!");
         } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        } catch (UnsupportedAudioFileException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,25 +47,65 @@ public class ResourceUtils {
         return clip;
     }
 
-    public static BufferedImage[] loadScaledImages(String name, int scales) {
-        if (scales < 1) {
-            throw new IllegalArgumentException("scales must be > 0");
+    public static AudioInputStream loadAudio(String name) {
+        InputStream in = getLocalResourceAsStream(name);
+        AudioInputStream a = null;
+        try {
+            a = AudioSystem.getAudioInputStream(in);
+        } catch (UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
         }
-        BufferedImage imgs[] = new BufferedImage[scales];
-        imgs[0] = loadImage(name);
-        for (int i = 1; i < scales; i++) {
-            BufferedImage img = imgs[i - 1];
+        return a;
+    }
+    
+    public static BufferedImage[] loadScaledImages(String name, int smaller,
+            int bigger) {
+        BufferedImage smallerImgs[] = new BufferedImage[smaller + 1];
+        final BufferedImage origImg = loadImage(name);
+
+        smallerImgs[0] = origImg;
+        for (int i = 1; i < smaller + 1; i++) {
+            final BufferedImage img = smallerImgs[i - 1];
             int w = img.getWidth() >> 1;
             int h = img.getHeight() >> 1;
 
-            imgs[i] = createCompatibleImage(w, h, img.getTransparency());
+            smallerImgs[i] = createCompatibleImage(w, h, img.getColorModel()
+                    .getTransparency());
 
-            Graphics2D g = imgs[i].createGraphics();
+            Graphics2D g = smallerImgs[i].createGraphics();
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                     RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g.scale(0.5, 0.5);
             g.drawImage(img, 0, 0, null);
             g.dispose();
+        }
+
+        BufferedImage biggerImgs[] = new BufferedImage[bigger];
+        for (int i = 0; i < bigger; i++) {
+            int scale = i + 1;
+
+            int w = origImg.getWidth() << scale;
+            int h = origImg.getHeight() << scale;
+
+            biggerImgs[i] = createCompatibleImage(w, h, origImg.getColorModel()
+                    .getTransparency());
+
+            Graphics2D g = biggerImgs[i].createGraphics();
+            g.scale(1 << scale, 1 << scale);
+            System.out.println(g.getTransform());
+            g.drawImage(origImg, 0, 0, null);
+            g.dispose();
+        }
+
+        final BufferedImage imgs[] = new BufferedImage[smaller + bigger + 1];
+        System.arraycopy(smallerImgs, 0, imgs, 0, smaller);
+        System.arraycopy(biggerImgs, 0, imgs, smaller, bigger);
+
+        for (int i = 0; i < imgs.length; i++) {
+            //            System.out.println("w: " + imgs[i].getWidth() + ", h: "
+            //                    + imgs[i].getHeight());
         }
 
         return imgs;
@@ -85,7 +121,7 @@ public class ResourceUtils {
         }
 
         BufferedImage img2 = createCompatibleImage(img.getWidth(), img
-                .getHeight(), img.getTransparency());
+                .getHeight(), img.getColorModel().getTransparency());
 
         Graphics2D g = img2.createGraphics();
         g.drawImage(img, 0, 0, null);

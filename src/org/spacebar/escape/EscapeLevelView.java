@@ -69,13 +69,13 @@ public class EscapeLevelView extends JComponent {
         public void actionPerformed(ActionEvent e) {
             if (smaller) {
                 scale++;
-                if (scale > SCALE_FACTORS - 1) {
-                    scale = SCALE_FACTORS - 1;
+                if (scale > SCALE_DOWN_FACTORS - 1) {
+                    scale = SCALE_DOWN_FACTORS - 1;
                 }
             } else {
                 scale--;
-                if (scale < -2) {
-                    scale = -2;
+                if (scale < -SCALE_UP_FACTORS) {
+                    scale = -SCALE_UP_FACTORS;
                 }
             }
 
@@ -84,6 +84,8 @@ public class EscapeLevelView extends JComponent {
             } else {
                 scaleVal = 1 / (double) (1 << scale);
             }
+
+            System.out.println("scale: " + scale + ", scaleVal: " + scaleVal);
 
             bufferPaint();
             repaint();
@@ -103,11 +105,14 @@ public class EscapeLevelView extends JComponent {
 
     private final static int FONT_MARGIN = 2;
 
-    private final static int SCALE_FACTORS = 6;
+    private final static int SCALE_DOWN_FACTORS = 5;
 
-    private final static BufferedImage[] player = ResourceUtils.loadScaledImages(
-            "player.png", SCALE_FACTORS);
-    
+    private final static int SCALE_UP_FACTORS = 2;
+
+    private final static BufferedImage[] player = ResourceUtils
+            .loadScaledImages("player.png", SCALE_DOWN_FACTORS,
+                    SCALE_UP_FACTORS);
+
     private final static int PLAYER_BORDER = 2;
 
     private final static int LEVEL_MARGIN = 12;
@@ -115,15 +120,15 @@ public class EscapeLevelView extends JComponent {
     private final static int TILE_SIZE = 32;
 
     private final static BufferedImage[] tiles = ResourceUtils
-            .loadScaledImages("tiles.png", SCALE_FACTORS);
+            .loadScaledImages("tiles.png", SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
 
     private final static int TILES_ACROSS = 16;
 
     static {
-        //        Effects e1 = new NESEffects();
+        Effects e1 = new NESEffects();
         Effects e2 = new TextEffects();
         CompoundEffects e = new CompoundEffects();
-        //        e.add(e1);
+        e.add(e1);
         e.add(e2);
         effects = e;
     }
@@ -168,37 +173,45 @@ public class EscapeLevelView extends JComponent {
     }
 
     void bufferPaint() {
-        bufferPaint(null);
-    }
-
-    private void bufferPaint(Rectangle clip) {
         if (backBuffer == null) {
             return;
         }
-        
+
+        int w = backBuffer.getWidth();
+        int h = backBuffer.getHeight();
+
         updateScroll();
 
         Graphics2D g2 = backBuffer.createGraphics();
-        g2.clip(clip);
 
+        // clear
         g2.setBackground(Color.BLACK);
-        g2.clearRect(0, 0, backBuffer.getWidth(), backBuffer.getHeight());
+        g2.clearRect(0, 0, w, h);
 
+        // save clip, setup for drawing level
+        Shape clip = g2.getClip();
+        g2.clip(new Rectangle(LEVEL_MARGIN, LEVEL_MARGIN, w - 2 * LEVEL_MARGIN,
+                h - 2 * LEVEL_MARGIN));
+
+        // save transform and translate
         AffineTransform origAT = g2.getTransform();
-
         g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
 
-        if (scaleVal > 1.0) {
-            g2.scale(scaleVal, scaleVal);
-        }
-
+        // paint things within boundaries of level
         paintLevel(g2);
         paintPlayer(g2);
 
+        // undo scale and draw laser
         g2.setTransform(origAT);
         g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
         paintLaser(g2);
 
+        // restore clip and draw the rest
+        g2.setClip(clip);
+        g2.setTransform(origAT);
+        paintArrows();
+
+        // restore transform and draw title
         g2.setTransform(origAT);
         g2.translate(FONT_MARGIN, FONT_MARGIN);
         paintTitle(g2);
@@ -289,12 +302,8 @@ public class EscapeLevelView extends JComponent {
     }
 
     private void paintPlayer(Graphics2D g2) {
-        int zoom = scale;
-        if (zoom < 0) {
-            zoom = 0;
-        }
-
-        int tileSize = TILE_SIZE / (1 << zoom);
+        int zoom = getZoomIndex();
+        int tileSize = getTileSize();
 
         int dx = (theLevel.getPlayerX() - xScroll) * tileSize;
         int dy = (theLevel.getPlayerY() - yScroll) * tileSize;
@@ -320,8 +329,16 @@ public class EscapeLevelView extends JComponent {
             break;
         }
 
-        g2.drawImage(player[zoom], dx, dy, dx + tileSize, dy + tileSize, sx, sy,
-                sx + tileSize, sy + tileSize, this);
+        g2.drawImage(player[zoom], dx, dy, dx + tileSize, dy + tileSize, sx,
+                sy, sx + tileSize, sy + tileSize, this);
+    }
+
+    private int getZoomIndex() {
+        int zoom = scale;
+        if (zoom < 0) {
+            zoom = -scale + SCALE_DOWN_FACTORS - 1;
+        }
+        return zoom;
     }
 
     private void paintLaser(Graphics2D g2) {
@@ -331,8 +348,10 @@ public class EscapeLevelView extends JComponent {
 
         int d = laser.getD();
 
-        int gx = (theLevel.getPlayerX() - xScroll) * TILE_SIZE + (TILE_SIZE >> 1);
-        int gy = (theLevel.getPlayerY() - yScroll) * TILE_SIZE + (TILE_SIZE >> 1);
+        int gx = (theLevel.getPlayerX() - xScroll) * TILE_SIZE
+                + (TILE_SIZE >> 1);
+        int gy = (theLevel.getPlayerY() - yScroll) * TILE_SIZE
+                + (TILE_SIZE >> 1);
 
         int lx = (laser.getX() - xScroll) * TILE_SIZE;
         int ly = (laser.getY() - yScroll) * TILE_SIZE;
@@ -393,15 +412,13 @@ public class EscapeLevelView extends JComponent {
     }
 
     private void paintLevel(Graphics2D g2) {
-        int zoom = scale;
-        if (zoom < 0) {
-            zoom = 0;
-        }
+        int zoom = getZoomIndex();
+        int tileSize = getTileSize();
+        System.out.println("tilesize: " + tileSize);
+        System.out.println("zoom: " + zoom);
 
-        int tileSize = TILE_SIZE / (1 << zoom);
-
-        for (int j = 0; j < paintedTilesDown; j++) {
-            for (int i = 0; i < paintedTilesAcross; i++) {
+        for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
+            for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
                 int dx = i * tileSize;
                 int dy = j * tileSize;
 
@@ -419,6 +436,17 @@ public class EscapeLevelView extends JComponent {
                         sx, sy, sx + tileSize, sy + tileSize, this);
             }
         }
+    }
+
+    private int getTileSize() {
+        if (scale < 0) {
+            return TILE_SIZE * (1 << -scale);
+        } else {
+            return TILE_SIZE / (1 << scale);
+        }
+    }
+
+    private void paintArrows() {
         if (xScroll > 0) {
             // left arrow
         }
@@ -463,21 +491,23 @@ public class EscapeLevelView extends JComponent {
 
         int playerBorderX = PLAYER_BORDER;
         int playerBorderY = PLAYER_BORDER;
-        
+
         if (paintedTilesAcross < playerBorderX * 2 + 1) {
             playerBorderX = Math.round(paintedTilesAcross / 2f) - 1;
             if (playerBorderX < 0) {
                 playerBorderX = 0;
             }
         }
-        
-        if (paintedTilesAcross < playerBorderY * 2 + 1) {
+
+        if (paintedTilesDown < playerBorderY * 2 + 1) {
             playerBorderY = Math.round(paintedTilesDown / 2f) - 1;
             if (playerBorderY < 0) {
                 playerBorderY = 0;
             }
         }
-        
+
+        System.out.println("pbx: " + playerBorderX + ", pby: " + playerBorderY);
+
         final int playerX = theLevel.getPlayerX();
         final int playerY = theLevel.getPlayerY();
         final int playerScreenX = playerX - xScroll;
@@ -549,14 +579,14 @@ public class EscapeLevelView extends JComponent {
                 repairDamage();
             }
         });
-        
+
         // restart
         addAction("ENTER", "restart", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 initLevel();
             }
         });
-        
+
         // quit
         addAction("ESCAPE", "exit", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
