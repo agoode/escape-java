@@ -241,24 +241,55 @@ public class Drawing {
         //        System.out.println("zoom: " + zoom);
 
         DirtyList d = theLevel.dirty;
-        for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
-            for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
-                int dx = i * tileSize;
-                int dy = j * tileSize;
+        if (d.isAnyDirty()) {
+            if (d.isAllDirty()) {
+                for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
+                    for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
+                        int dx = i * tileSize;
+                        int dy = j * tileSize;
 
-                if (d.isDirty(i, j)) {
-                    int tile;
-                    if (showBizarro) {
-                        tile = theLevel.oTileAt(i + xScroll, j + yScroll);
-                    } else {
-                        tile = theLevel.tileAt(i + xScroll, j + yScroll);
+                        int tile;
+                        tile = getTile(theLevel, i + xScroll, j + yScroll,
+                                showBizarro);
+
+                        paintTile(g2, zoom, tileSize, dx, dy, tile);
                     }
+                }
+            } else {
+                // some are dirty so just do those
+                for (int i = d.getNumDirty() - 1; i >= 0; i--) {
+                    int idx = d.getDirty(i);
+                    int x = idx % theLevel.getWidth();
+                    int y = idx / theLevel.getWidth();
 
+                    int dx = x * tileSize;
+                    int dy = y * tileSize;
+                    
+                    int tile = getTile(theLevel, x, y, showBizarro);
                     paintTile(g2, zoom, tileSize, dx, dy, tile);
                 }
             }
+            d.clearDirty();
         }
-        d.clearDirty();
+    }
+
+    /**
+     * @param theLevel
+     * @param x
+     * @param y
+     * @param xScroll
+     * @param yScroll
+     * @param showBizarro
+     * @return
+     */
+    private static int getTile(Level theLevel, int x, int y, boolean showBizarro) {
+        int tile;
+        if (showBizarro) {
+            tile = theLevel.oTileAt(x, y);
+        } else {
+            tile = theLevel.tileAt(x, y);
+        }
+        return tile;
     }
 
     static private void paintSprite(Graphics2D g2, Level theLevel, int xScroll,

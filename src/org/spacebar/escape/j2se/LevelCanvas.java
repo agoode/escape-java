@@ -11,7 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.image.VolatileImage;
+import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -32,6 +32,7 @@ public class LevelCanvas extends DoubleBufferCanvas {
     private final static int PLAYER_BORDER = 2;
 
     private final static int LEVEL_MARGIN_X = 12;
+
     private final static int LEVEL_MARGIN_Y = 15;
 
     static {
@@ -65,7 +66,7 @@ public class LevelCanvas extends DoubleBufferCanvas {
 
     private int paintedTilesDown;
 
-    private VolatileImage levelSurface;
+    private BufferedImage levelSurface;
 
     public LevelCanvas(Level l) {
         super();
@@ -89,8 +90,8 @@ public class LevelCanvas extends DoubleBufferCanvas {
 
         // save clip, setup for drawing level
         Shape clip = g.getClip();
-        g.clip(new Rectangle(LEVEL_MARGIN_X, LEVEL_MARGIN_Y, w - 2 * LEVEL_MARGIN_X,
-                h - 2 * LEVEL_MARGIN_Y));
+        g.clip(new Rectangle(LEVEL_MARGIN_X, LEVEL_MARGIN_Y, w - 2
+                * LEVEL_MARGIN_X, h - 2 * LEVEL_MARGIN_Y));
 
         // save transform and translate
         AffineTransform origAT = g.getTransform();
@@ -124,29 +125,30 @@ public class LevelCanvas extends DoubleBufferCanvas {
     private void paintLevel(Graphics2D g) {
         if (levelSurface == null) {
             initLevelSurface();
+            theLevel.dirty.setAllDirty();
         }
-        do {
-            int returnCode = levelSurface.validate(getGraphicsConfiguration());
-            if (returnCode == VolatileImage.IMAGE_RESTORED) {
-                theLevel.dirty.setAllDirty();
-            } else if (returnCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-                initLevelSurface();
-                theLevel.dirty.setAllDirty();
-            }
-
-            if (theLevel.dirty.isAnyDirty()) {
-                paintLevelToSurface();
-            }
-
-            g.drawImage(levelSurface, -xScroll * Drawing.getTileSize(scale),
-                    -yScroll * Drawing.getTileSize(scale), this);
-        } while (levelSurface.contentsLost());
+        System.out.println(theLevel.dirty);
+        if (theLevel.dirty.isAnyDirty()) {
+            paintLevelToSurface();
+        }
+        int sx1 = xScroll * Drawing.getTileSize(scale);
+        int sy1 = yScroll * Drawing.getTileSize(scale);
+        int w = theLevel.getWidth() * Drawing.getTileSize(scale);
+        int h = theLevel.getHeight() * Drawing.getTileSize(scale);
+        int sx2 = sx1 + w;
+        int sy2 = sy1 + h;
+        
+        System.out.print("drawImage... ");
+        System.out.flush();
+        long t = System.currentTimeMillis();
+        g.drawImage(levelSurface, 0, 0, w, h, sx1, sy1, sx2, sy2, null);
+        System.out.println("done in " + (System.currentTimeMillis() - t));
     }
 
     private void initLevelSurface() {
-        levelSurface = createVolatileImage(theLevel.getWidth()
-                * Drawing.getTileSize(scale), theLevel.getHeight()
-                * Drawing.getTileSize(scale));
+        levelSurface = getGraphicsConfiguration().createCompatibleImage(
+                theLevel.getWidth() * Drawing.getTileSize(scale),
+                theLevel.getHeight() * Drawing.getTileSize(scale));
     }
 
     /**

@@ -1515,6 +1515,23 @@ public class Level {
 
         private int numDirty;
 
+        /**
+         * @return Returns the allDirty.
+         */
+        public boolean isAllDirty() {
+            return allDirty;
+        }
+        /**
+         * @return Returns the numDirty.
+         */
+        public int getNumDirty() {
+            return numDirty;
+        }
+        
+        public int getDirty(int i) {
+            return dirtyList[i];
+        }
+        
         DirtyList() {
             int n = width * height;
             dirty = new boolean[n];
@@ -1524,7 +1541,7 @@ public class Level {
         }
 
         public void clearDirty() {
-            for (int i = dirty.length - 1; i >= 0; i--) {
+            for (int i = numDirty - 1; i >= 0; i--) {
                 dirty[i] = false;
             }
             numDirty = 0;
@@ -1559,6 +1576,25 @@ public class Level {
 
         public boolean isAnyDirty() {
             return allDirty || numDirty > 0;
+        }
+        
+        public String toString() {
+            StringBuffer sb = new StringBuffer("DirtyList: ");
+            if (allDirty) {
+                sb.append("all dirty");
+            } else if (numDirty > 0) {
+                sb.append("some dirty [");
+                for (int i = 0; i < numDirty; i++) {
+                    int idx = dirtyList[i];
+                    int x = idx % width;
+                    int y = idx / width;
+                    sb.append(" (" + x + "," + y + ")");
+                }
+                sb.append(" ]");
+            } else {
+                sb.append("clean");
+            }
+            return sb.toString();
         }
     }
 

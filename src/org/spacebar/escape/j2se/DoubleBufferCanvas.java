@@ -19,8 +19,6 @@ abstract public class DoubleBufferCanvas extends JComponent {
 
     private Overlay overlay;
 
-    private boolean paintingActive = true;
-
     protected Continuation theWayOut;
     
     DoubleBufferCanvas() {
@@ -55,10 +53,6 @@ abstract public class DoubleBufferCanvas extends JComponent {
         //        System.out.println("backBuffer: " + backBuffer);
     }
 
-    public boolean isPaintingActive() {
-        return paintingActive;
-    }
-
     final private void myBufferPaint(Graphics2D g) {
         synchronized (backBuffer) {
             bufferPaint(g);
@@ -69,10 +63,6 @@ abstract public class DoubleBufferCanvas extends JComponent {
     }
 
     final protected void paintComponent(Graphics g) {
-        if (!paintingActive) {
-            return;
-        }
-
         if (backBuffer == null || backBuffer.getHeight() != getHeight()
                 || backBuffer.getWidth() != getWidth()) {
             initBackBuffer();
@@ -96,10 +86,6 @@ abstract public class DoubleBufferCanvas extends JComponent {
     }
 
     final private void renderOffscreen() {
-        if (!paintingActive) {
-            return;
-        }
-
         do {
             if (backBuffer.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE) {
                 initBackBuffer();
@@ -113,16 +99,6 @@ abstract public class DoubleBufferCanvas extends JComponent {
     public void setOverlay(Overlay o) {
         overlay = o;
         bufferRepaint();
-    }
-
-    public void setPaintingActive(boolean b) {
-        paintingActive = b;
-        if (!paintingActive) {
-            backBuffer = null;
-        } else {
-            repaint();
-        }
-        System.out.println("paintingActive:" + paintingActive);
     }
 
     protected void addAction(String keyStroke, String name, Action a) {
