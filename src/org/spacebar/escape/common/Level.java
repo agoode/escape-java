@@ -1043,6 +1043,10 @@ public class Level {
      * @return
      */
     private boolean doGreenBlockMove(Entity ent, int d, IntPair newP) {
+        if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+            return false;
+        }
+
         IntPair dest = new IntPair();
         if (travel(newP.x, newP.y, d, dest)) {
             if (tileAt(dest.x, dest.y) == T_FLOOR && !isBotAt(dest.x, dest.y)
