@@ -6,8 +6,12 @@
  */
 package org.spacebar.escape.j2se;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.image.VolatileImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -40,7 +44,7 @@ public class LevelCanvas extends DoubleBufferCanvas {
 
     //    boolean done;
 
-    boolean showBizarro;
+    private boolean showBizarro;
 
     //    IntTriple laser;
 
@@ -60,12 +64,14 @@ public class LevelCanvas extends DoubleBufferCanvas {
 
     private int paintedTilesDown;
 
+    private VolatileImage levelSurface;
+
     public LevelCanvas(Level l) {
         super();
         theLevel = l;
         initLevel();
     }
-    
+
     public LevelCanvas(Level l, Continuation c) {
         super(c);
         theLevel = l;
@@ -92,7 +98,8 @@ public class LevelCanvas extends DoubleBufferCanvas {
         g.translate(LEVEL_MARGIN, LEVEL_MARGIN);
 
         // paint things within boundaries of level
-        paintAllLevel(g);
+        paintLevel(g);
+        paintSprites(g);
 
         // restore clip and draw the rest
         g.setTransform(origAT);
@@ -113,6 +120,37 @@ public class LevelCanvas extends DoubleBufferCanvas {
     }
 
     /**
+     * @param g
+     */
+    private void paintLevel(Graphics2D g) {
+        if (levelSurface == null) {
+            initLevelSurface();
+        }
+        do {
+            int returnCode = levelSurface.validate(getGraphicsConfiguration());
+            if (returnCode == VolatileImage.IMAGE_RESTORED) {
+                theLevel.dirty.setAllDirty();
+            } else if (returnCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+                initLevelSurface();
+                theLevel.dirty.setAllDirty();
+            }
+
+            if (theLevel.dirty.isAnyDirty()) {
+                paintLevelToSurface();
+            }
+
+            g.drawImage(levelSurface, -xScroll * Drawing.getTileSize(scale),
+                    -yScroll * Drawing.getTileSize(scale), this);
+        } while (levelSurface.contentsLost());
+    }
+
+    private void initLevelSurface() {
+        levelSurface = createVolatileImage(theLevel.getWidth()
+                * Drawing.getTileSize(scale), theLevel.getHeight()
+                * Drawing.getTileSize(scale));
+    }
+
+    /**
      * @throws IOException
      * @throws FileNotFoundException
      */
@@ -123,10 +161,18 @@ public class LevelCanvas extends DoubleBufferCanvas {
         bufferRepaint();
     }
 
-    private void paintAllLevel(Graphics2D g) {
-        Drawing
-                .paintAllLevel(g, theLevel, xScroll, yScroll, showBizarro,
-                        scale);
+    private void paintLevelToSurface() {
+        Graphics2D bg = levelSurface.createGraphics();
+        try {
+            Drawing.paintLevel(bg, theLevel, 0, 0, showBizarro, scale);
+        } finally {
+            bg.dispose();
+        }
+    }
+
+    private void paintSprites(Graphics2D g) {
+        Drawing.paintSprites(g, theLevel, xScroll, yScroll, scale);
+
     }
 
     private void paintArrows(Graphics2D g) {
@@ -263,10 +309,32 @@ public class LevelCanvas extends DoubleBufferCanvas {
         //        System.out.println("pta: " + paintedTilesAcross + ", ptd: "
         //                + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
     }
-    
+
     public void setLevel(Level l) {
         this.theLevel = l;
-        
+
         initLevel();
+    }
+
+    public void swapWithBizarro() {
+        showBizarro = !showBizarro;
+        theLevel.dirty.setAllDirty();
+    }
+
+    public void setRelativeScale(int s) {
+        int s2 = -s + scale;
+        setScale(s2);
+    }
+
+    private void setScale(int s) {
+        if (s > Drawing.SCALE_DOWN_FACTORS - 1) {
+            s = Drawing.SCALE_DOWN_FACTORS - 1;
+        } else if (s < -Drawing.SCALE_UP_FACTORS) {
+            s = -Drawing.SCALE_UP_FACTORS;
+        }
+        scale = s;
+        theLevel.dirty.setAllDirty();
+
+        bufferRepaint();
     }
 }

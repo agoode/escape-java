@@ -45,7 +45,7 @@ public class PlayCanvas extends LevelCanvas {
         // bizarro
         addAction("Y", "toggleAlt", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                showBizarro = !showBizarro;
+                swapWithBizarro();
                 bufferRepaint();
             }
         });
@@ -129,15 +129,9 @@ public class PlayCanvas extends LevelCanvas {
     
         public void actionPerformed(ActionEvent e) {
             if (smaller) {
-                scale++;
-                if (scale > Drawing.SCALE_DOWN_FACTORS - 1) {
-                    scale = Drawing.SCALE_DOWN_FACTORS - 1;
-                }
+                setRelativeScale(-1);
             } else {
-                scale--;
-                if (scale < -Drawing.SCALE_UP_FACTORS) {
-                    scale = -Drawing.SCALE_UP_FACTORS;
-                }
+                setRelativeScale(+1);
             }
     
             //            System.out.println("scale: " + scale + ", scaleVal: " +

@@ -7,16 +7,10 @@
 package org.spacebar.escape.j2se;
 
 import java.awt.*;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import org.spacebar.escape.common.*;
-import org.spacebar.escape.common.Characters;
-import org.spacebar.escape.common.IntTriple;
-import org.spacebar.escape.common.Level;
-import org.spacebar.escape.common.StyleStack;
+import org.spacebar.escape.common.Level.DirtyList;
 
 /**
  * @author adam
@@ -113,13 +107,6 @@ public class Drawing {
         return zoom;
     }
 
-    static public void paintAllLevel(Graphics2D g, Level theLevel, int xScroll,
-            int yScroll, boolean showBizarro, int scale) {
-        paintLevel(g, theLevel, xScroll, yScroll, showBizarro, scale);
-        paintSprites(g, theLevel, xScroll, yScroll, scale);
-        paintLaser(g, theLevel, xScroll, yScroll, scale);
-    }
-
     /**
      * @param g
      * @param theLevel
@@ -128,7 +115,7 @@ public class Drawing {
      * @param playerDir
      * @param scale
      */
-    private static void paintSprites(Graphics2D g, Level theLevel, int xScroll,
+    public static void paintSprites(Graphics2D g, Level theLevel, int xScroll,
             int yScroll, int scale) {
         int spriteCount = 1 + theLevel.getBotCount();
 
@@ -148,7 +135,7 @@ public class Drawing {
             for (int j = 0; j < row.length; j++) {
                 if (row[j] == 0) {
                     row[j] = z; // don't clobber sprites (but wasteful of
-                                // memory)
+                    // memory)
                     break;
                 }
             }
@@ -163,10 +150,11 @@ public class Drawing {
                 }
 
                 int index = row[j] - 1000;
-                paintSprite(g, theLevel, xScroll, yScroll, index,
-                        scale);
+                paintSprite(g, theLevel, xScroll, yScroll, index, scale);
             }
         }
+
+        paintLaser(g, theLevel, xScroll, yScroll, scale);
     }
 
     static private void paintLaser(Graphics2D g2, Level theLevel, int xScroll,
@@ -244,34 +232,32 @@ public class Drawing {
         g2.fill(inner);
     }
 
-    static private void paintLevel(Graphics2D g2, Level theLevel, int xScroll,
+    static public void paintLevel(Graphics2D g2, Level theLevel, int xScroll,
             int yScroll, boolean showBizarro, int scale) {
         int zoom = getZoomIndex(scale);
         int tileSize = getTileSize(scale);
         //        System.out.println("tilesize: " + tileSize);
         //        System.out.println("zoom: " + zoom);
 
-        Rectangle clip = g2.getClipBounds();
-        ROW: for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
-            COL: for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
+        DirtyList d = theLevel.dirty;
+        for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
+            for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
                 int dx = i * tileSize;
                 int dy = j * tileSize;
 
-                if (clip != null
-                        && !clip.intersects(dx, dy, tileSize, tileSize)) {
-                    continue COL;
-                }
+                if (d.isDirty(i, j)) {
+                    int tile;
+                    if (showBizarro) {
+                        tile = theLevel.oTileAt(i + xScroll, j + yScroll);
+                    } else {
+                        tile = theLevel.tileAt(i + xScroll, j + yScroll);
+                    }
 
-                int tile;
-                if (showBizarro) {
-                    tile = theLevel.oTileAt(i + xScroll, j + yScroll);
-                } else {
-                    tile = theLevel.tileAt(i + xScroll, j + yScroll);
+                    paintTile(g2, zoom, tileSize, dx, dy, tile);
                 }
-
-                paintTile(g2, zoom, tileSize, dx, dy, tile);
             }
         }
+        d.clearDirty();
     }
 
     static private void paintSprite(Graphics2D g2, Level theLevel, int xScroll,
@@ -288,7 +274,7 @@ public class Drawing {
         if (theLevel.isBotDeleted(botIndex)) {
             return;
         }
-        
+
         int zoom = getZoomIndex(scale);
         int tileSize = getTileSize(scale);
 
