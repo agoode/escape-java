@@ -1,7 +1,10 @@
 package org.spacebar.escape;
 
+import java.io.*;
+
 import org.spacebar.escape.util.IntPair;
 import org.spacebar.escape.util.IntTriple;
+import org.spacebar.escape.util.RunLengthEncoding;
 
 public class Level {
 
@@ -254,9 +257,9 @@ public class Level {
     String author;
 
     // width, height
-    int w;
+    private final int w;
 
-    int h;
+    private final int h;
 
     // location of guy
     int guyX;
@@ -264,16 +267,16 @@ public class Level {
     int guyY;
 
     // shown
-    int tiles[];
+    private final int tiles[];
 
     // "other" (tiles swapped into bizarro world by panels)
-    int otiles[];
+    private final int oTiles[];
 
     // destinations for transporters and panels (as index into tiles)
-    int dests[];
+    private final int dests[];
 
     // has a panel (under a pushable block)? etc.
-    int flags[];
+    private final int flags[];
 
     // the meat
     void warp(int targX, int targY) {
@@ -306,7 +309,7 @@ public class Level {
     }
 
     int oTileAt(int x, int y) {
-        return otiles[y * w + x];
+        return oTiles[y * w + x];
     }
 
     void setTile(int x, int y, int t) {
@@ -314,7 +317,7 @@ public class Level {
     }
 
     void oSetTile(int x, int y, int t) {
-        otiles[y * w + x] = t;
+        oTiles[y * w + x] = t;
     }
 
     void setDest(int x, int y, int xd, int yd) {
@@ -400,8 +403,8 @@ public class Level {
 
     void swapO(int idx) {
         int tmp = tiles[idx];
-        tiles[idx] = otiles[idx];
-        otiles[idx] = tmp;
+        tiles[idx] = oTiles[idx];
+        oTiles[idx] = tmp;
 
         /* swap haspanel/opanel and their refinements as well */
         flags[idx] =
@@ -871,4 +874,95 @@ public class Level {
             return false;
     }
 
+    
+    public Level(InputStream in) throws IOException {
+        byte buf[] = new byte[4];
+        
+        in.read(buf);
+        if (!new String(buf).equals("ESXL")) {
+            throw new RuntimeException("Bad magic");
+        }
+        
+        w = getIntFromStream(in);
+        h = getIntFromStream(in);
+        
+        int size;
+        
+        size = getIntFromStream(in);
+        title = getStringFromStream(in, size);
+        
+        size = getIntFromStream(in);
+        author = getStringFromStream(in, size);
+        
+        guyX = getIntFromStream(in);
+        guyY = getIntFromStream(in);
+        
+        tiles = RunLengthEncoding.decode(in, w*h);
+        oTiles = RunLengthEncoding.decode(in, w*h);
+        dests = RunLengthEncoding.decode(in, w*h);
+        flags = RunLengthEncoding.decode(in, w*h);
+    }
+    
+    public void print(PrintStream p) {
+        p.println("\"" + title + "\" by " + author + " (" + w + "," + h + ")" +
+                " guy: (" + guyX + "," + guyY + ")");
+        p.println();
+        p.println("tiles");
+        printM(p, tiles, w);
+        
+        p.println();
+        p.println("oTiles");
+        printM(p, oTiles, w);
+
+        p.println();
+        p.println("dests");
+        printM(p, dests, w);
+
+        p.println();
+        p.println("flags");
+        printM(p, flags, w);
+    }
+    
+    private void printM(PrintStream p, int[] m, int w) {
+        int l = 0;
+        for (int i = 0; i < m.length; i++) {
+            p.print((char) (m[i]+32));
+            l++;
+            if (l == w) {
+                p.println();
+                l = 0;
+            }
+        }
+    }
+    
+    private int getIntFromStream(InputStream in) throws IOException {
+        int r = 0;
+        r += in.read() << 24;
+        r += in.read() << 16;
+        r += in.read() << 8;
+        r += in.read();
+        
+        return r;
+    }
+    
+    private String getStringFromStream(InputStream in, int size) throws IOException {
+        byte buf[] = new byte[size];
+        
+        in.read(buf);
+        
+        String result = new String(buf);
+        return(result);
+    }
+    
+    public static void main(String args[]) {
+        File f = new File(args[0]);
+        try {
+            Level l = new Level(new FileInputStream(f));
+            l.print(System.out);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
