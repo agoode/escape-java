@@ -155,17 +155,15 @@ public class ResourceUtil {
     public static BufferedImage stitchHoriz(BufferedImage imgs[]) {
         int height = 0;
         int maxWidth = 0;
-        int transparency = 0; // can be 1, 2, 3 for opaque, bitmap, transparent
 
         // get max height and width and transparency
         for (int i = 0; i < imgs.length; i++) {
             height = Math.max(height, imgs[i].getHeight());
             maxWidth = Math.max(maxWidth, imgs[i].getWidth());
-            transparency = Math.max(transparency, imgs[i].getTransparency());
         }
 
         BufferedImage newImg = createCompatibleImage(maxWidth * imgs.length, height,
-                transparency);
+                Transparency.TRANSLUCENT);
 //        System.out.println(newImg);
         Graphics2D g2 = newImg.createGraphics();
         int dx = 0;

@@ -3,13 +3,17 @@ package org.spacebar.escape;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.spacebar.escape.common.*;
 import org.spacebar.escape.common.BitInputStream;
 import org.spacebar.escape.common.Level;
 import org.spacebar.escape.common.Misc;
+import org.spacebar.escape.common.Solution;
 import org.spacebar.escape.common.hash.MD5;
+import org.spacebar.escape.j2se.DrawnLevel;
 import org.spacebar.escape.j2se.PlayerInfo;
 
 public class TestSolutions {
@@ -92,8 +96,8 @@ public class TestSolutions {
                         System.out.print(" " + ls);
                         System.out.flush();
 
-                        //                        DrawnLevel d = new DrawnLevel(l);
-                        int result = sol.verify(l);
+                        DrawnLevel d = new DrawnLevel(l);
+                        int result = sol.verify(d);
 
                         int pad = maxLevelString - ls.length() + 5;
                         while (pad-- > 0) {
@@ -107,7 +111,7 @@ public class TestSolutions {
                         } else {
                             System.out.println("BAD at " + result);
                         }
-                        //                        d.dispose();
+                        d.dispose();
                     }
                 }
             }
