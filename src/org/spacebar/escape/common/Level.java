@@ -547,7 +547,7 @@ public class Level {
     }
 
     private void swapTiles(int t1, int t2) {
-        for (int i = 0; i < width * height; i++) {
+        for (int i = (width * height) - 1; i >= 0; i--) {
             if (tiles[i] == t1)
                 setTile(i, t2);
             else if (tiles[i] == t2)
@@ -556,7 +556,7 @@ public class Level {
     }
 
     void clearFlag(int fl) {
-        for (int i = 0; i < width * height; i++) {
+        for (int i = (width * height) - 1; i >= 0; i--) {
             flags[i] &= ~fl;
         }
     }
@@ -606,7 +606,7 @@ public class Level {
 
             case T_ON: {
                 e.doElectricOff();
-                for (int i = 0; i < width * height; i++) {
+                for (int i = (width * height) - 1; i >= 0; i--) {
                     if (tiles[i] == T_ELECTRIC)
                         setTile(i, T_FLOOR);
                 }

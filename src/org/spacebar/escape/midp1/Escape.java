@@ -31,7 +31,7 @@ public class Escape extends MIDlet {
         byte theLevel[];
         try {
             theLevel = Misc.getByteArrayFromInputStream(getClass()
-                    .getResourceAsStream("/lev162.esx"));
+                    .getResourceAsStream("/lev204.esx"));
             canvas = new EscapeCanvas(theLevel);
         } catch (IOException e) {
             e.printStackTrace();

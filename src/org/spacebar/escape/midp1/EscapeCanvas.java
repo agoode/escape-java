@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
@@ -24,17 +25,24 @@ import org.spacebar.escape.common.Level;
  */
 public class EscapeCanvas extends Canvas {
 
-    private static final int TILES_ACROSS = 16;
+    private static final byte TILES_ACROSS = 16;
 
-    private static final int TILE_SIZE = 16;
+    private static final byte TILE_SIZE = 8;
+
+    private static final Font font = Font.getFont(Font.FACE_MONOSPACE,
+            Font.STYLE_PLAIN, Font.SIZE_SMALL);
+
+    //    private static final byte NUM_IMAGES = 4;
 
     final byte origLevel[];
 
     Level theLevel;
 
-    final static Image tiles[] = ResourceUtil.loadImages("/tiles", 4, ".png");
+    //    final static Image tiles[] = ResourceUtil.loadImages("/tiles",
+    // NUM_IMAGES, ".png");
+    final static Image tiles = ResourceUtil.loadImage("/tiles8x8.png");
 
-    final static Image player = ResourceUtil.loadImage("/player.png");
+    final static Image player = ResourceUtil.loadImage("/player8x8.png");
 
     private byte playerDir;
 
@@ -49,25 +57,23 @@ public class EscapeCanvas extends Canvas {
         playerDir = Level.DIR_DOWN;
     }
 
-    static private void drawTile(Graphics g, int tile, int dx, int dy) {
-        int si = tile / tiles.length;
-        int sx = (tile % (TILES_ACROSS / tiles.length)) * TILE_SIZE;
+    static private void drawTile(Graphics g, int tile) {
+        //        int si = (tile % TILES_ACROSS) / tiles.length;
+        //        int sx = (tile % (TILES_ACROSS / tiles.length)) * TILE_SIZE;
+        int sx = tile % TILES_ACROSS * TILE_SIZE;
         int sy = tile / TILES_ACROSS * TILE_SIZE;
 
-        int px = dx - sx;
-        int py = dy - sy;
-        
         int cx = g.getClipX();
         int cy = g.getClipY();
         int cw = g.getClipWidth();
         int ch = g.getClipHeight();
-        
-        Image t = tiles[si];
-        
-        g.clipRect(dx, dy, TILE_SIZE, TILE_SIZE);
-        g.drawImage(t, px, py, Graphics.TOP|Graphics.LEFT);
-//        System.out.println("s: " + sx + " " + sy + ", d: " + dx + " " + dy
-//                + ", p:" + px + " " + py);
+
+        //        Image t = tiles[si];
+
+        g.clipRect(0, 0, TILE_SIZE, TILE_SIZE);
+        g.drawImage(tiles, -sx, -sy, Graphics.TOP | Graphics.LEFT);
+        //        System.out.println("s: " + sx + " " + sy + ", d: " + dx + " " + dy
+        //                + ", p:" + px + " " + py);
         g.setClip(cx, cy, cw, ch);
     }
 
@@ -75,25 +81,33 @@ public class EscapeCanvas extends Canvas {
         int h = getHeight();
         int w = getWidth();
 
+        g.setFont(font);
+
         g.setColor(0, 0, 0);
         g.fillRect(0, 0, w, h);
-        
-        int lh = theLevel.getHeight();
-        int lw = theLevel.getWidth();
 
-        for (int j = 0; j < lh; j++) {
-            for (int i = 0; i < lw; i++) {
-                int dx = i * TILE_SIZE;
-                int dy = j * TILE_SIZE;
+        int lw = theLevel.getWidth();
+        int lh = theLevel.getHeight();
+
+        g.translate((lw - 1) * TILE_SIZE, (lh - 1) * TILE_SIZE);
+        int origX = g.getTranslateX();
+        for (int j = lh - 1; j >= 0; j--) {
+            g.translate(origX - g.getTranslateX(), 0);
+            for (int i = lw - 1; i >= 0; i--) {
 
                 int t = theLevel.tileAt(i, j);
-                drawTile(g, t, dx, dy);
+                drawTile(g, t);
+                g.translate(-TILE_SIZE, 0);
             }
+            g.translate(0, -TILE_SIZE);
         }
+
+        g.translate(-g.getTranslateX(), -g.getTranslateY());
         drawPlayer(g);
 
         g.setColor(255, 255, 255);
-        g.drawString(theLevel.getTitle(), 0, 0, Graphics.TOP|Graphics.LEFT);
+        g.translate(-g.getTranslateX(), -g.getTranslateY());
+        g.drawString(theLevel.getTitle(), 0, 0, Graphics.TOP | Graphics.LEFT);
     }
 
     private void drawPlayer(Graphics g) {
@@ -102,16 +116,18 @@ public class EscapeCanvas extends Canvas {
         int sx = playerDir % 2 * TILE_SIZE;
         int sy = playerDir / 2 * TILE_SIZE;
 
-//        dx = 0;
-//        dy = 2 * TILE_SIZE;
+        //        dx = 0;
+        //        dy = 2 * TILE_SIZE;
+
+        g.translate(dx, dy);
         
         int cx = g.getClipX();
         int cy = g.getClipY();
         int cw = g.getClipWidth();
         int ch = g.getClipHeight();
-        
-        g.clipRect(dx, dy, TILE_SIZE, TILE_SIZE);
-        g.drawImage(player, dx - sx, dy - sy, Graphics.TOP|Graphics.LEFT);
+
+        g.clipRect(0, 0, TILE_SIZE, TILE_SIZE);
+        g.drawImage(player, -sx, -sy, Graphics.TOP | Graphics.LEFT);
         g.setClip(cx, cy, cw, ch);
     }
 }
