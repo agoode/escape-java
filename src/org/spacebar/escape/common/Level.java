@@ -763,6 +763,10 @@ public class Level {
      */
     private boolean doSimpleBlockMove(Entity ent, int d, Effects e, int target,
             IntPair newP) {
+        if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+            return false;
+        }
+
         /*
          * we're always stepping onto the panel that the block was on, so we
          * don't need to change its state. (if it's a regular panel, then don't
@@ -1201,18 +1205,20 @@ public class Level {
      * @return
      */
     private boolean doToggleMove(Effects e, int target, IntPair newP) {
-        {
-            int opp = (target == T_0 ? T_1 : T_0);
-
-            swapTiles(T_UD, T_LR);
-
-            if (e != null) {
-                e.doSwap();
-            }
-            setTile(newP.x, newP.y, opp);
-
-            return true;
+        if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+            return false;
         }
+
+        int opp = (target == T_0 ? T_1 : T_0);
+
+        swapTiles(T_UD, T_LR);
+
+        if (e != null) {
+            e.doSwap();
+        }
+        setTile(newP.x, newP.y, opp);
+
+        return true;
     }
 
     /**
