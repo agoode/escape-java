@@ -1079,7 +1079,7 @@ public class Level {
     private boolean doButtonMove(Effects e, IntPair newP) {
         for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
             /* send a pulse in that direction. */
-            IntPair pulse = newP;
+            IntPair pulse = new IntPair(newP);
             int pd = dd;
 
             while (pd != Entity.DIR_NONE && travel(pulse.x, pulse.y, pd, pulse)) {
