@@ -38,8 +38,7 @@ public class EscapeLevelView extends JPanel {
 
     private final static BufferedImage guy;
     static {
-        ClassLoader c = EscapeMain.class.getClassLoader();
-        URL tURL = c.getResource("org/spacebar/escape/resources/tiles.png");
+        URL tURL = ResourceUtils.getLocalResource("tiles.png");
         BufferedImage myTiles = null;
         try {
             myTiles = ImageIO.read(tURL);
@@ -48,7 +47,7 @@ public class EscapeLevelView extends JPanel {
         }
         tiles = myTiles;
 
-        tURL = c.getResource("org/spacebar/escape/resources/player.png");
+        tURL = ResourceUtils.getLocalResource("player.png");
         BufferedImage myGuy = null;
         try {
             myGuy = ImageIO.read(tURL);
@@ -58,7 +57,15 @@ public class EscapeLevelView extends JPanel {
         guy = myGuy;
     }
     
-    final static Effects effects = new DefaultEffects();
+    final static Effects effects;
+    static {
+        Effects e1 = new NESEffects();
+        Effects e2 = new TextEffects();
+        EffectsCombiner e = new EffectsCombiner();
+        e.add(e1);
+        e.add(e2);
+        effects = e;
+    }
 
     private final static int TILE_SIZE = 32;
 

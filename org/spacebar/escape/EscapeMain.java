@@ -29,7 +29,7 @@ public class EscapeMain extends JFrame {
         super("Escape");
         
         // icon
-        URL u = getClass().getClassLoader().getResource("org/spacebar/escape/resources/icon.png");
+        URL u = ResourceUtils.getLocalResource("icon.png");
         try {
             setIconImage(ImageIO.read(u));
         } catch (IOException e) {

@@ -6,9 +6,7 @@
  */
 package org.spacebar.escape;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
-import java.net.URL;
+import javax.sound.sampled.Clip;
 
 /**
  * @author adam
@@ -18,119 +16,84 @@ import java.net.URL;
  */
 public class NESEffects implements Effects {
 
-    private final AudioClip broken;
+    private static final Clip broken = ResourceUtils.loadClip("nes/broken.wav");
 
-    private final AudioClip electricOff;
+    private static final Clip electricOff = ResourceUtils
+            .loadClip("nes/electric-off.wav");
 
-    private final AudioClip exit;
+    private static final Clip exit = ResourceUtils.loadClip("nes/exit.wav");
 
-    private final AudioClip hole;
+    private static final Clip hole = ResourceUtils.loadClip("nes/hole.wav");
 
-    private final AudioClip laser;
+    private static final Clip laser = ResourceUtils.loadClip("nes/laser.wav");
 
-    private final AudioClip noStep;
+    private static final Clip noStep = ResourceUtils
+            .loadClip("nes/no-step.wav");
 
-    private final AudioClip pulse;
+    private static final Clip pulse = ResourceUtils.loadClip("nes/pulse.wav");
 
-    private final AudioClip slide;
+    private static final Clip slide = ResourceUtils.loadClip("nes/slide.wav");
 
-    private final AudioClip step;
+    private static final Clip step = ResourceUtils.loadClip("nes/step.wav");
 
-    private final AudioClip swap;
+    private static final Clip swap = ResourceUtils.loadClip("nes/swap.wav");
 
-    private final AudioClip transport;
+    private static final Clip transport = ResourceUtils
+            .loadClip("nes/transport.wav");
 
-    private final AudioClip zap;
+    private static final Clip zap = ResourceUtils.loadClip("nes/zap.wav");
 
-    private final static String resPrefix = "org/spacebar/escape/resources/nes/";
-
-    public NESEffects() {
-        ClassLoader c = getClass().getClassLoader();
-        URL u;
-
-        u = c.getResource(resPrefix + "broken.wav");
-        broken = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "electric-off.wav");
-        electricOff = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "exit.wav");
-        exit = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "hole.wav");
-        hole = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "laser.wav");
-        laser = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "no-step.wav");
-        noStep = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "pulse.wav");
-        pulse = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "slide.wav");
-        slide = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "step.wav");
-        step = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "swap.wav");
-        swap = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "transport.wav");
-        transport = Applet.newAudioClip(u);
-
-        u = c.getResource(resPrefix + "zap.wav");
-        zap = Applet.newAudioClip(u);
+    private void rewindAndPlay(Clip c) {
+        System.out.println("playing " + c);
+        c.setFramePosition(0);
+        c.loop(0);
     }
     
-    
     public void doBroken() {
-        broken.play();
+        rewindAndPlay(broken);
     }
 
     public void doElectricOff() {
-        electricOff.play();
+        rewindAndPlay(electricOff);
     }
 
     public void doExit() {
-        exit.play();
+        rewindAndPlay(exit);
     }
 
     public void doHole() {
-        hole.play();
+        rewindAndPlay(hole);
     }
 
     public void doLaser() {
-        laser.play();
+        rewindAndPlay(laser);
     }
 
     public void doNoStep() {
-        noStep.play();
+        rewindAndPlay(noStep);
     }
 
     public void doPulse() {
-        pulse.play();
+        rewindAndPlay(pulse);
     }
 
     public void doSlide() {
-        slide.play();
+        rewindAndPlay(slide);
     }
 
     public void doStep() {
-        step.play();
+        rewindAndPlay(step);
     }
 
     public void doSwap() {
-        swap.play();
+        rewindAndPlay(swap);
     }
 
     public void doTransport() {
-        transport.play();
+        rewindAndPlay(transport);
     }
 
     public void doZap() {
-        zap.play();
+        rewindAndPlay(zap);
     }
 }
