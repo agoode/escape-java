@@ -6,65 +6,83 @@
  */
 package org.spacebar.escape.util;
 
+import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
  * @author adam
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * 
+ * TODO To change the template for this generated type comment go to Window -
+ * Preferences - Java - Code Style - Code Templates
  */
 public class RunLengthEncoding {
-    public static int[] decode(InputStream in, int len) throws IOException {
+    public static int[] decode(BitInputStream in, int len) throws IOException {
         int result[] = new int[len];
-        
-        int bytes = in.read();
-        if (bytes > 1) {
-            throw new IOException("Bad file bytecount: " + bytes);
+
+        // number of bytes to represent one integer
+        final int bytecount = in.read();
+        if (bytecount == -1) {
+            throw new EOFException();
         }
-        
+
+        int bits;
+        int framebits = 8;
+        if ((bytecount & 128) == 128) {
+            if ((bytecount & 64) == 64) {
+                framebits = in.readBits(5);
+            }
+            bits = bytecount & 63;
+        } else {
+            if (bytecount > 4) {
+                throw new IOException("Bad file bytecount: " + bytecount);
+            }
+            bits = bytecount * 8;
+        }
+
+//        System.out.println("bits:" + bits + ", bytecount: " + bytecount
+//                + ", framebits: " + framebits);
+
         int run;
         int ri = 0;
         while (ri < len) {
-            run = in.read();
-            
+            run = in.readBits(framebits);
+
             int ch;
             if (run == 0) {
                 // anti-run
-                run = in.read();
-//                System.out.println();
-//                System.out.print("skipping " + run + ": ");
-//                System.out.flush();
+                run = in.readBits(framebits);
+                //                System.out.println();
+                //                System.out.print("skipping " + run + ": ");
+                //                System.out.flush();
                 for (int i = 0; i < run; i++) {
-                    ch = in.read();
-//                    System.out.print(ch + " ");
-//                    System.out.flush();
+                    ch = in.readBits(bits);
+                    //                    System.out.print(ch + " ");
+                    //                    System.out.flush();
                     result[ri++] = ch;
                 }
             } else {
                 // run
-                if (bytes == 1) {
+                if (bytecount == 1) {
                     ch = in.read();
                 } else {
                     ch = 0;
                 }
-//                System.out.println();
-//                System.out.print(run + " " + ch + "\'s: ");
-//                System.out.flush();
+                //                System.out.println();
+                //                System.out.print(run + " " + ch + "\'s: ");
+                //                System.out.flush();
                 for (int i = 0; i < run; i++) {
-//                    System.out.print(ch + " ");
-//                    System.out.flush();
+                    //                    System.out.print(ch + " ");
+                    //                    System.out.flush();
                     result[ri++] = ch;
                 }
             }
         }
-        
+
         return result;
     }
-    
+
     public static void encode(OutputStream out, int[] data) {
-        
+
     }
 }

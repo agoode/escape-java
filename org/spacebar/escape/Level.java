@@ -2,6 +2,7 @@ package org.spacebar.escape;
 
 import java.io.*;
 
+import org.spacebar.escape.util.BitInputStream;
 import org.spacebar.escape.util.IntPair;
 import org.spacebar.escape.util.IntTriple;
 import org.spacebar.escape.util.RunLengthEncoding;
@@ -875,12 +876,10 @@ public class Level {
     }
 
     
-    public Level(InputStream in) throws IOException {
-        byte buf[] = new byte[4];
-        
-        in.read(buf);
-        if (!new String(buf).equals("ESXL")) {
-            throw new RuntimeException("Bad magic");
+    public Level(BitInputStream in) throws IOException {
+        String magic = getStringFromStream(in, 4);
+        if (!magic.equals("ESXL")) {
+            throw new IOException("Bad magic");
         }
         
         w = getIntFromStream(in);
@@ -957,7 +956,7 @@ public class Level {
     public static void main(String args[]) {
         File f = new File(args[0]);
         try {
-            Level l = new Level(new FileInputStream(f));
+            Level l = new Level(new BitInputStream(new FileInputStream(f)));
             l.print(System.out);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
