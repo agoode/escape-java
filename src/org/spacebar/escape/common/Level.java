@@ -6,6 +6,68 @@ import org.spacebar.escape.common.hash.FNV32;
 
 public class Level {
 
+    public static class Solution {
+        byte solution[];
+
+        int solutionCount;
+
+        public int getSolutionCount() {
+            return solutionCount;
+        }
+        
+        public String toString() {
+            StringBuffer sb = new StringBuffer();
+            sb.append("solution: [");
+            for (int i = 0; i < solutionCount; i++) {
+                int d = solution[i];
+                String s;
+                switch (d) {
+                case Entity.DIR_UP:
+                    //                            s = "up";
+                    s = "↑";
+                    break;
+                case Entity.DIR_DOWN:
+                    //                            s = "down";
+                    s = "↓";
+                    break;
+                case Entity.DIR_LEFT:
+                    //                            s = "left";
+                    s = "←";
+                    break;
+                case Entity.DIR_RIGHT:
+                    //                            s = "right";
+                    s = "→";
+                    break;
+                default:
+                    s = "?";
+                }
+                sb.append(s);
+                if (i != solutionCount - 1) {
+                    sb.append(" ");
+                }
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+
+        public void addToSolution(int dir) {
+            if (solution == null) {
+                solution = new byte[16];
+            }
+
+            solutionCount++;
+
+            if (solutionCount == solution.length) {
+                // extend
+                byte b[] = new byte[(int) (solution.length * 1.5)];
+                System.arraycopy(solution, 0, b, 0, solution.length);
+                solution = b;
+            }
+
+            solution[solutionCount - 1] = (byte) dir;
+        }
+    }
+    
     public static class MetaData {
         final public int width;
 
@@ -213,100 +275,6 @@ public class Level {
         return bots.length;
     }
 
-    // static functions
-    static int turnLeft(int d) {
-        switch (d) {
-        case Entity.DIR_UP:
-            return Entity.DIR_LEFT;
-        case Entity.DIR_DOWN:
-            return Entity.DIR_RIGHT;
-        case Entity.DIR_RIGHT:
-            return Entity.DIR_UP;
-        case Entity.DIR_LEFT:
-            return Entity.DIR_DOWN;
-        default:
-        case Entity.DIR_NONE:
-            return Entity.DIR_NONE; /* ? */
-        }
-    }
-
-    static int turnRight(int d) {
-        switch (d) {
-        case Entity.DIR_UP:
-            return Entity.DIR_RIGHT;
-        case Entity.DIR_DOWN:
-            return Entity.DIR_LEFT;
-        case Entity.DIR_RIGHT:
-            return Entity.DIR_DOWN;
-        case Entity.DIR_LEFT:
-            return Entity.DIR_UP;
-        default:
-        case Entity.DIR_NONE:
-            return Entity.DIR_NONE; /* ? */
-        }
-    }
-
-    static IntPair dirChange(int d) {
-        int dx, dy;
-        switch (d) {
-        case Entity.DIR_UP:
-            dx = 0;
-            dy = -1;
-            break;
-        case Entity.DIR_LEFT:
-            dx = -1;
-            dy = 0;
-            break;
-        case Entity.DIR_RIGHT:
-            dx = 1;
-            dy = 0;
-            break;
-        case Entity.DIR_DOWN:
-            dx = 0;
-            dy = 1;
-            break;
-        default:
-            dx = 0;
-            dy = 0;
-        }
-        return new IntPair(dx, dy);
-    }
-
-    static String dirString(int d) {
-        switch (d) {
-        case Entity.DIR_UP:
-            return "up";
-        case Entity.DIR_LEFT:
-            return "left";
-        case Entity.DIR_RIGHT:
-            return "right";
-        case Entity.DIR_DOWN:
-            return "down";
-        case Entity.DIR_NONE:
-            return "none";
-        default:
-            return "??";
-        }
-    }
-
-    static int dirReverse(int d) {
-        switch (d) {
-        case Entity.DIR_UP:
-            return Entity.DIR_DOWN;
-        case Entity.DIR_LEFT:
-            return Entity.DIR_RIGHT;
-        case Entity.DIR_DOWN:
-            return Entity.DIR_UP;
-        case Entity.DIR_RIGHT:
-            return Entity.DIR_LEFT;
-        default:
-        case Entity.DIR_NONE:
-            return Entity.DIR_NONE;
-        }
-    }
-
-    // member variables
-
     // metadata
     private final String title;
 
@@ -449,7 +417,7 @@ public class Level {
                 if (tileAt(lx, ly) == T_LASER) {
                     int tileX = r.x;
                     int tileY = r.y;
-                    int d = dirReverse(dd);
+                    int d = Entity.dirReverse(dd);
 
                     laser = new IntTriple(tileX, tileY, d);
                     return laser;
@@ -533,15 +501,15 @@ public class Level {
         }
     }
 
-    private boolean isPanel(int t) {
+    static private boolean isPanel(int t) {
         return (t == T_PANEL || t == T_RPANEL || t == T_GPANEL || t == T_BPANEL);
     }
 
-    private boolean isSphere(int t) {
+    static private boolean isSphere(int t) {
         return (t == T_SPHERE || t == T_RSPHERE || t == T_GSPHERE || t == T_BSPHERE);
     }
 
-    private boolean isSteel(int t) {
+    static private boolean isSteel(int t) {
         return (t == T_STEEL || t == T_RSTEEL || t == T_GSTEEL || t == T_BSTEEL);
     }
 
@@ -992,7 +960,7 @@ public class Level {
          * 
          * d ---->
          */
-        int revD = dirReverse(d);
+        int revD = Entity.dirReverse(d);
 
         /* move the steel blocks first. */
         {
@@ -1455,7 +1423,7 @@ public class Level {
         flags[y * width + x] = f;
     }
 
-    private boolean triggers(int tile, int panel) {
+    static private boolean triggers(int tile, int panel) {
         /* "anything" triggers grey panels */
         if (panel == T_PANEL)
             return true;
@@ -1532,8 +1500,8 @@ public class Level {
         author = m.author;
         title = m.title;
 
-        int playerX = getIntFromStream(in);
-        int playerY = getIntFromStream(in);
+        int playerX = Misc.getIntFromStream(in);
+        int playerY = Misc.getIntFromStream(in);
 
         player = new Player(playerX, playerY, Entity.DIR_DOWN);
 
@@ -1547,7 +1515,7 @@ public class Level {
         int botI[] = null;
         int botT[] = null;
         try {
-            bots = getIntFromStream(in);
+            bots = Misc.getIntFromStream(in);
             botI = RunLengthEncoding.decode(in, bots);
             botT = RunLengthEncoding.decode(in, bots);
         } catch (EOFException e) {
@@ -1568,23 +1536,23 @@ public class Level {
     }
 
     public static MetaData getMetaData(BitInputStream in) throws IOException {
-        String magic = getStringFromStream(in, 4);
+        String magic = Misc.getStringFromStream(in, 4);
         if (!magic.equals("ESXL")) {
             throw new IOException("Bad magic");
         }
 
-        int width = getIntFromStream(in);
-        int height = getIntFromStream(in);
+        int width = Misc.getIntFromStream(in);
+        int height = Misc.getIntFromStream(in);
 
         //        System.out.println("width: " + width + ", height: " + height);
 
         int size;
 
-        size = getIntFromStream(in);
-        String title = getStringFromStream(in, size);
+        size = Misc.getIntFromStream(in);
+        String title = Misc.getStringFromStream(in, size);
 
-        size = getIntFromStream(in);
-        String author = getStringFromStream(in, size);
+        size = Misc.getIntFromStream(in);
+        String author = Misc.getStringFromStream(in, size);
 
         return new MetaData(width, height, title, author);
     }
@@ -1666,7 +1634,7 @@ public class Level {
         printM(p, flags, width);
     }
 
-    private void printM(PrintStream p, int[] m, int w) {
+    static private void printM(PrintStream p, int[] m, int w) {
         int l = 0;
         for (int i = 0; i < m.length; i++) {
             p.print((char) (m[i] + 32));
@@ -1676,35 +1644,6 @@ public class Level {
                 l = 0;
             }
         }
-    }
-
-    private static int getIntFromStream(InputStream in) throws IOException {
-        int r = 0;
-
-        r += eofRead(in) << 24;
-        r += eofRead(in) << 16;
-        r += eofRead(in) << 8;
-        r += eofRead(in);
-
-        return r;
-    }
-
-    private static int eofRead(InputStream in) throws IOException {
-        int i = in.read();
-        if (i == -1) {
-            throw new EOFException();
-        }
-        return i;
-    }
-
-    private static String getStringFromStream(InputStream in, int size)
-            throws IOException {
-        byte buf[] = new byte[size];
-
-        in.read(buf);
-
-        String result = new String(buf);
-        return (result);
     }
 
     public int getBotDir(int botIndex) {

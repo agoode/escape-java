@@ -6,7 +6,6 @@
  */
 package org.spacebar.escape.common;
 
-import java.io.EOFException;
 import java.io.IOException;
 
 /**
@@ -20,10 +19,7 @@ public class RunLengthEncoding {
         int result[] = new int[len];
 
         // number of bytes to represent one integer
-        final int bytecount = in.read();
-        if (bytecount == -1) {
-            throw new EOFException();
-        }
+        final int bytecount = Misc.eofRead(in);
 
         int bits;
         int framebits = 8;

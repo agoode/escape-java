@@ -39,11 +39,12 @@ public class PlayCanvas extends DoubleBufferCanvas {
             this.dir = dir;
         }
 
+        
         public void actionPerformed(ActionEvent e) {
 
             if (theLevel.move(dir, effects)) {
                 // append to solution
-                addToSolution(dir);
+                solution.addToSolution(dir);
             }
             if ((theLevel.isDead()) != null) {
                 effects.doLaser();
@@ -64,37 +65,9 @@ public class PlayCanvas extends DoubleBufferCanvas {
             } else if (theLevel.isWon()) {
                 effects.doExit();
                 status = Characters.GREEN + "Solved!" + Characters.POP;
-                System.out.println("won in " + solutionCount + " steps");
-                System.out.print("solution: [");
-                for (int i = 0; i < solutionCount; i++) {
-                    int d = solution[i];
-                    String s;
-                    switch (d) {
-                    case Entity.DIR_UP:
-                        //                            s = "up";
-                        s = "↑";
-                        break;
-                    case Entity.DIR_DOWN:
-                        //                            s = "down";
-                        s = "↓";
-                        break;
-                    case Entity.DIR_LEFT:
-                        //                            s = "left";
-                        s = "←";
-                        break;
-                    case Entity.DIR_RIGHT:
-                        //                            s = "right";
-                        s = "→";
-                        break;
-                    default:
-                        s = "?";
-                    }
-                    System.out.print(s);
-                    if (i != solutionCount - 1) {
-                        System.out.print(" ");
-                    }
-                }
-                System.out.println("]");
+                System.out.println("won in " + solution.getSolutionCount()
+                        + " steps");
+                System.out.println(solution);
 
                 // XXX: race condition
                 new Thread() {
@@ -179,9 +152,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
     private int paintedTilesDown;
 
-    byte solution[];
-
-    int solutionCount;
+    Level.Solution solution;
 
     public PlayCanvas(byte theLevel[], Continuation c) {
         super(c);
@@ -245,8 +216,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
         }
 
         showBizarro = false;
-        solution = null;
-        solutionCount = 0;
+        solution = new Level.Solution();
         status = null;
 
         bufferRepaint();
@@ -391,23 +361,6 @@ public class PlayCanvas extends DoubleBufferCanvas {
 
         //        System.out.println("pta: " + paintedTilesAcross + ", ptd: "
         //                + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
-    }
-
-    void addToSolution(int dir) {
-        if (solution == null) {
-            solution = new byte[16];
-        }
-
-        solutionCount++;
-
-        if (solutionCount == solution.length) {
-            // extend
-            byte b[] = new byte[(int) (solution.length * 1.5)];
-            System.arraycopy(solution, 0, b, 0, solution.length);
-            solution = b;
-        }
-
-        solution[solutionCount - 1] = (byte) dir;
     }
 
     private void setupKeys() {

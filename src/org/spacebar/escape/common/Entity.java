@@ -205,6 +205,98 @@ abstract public class Entity {
         return false;
     }
 
+    static IntPair dirChange(int d) {
+        int dx, dy;
+        switch (d) {
+        case DIR_UP:
+            dx = 0;
+            dy = -1;
+            break;
+        case DIR_LEFT:
+            dx = -1;
+            dy = 0;
+            break;
+        case DIR_RIGHT:
+            dx = 1;
+            dy = 0;
+            break;
+        case DIR_DOWN:
+            dx = 0;
+            dy = 1;
+            break;
+        default:
+            dx = 0;
+            dy = 0;
+        }
+        return new IntPair(dx, dy);
+    }
+
+    static String dirString(int d) {
+        switch (d) {
+        case DIR_UP:
+            return "up";
+        case DIR_LEFT:
+            return "left";
+        case DIR_RIGHT:
+            return "right";
+        case DIR_DOWN:
+            return "down";
+        case DIR_NONE:
+            return "none";
+        default:
+            return "??";
+        }
+    }
+
+    static int dirReverse(int d) {
+        switch (d) {
+        case DIR_UP:
+            return DIR_DOWN;
+        case DIR_LEFT:
+            return DIR_RIGHT;
+        case DIR_DOWN:
+            return DIR_UP;
+        case DIR_RIGHT:
+            return DIR_LEFT;
+        default:
+        case DIR_NONE:
+            return DIR_NONE;
+        }
+    }
+
+    // static functions
+    static int turnLeft(int d) {
+        switch (d) {
+        case DIR_UP:
+            return DIR_LEFT;
+        case DIR_DOWN:
+            return DIR_RIGHT;
+        case DIR_RIGHT:
+            return DIR_UP;
+        case DIR_LEFT:
+            return DIR_DOWN;
+        default:
+        case DIR_NONE:
+            return DIR_NONE; /* ? */
+        }
+    }
+
+    static int turnRight(int d) {
+        switch (d) {
+        case DIR_UP:
+            return DIR_RIGHT;
+        case DIR_DOWN:
+            return DIR_LEFT;
+        case DIR_RIGHT:
+            return DIR_DOWN;
+        case DIR_LEFT:
+            return DIR_UP;
+        default:
+        case DIR_NONE:
+            return DIR_NONE; /* ? */
+        }
+    }
+
     public static final int B_DELETED = -2;
 
     public static final int B_PLAYER = -1;
