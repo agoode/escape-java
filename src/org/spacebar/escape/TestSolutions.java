@@ -119,11 +119,11 @@ public class TestSolutions {
                             System.out.println("BAD at " + sol.length()
                                     + " (end)");
                             bad++;
-                            new EscapeFrame(l2);
+//                            new EscapeFrame(l2);
                         } else {
                             System.out.println("BAD at " + result);
                             bad++;
-                            new EscapeFrame(l2);
+//                            new EscapeFrame(l2);
                         }
                     }
                 }
