@@ -8,6 +8,7 @@ package org.spacebar.escape;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -41,9 +42,7 @@ public class EscapeLevelView extends JComponent {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (done) {
-                initLevel();
-            } else {
+            if (!done) {
                 theLevel.move(dir, effects);
                 setPlayerDir(dir);
 
@@ -56,8 +55,8 @@ public class EscapeLevelView extends JComponent {
                     System.out.println("won");
                     done = true;
                 }
+                repairDamage();
             }
-            repairDamage();
         }
     }
 
@@ -174,6 +173,10 @@ public class EscapeLevelView extends JComponent {
     }
 
     private void bufferPaint(Rectangle clip) {
+        if (backBuffer == null) {
+            return;
+        }
+        
         updateScroll();
 
         Graphics2D g2 = backBuffer.createGraphics();
@@ -272,6 +275,7 @@ public class EscapeLevelView extends JComponent {
         showBizarro = false;
         laser = theLevel.isDead();
 
+        bufferPaint();
         repaint();
     }
 
@@ -544,6 +548,20 @@ public class EscapeLevelView extends JComponent {
             public void actionPerformed(ActionEvent e) {
                 showBizarro = !showBizarro;
                 repairDamage();
+            }
+        });
+        
+        // restart
+        addAction("ENTER", "restart", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                initLevel();
+            }
+        });
+        
+        // quit
+        addAction("ESCAPE", "exit", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
             }
         });
     }
