@@ -11,6 +11,8 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import org.spacebar.escape.common.Continuation;
+
 abstract public class DoubleBufferCanvas extends JComponent {
 
     private VolatileImage backBuffer;

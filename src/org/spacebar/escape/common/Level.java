@@ -4,6 +4,20 @@ import java.io.*;
 
 public class Level {
 
+    public static class MetaData {
+        final public int width;
+        final public int height;
+        final public String title;
+        final public String author;
+        
+        public MetaData(int width, int height, String title, String author) {
+            this.width = width;
+            this.height = height;
+            this.title = title;
+            this.author = author;           
+        }
+    }
+
     // directions
     public final static int DIR_NONE = 0;
 
@@ -328,6 +342,7 @@ public class Level {
     
     // cached laser
     private IntTriple laser;
+
 
     // the meat
     void warp(int targX, int targY) {
@@ -990,23 +1005,13 @@ public class Level {
     }
 
     public Level(BitInputStream in) throws IOException {
-        String magic = getStringFromStream(in, 4);
-        if (!magic.equals("ESXL")) {
-            throw new IOException("Bad magic");
-        }
+        MetaData m = getMetaData(in);
 
-        width = getIntFromStream(in);
-        height = getIntFromStream(in);
-
-        //        System.out.println("width: " + width + ", height: " + height);
-
-        int size;
-
-        size = getIntFromStream(in);
-        title = getStringFromStream(in, size);
-
-        size = getIntFromStream(in);
-        author = getStringFromStream(in, size);
+        width = m.width;
+        height = m.height;
+        
+        author = m.author;
+        title = m.title;
 
         playerX = getIntFromStream(in);
         playerY = getIntFromStream(in);
@@ -1023,6 +1028,29 @@ public class Level {
     }
 
     
+    public static MetaData getMetaData(BitInputStream in) throws IOException {
+        String magic = getStringFromStream(in, 4);
+        if (!magic.equals("ESXL")) {
+            throw new IOException("Bad magic");
+        }
+
+        int width = getIntFromStream(in);
+        int height = getIntFromStream(in);
+
+        //        System.out.println("width: " + width + ", height: " + height);
+
+        int size;
+
+        size = getIntFromStream(in);
+        String title = getStringFromStream(in, size);
+
+        size = getIntFromStream(in);
+        String author = getStringFromStream(in, size);
+        
+        return new MetaData(width, height, title, author);
+    }
+
+
     public class DirtyList {
         boolean allDirty;
 
@@ -1106,7 +1134,7 @@ public class Level {
         }
     }
 
-    private int getIntFromStream(InputStream in) throws IOException {
+    private static int getIntFromStream(InputStream in) throws IOException {
         int r = 0;
         r += in.read() << 24;
         r += in.read() << 16;
@@ -1116,7 +1144,7 @@ public class Level {
         return r;
     }
 
-    private String getStringFromStream(InputStream in, int size)
+    private static String getStringFromStream(InputStream in, int size)
             throws IOException {
         byte buf[] = new byte[size];
 

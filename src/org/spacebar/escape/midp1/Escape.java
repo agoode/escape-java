@@ -6,13 +6,12 @@
  */
 package org.spacebar.escape.midp1;
 
-import java.io.IOException;
-
+import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
-import org.spacebar.escape.common.Misc;
+import org.spacebar.escape.common.Continuation;
 
 /**
  * @author adam
@@ -21,25 +20,23 @@ import org.spacebar.escape.common.Misc;
  * Preferences - Java - Code Style - Code Templates
  */
 public class Escape extends MIDlet {
+    final static Command EXIT_COMMAND = new Command("Exit", Command.EXIT, 1);
+    final static Command BACK_COMMAND = new Command("Back", Command.BACK, 1);
 
-    Display display;
+    final static Command RESTART_COMMAND = new Command("Restart",
+            Command.SCREEN, 1);
 
-    private EscapeCanvas canvas;
+    final Display display = Display.getDisplay(this);
 
-    public Escape() {
-        display = Display.getDisplay(this);
-        byte theLevel[];
-        try {
-            theLevel = Misc.getByteArrayFromInputStream(getClass()
-                    .getResourceAsStream("/lev203.esx"));
-            canvas = new EscapeCanvas(theLevel, this);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private LevelChooser lc = new LevelChooser(this, new Continuation() {
+        public void invoke() {
+            notifyDestroyed();
         }
-    }
+    });
 
     public void startApp() throws MIDletStateChangeException {
-        display.setCurrent(canvas);
+        //        display.setCurrent(canvas);
+        displayLevelChooser();
     }
 
     public void pauseApp() {
@@ -51,4 +48,7 @@ public class Escape extends MIDlet {
         display.setCurrent(null);
     }
 
+    public void displayLevelChooser() {
+        display.setCurrent(lc);
+    }
 }

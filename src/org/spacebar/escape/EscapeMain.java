@@ -17,8 +17,8 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import org.spacebar.escape.common.Continuation;
 import org.spacebar.escape.common.Misc;
-import org.spacebar.escape.j2se.Continuation;
 import org.spacebar.escape.j2se.PlayCanvas;
 import org.spacebar.escape.j2se.ResourceUtil;
 

@@ -10,9 +10,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.microedition.lcdui.*;
-import javax.microedition.midlet.MIDlet;
 
 import org.spacebar.escape.common.BitInputStream;
+import org.spacebar.escape.common.Continuation;
 import org.spacebar.escape.common.IntTriple;
 import org.spacebar.escape.common.Level;
 
@@ -22,7 +22,7 @@ import org.spacebar.escape.common.Level;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class EscapeCanvas extends Canvas {
+public class EscapeCanvas extends Canvas implements CommandListener {
 
     private static final byte TILES_ACROSS = 16;
 
@@ -39,9 +39,9 @@ public class EscapeCanvas extends Canvas {
 
     final byte origLevel[];
 
-    final MIDlet parent;
+    final Display display;
 
-    Level theLevel;
+    volatile Level theLevel;
 
     final static Image tiles = ResourceUtil.loadImage("/tiles8x8i.png");
 
@@ -54,24 +54,44 @@ public class EscapeCanvas extends Canvas {
     private int bufH;
 
     private int playerDir;
+    
+    final private Escape theApp;
+    
+    final private Continuation theWayOut;
 
-    EscapeCanvas(byte[] level, MIDlet parent) {
-        this.parent = parent;
+    final Loader loader = new Loader();
+    
+    EscapeCanvas(byte[] level, Escape m, Continuation c) {
+        theApp = m;
+        theWayOut = c;
+        display = Display.getDisplay(theApp);
         origLevel = level;
         playerDir = Level.DIR_DOWN;
+
+        setCommandListener(this);
+        
+        addCommand(Escape.RESTART_COMMAND);
+        addCommand(Escape.BACK_COMMAND);
+
         initLevel();
     }
 
-    void initLevel() {
-        try {
-            theLevel = new Level(new BitInputStream(new ByteArrayInputStream(
-                    origLevel)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    class Loader implements Runnable {
+        public void run() {
+            new Thread() {
+                public void run() {
+                    try {
+                        theLevel = new Level(new BitInputStream(
+                                new ByteArrayInputStream(origLevel)));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-        done = false;
-        repaint();
+                    done = false;
+                    repaint();
+                }
+            }.start();
+        }
     }
 
     // clobbers clip
@@ -92,19 +112,24 @@ public class EscapeCanvas extends Canvas {
     }
 
     protected void paint(Graphics g) {
+        int w = getWidth();
+        int h = getHeight();
+
+        if (theLevel == null) {
+            paintLoading(g, w, h);
+            return;
+        }
+
         if (levelBuffer == null) {
             initLevelBuffer();
         }
 
+        g.setColor(0, 0, 0);
+        g.fillRect(0, 0, w, h);
+
         if (theLevel.dirty.isAnyDirty()) {
             drawLevel();
         }
-
-        int h = getHeight();
-        int w = getWidth();
-
-        g.setColor(0, 0, 0);
-        g.fillRect(0, 0, w, h);
 
         // nudge
         g.translate(-TILE_SIZE / 2, font.getBaselinePosition());
@@ -117,6 +142,17 @@ public class EscapeCanvas extends Canvas {
         g.setColor(255, 255, 255);
         g.drawString(theLevel.getTitle(), -g.getTranslateX(), -g
                 .getTranslateY(), Graphics.TOP | Graphics.LEFT);
+    }
+
+    private void paintLoading(Graphics g, int w, int h) {
+        g.setColor(0, 0, 0);
+        g.fillRect(0, 0, w, h);
+
+        g.setFont(Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD,
+                Font.SIZE_LARGE));
+        g.setColor(13, 147, 209);
+        g.drawString("Loading", w / 2, h / 2, Graphics.BASELINE
+                | Graphics.HCENTER);
     }
 
     private void initLevelBuffer() {
@@ -264,8 +300,14 @@ public class EscapeCanvas extends Canvas {
         }
     }
 
+    private void initLevel() {
+        theLevel = null;
+        display.callSerially(loader);
+        repaint();
+    }
+
     private void doMove(int dir) {
-        if (done) {
+        if (theLevel == null || done) {
             return;
         }
 
@@ -273,20 +315,18 @@ public class EscapeCanvas extends Canvas {
 
         theLevel.move(dir, null);
 
-        final Display d = Display.getDisplay(parent);
-
         if (theLevel.isDead() != null) {
             done = true;
-            d.callSerially(new Runnable() {
+            display.callSerially(new Runnable() {
                 public void run() {
-                    AlertType.ERROR.playSound(d);
+                    AlertType.ERROR.playSound(display);
                 }
             });
         } else if (theLevel.isWon()) {
             done = true;
-            d.callSerially(new Runnable() {
+            display.callSerially(new Runnable() {
                 public void run() {
-                    AlertType.INFO.playSound(d);
+                    AlertType.INFO.playSound(display);
                 }
             });
         }
@@ -295,5 +335,13 @@ public class EscapeCanvas extends Canvas {
 
     protected void keyRepeated(int keyCode) {
         keyPressed(keyCode);
+    }
+
+    public void commandAction(Command c, Displayable d) {
+        if (c == Escape.RESTART_COMMAND) {
+            initLevel();
+        } else if (c == Escape.EXIT_COMMAND) {
+            theWayOut.invoke();
+        }
     }
 }
