@@ -33,8 +33,11 @@ public class Drawing {
     private final static int PLAYER_FRAMES = 5;
 
     private final static BufferedImage[] player;
+
+    private final static BufferedImage[][] bots;
+
     static {
-        String names[] = { "animation/walk_forward_0.png",
+        String pNames[] = { "animation/walk_forward_0.png",
                 "animation/walk_forward_a.png",
                 "animation/walk_forward_a2.png",
                 "animation/walk_forward_b.png",
@@ -55,10 +58,23 @@ public class Drawing {
                 "animation/walk_backward_b2.png" };
 
         // load the animations for the player
-        BufferedImage playerAnim = ResourceUtil.stitchHoriz(names);
+        BufferedImage playerAnim = ResourceUtil.stitchHoriz(pNames);
 
         player = ResourceUtil.createScaledImages(playerAnim,
                 SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
+
+        bots = new BufferedImage[3][];
+        String bNames0[] = { "animation/deadrobot.png" };
+        bots[0] = ResourceUtil.createScaledImages(ResourceUtil
+                .stitchHoriz(bNames0), SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
+        String bNames1[] = { "animation/dalek_forward_0.png",
+                "animation/dalek_forward_1.png" };
+        bots[1] = ResourceUtil.createScaledImages(ResourceUtil
+                .stitchHoriz(bNames1), SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
+        String bNames2[] = { "animation/hugbot_forward_0.png",
+                "animation/hugbot_forward_1.png" };
+        bots[2] = ResourceUtil.createScaledImages(ResourceUtil
+                .stitchHoriz(bNames2), SCALE_DOWN_FACTORS, SCALE_UP_FACTORS);
     }
 
     private final static BufferedImage[] tiles = ResourceUtil.loadScaledImages(
@@ -99,7 +115,10 @@ public class Drawing {
     static public void paintAllLevel(Graphics2D g, Level theLevel, int xScroll,
             int yScroll, boolean showBizarro, int playerDir, int scale) {
         paintLevel(g, theLevel, xScroll, yScroll, showBizarro, scale);
-        paintPlayer(g, theLevel, xScroll, yScroll, playerDir, scale);
+        paintSprite(g, theLevel, xScroll, yScroll, playerDir, -1, scale);
+        for (int i = 0; i < theLevel.getBotCount(); i++) {
+            paintSprite(g, theLevel, xScroll, yScroll, playerDir, i, scale);
+        }
         paintLaser(g, theLevel, xScroll, yScroll, scale);
     }
 
@@ -206,6 +225,46 @@ public class Drawing {
                 paintTile(g2, zoom, tileSize, dx, dy, tile);
             }
         }
+    }
+
+    static private void paintSprite(Graphics2D g2, Level theLevel, int xScroll,
+            int yScroll, int dir, int spriteIndex, int scale) {
+        // y is z
+        int s[] = new int[1 + theLevel.getBotCount()];
+        
+        if (spriteIndex == -1) {
+            paintPlayer(g2, theLevel, xScroll, yScroll, dir, scale);
+        } else {
+            paintBot(g2, theLevel, xScroll, yScroll, dir, spriteIndex, scale);
+        }
+    }
+
+    private static void paintBot(Graphics2D g2, Level theLevel, int xScroll,
+            int yScroll, int dir, int botIndex, int scale) {
+        int zoom = getZoomIndex(scale);
+        int tileSize = getTileSize(scale);
+
+        int botType = theLevel.getBotType(botIndex);
+
+        int height = bots[botType][zoom].getHeight();
+
+        int dx = (theLevel.getSpriteX(botIndex) - xScroll) * tileSize;
+        int dy = (theLevel.getSpriteY(botIndex) - yScroll) * tileSize
+                - (height - tileSize);
+
+        int sx;
+        switch (dir) {
+        case Level.DIR_DOWN:
+        case Level.DIR_RIGHT:
+        case Level.DIR_LEFT:
+        case Level.DIR_UP:
+        default:
+            sx = 0;
+            break;
+        }
+
+        g2.drawImage(bots[botType][zoom], dx, dy, dx + tileSize, dy + height,
+                sx, 0, sx + tileSize, height, null);
     }
 
     static private void paintPlayer(Graphics2D g2, Level theLevel, int xScroll,

@@ -187,6 +187,8 @@ public class Level {
 
     public final static int B_HUGBOT = 2;
 
+    public final static int B_PLAYER = -1;  // not really a bot!
+    
     /**
      * @return Returns the author.
      */
@@ -217,6 +219,14 @@ public class Level {
         this.title = title;
     }
 
+    public int getSpriteX(int index) {
+        return botI[index] % width;
+    }
+    
+    public int getSpriteY(int index) {
+        return botI[index] / width;
+    }
+    
     public int getPlayerX() {
         return playerX;
     }
@@ -233,6 +243,18 @@ public class Level {
         return width;
     }
 
+    public int getBotCount() {
+        return botI.length;
+    }
+    
+    public int getBotIndex(int i) {
+        return botI[i];
+    }
+    
+    public int getBotType(int i) {
+        return botT[i];
+    }
+    
     // static functions
     static int turnLeft(int d) {
         switch (d) {
