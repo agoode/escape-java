@@ -121,7 +121,7 @@ public class Solution {
     public int verify(Level l) {
         return verify(l, 0, null);
     }
-    
+
     /**
      * @param l
      * @return
@@ -134,22 +134,30 @@ public class Solution {
                 p.print(Entity.directionToString(d) + " ");
                 p.flush();
             }
-            
-            // bad move is bad
+
             if (!l.move(d)) {
-                System.out.print(" bad move ");
+                if (p != null) {
+                    p.print(" bad move ");
+                    p.flush();
+                }
                 return i;
             }
 
             // death is bad
             if (l.isDead()) {
-                System.out.print(" bad dead ");
+                if (p != null) {
+                    p.print(" bad dead ");
+                    p.flush();
+                }
                 return i;
             }
 
             // early winning is bad
             if (l.isWon() && i != (size - 1)) {
-                System.out.print(" early win ");
+                if (p != null) {
+                    p.print(" early win ");
+                    p.flush();
+                }
                 return i;
             }
             //                System.out.println(d);
@@ -162,30 +170,36 @@ public class Solution {
             }
         }
         if (l.isWon() && !l.isDead()) {
-            return size;           // perfect
+            return size; // perfect
         } else {
-            return -1;             // failed at last move
+            return -1; // failed at last move
         }
     }
 
     public String getAuthor() {
         return author;
     }
+
     public void setAuthor(String author) {
         this.author = author;
     }
+
     public Date getDate() {
         return date;
     }
+
     public void setDate(Date date) {
         this.date = date;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public byte[] getSolution() {
         return solution;
     }

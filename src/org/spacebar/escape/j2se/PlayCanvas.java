@@ -71,7 +71,7 @@ public class PlayCanvas extends LevelCanvas {
     }
 
     protected void playSolution() {
-        playbackSolution.verify(theLevel, 50, System.out);
+        playbackSolution.verify(theLevel, 100, System.out);
         bufferRepaint();
     }
 

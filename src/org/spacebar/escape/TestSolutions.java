@@ -3,10 +3,7 @@ package org.spacebar.escape;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.spacebar.escape.common.BitInputStream;
 import org.spacebar.escape.common.Level;
@@ -17,6 +14,11 @@ import org.spacebar.escape.j2se.EscapeFrame;
 import org.spacebar.escape.j2se.PlayerInfo;
 
 public class TestSolutions {
+
+    private static Set rejectures = new HashSet();
+    static {
+        rejectures.add(new MD5("75b45c8e3fb338ba80cf69352e425508"));
+    }
 
     private static FileFilter ff = new FileFilter() {
         public boolean accept(File pathname) {
@@ -41,16 +43,19 @@ public class TestSolutions {
         int good = 0;
         int bad = 0;
         int unknown = 0;
+        int rejecture = 0;
+        int failure = 0;
 
         try {
             // given a directory, search all player files and all level
             // files and try the solutions on all of them
             Map levels = new HashMap();
+            Map md5s = new HashMap();
             Map levelsToFiles = new HashMap();
 
             System.out.print("Loading...");
             System.out.flush();
-            getAllStuff(f, levels, levelsToFiles);
+            getAllStuff(f, levels, md5s, levelsToFiles);
             System.out.println(" " + levels.size() + " levels loaded");
 
             int maxLevelString = 0;
@@ -97,7 +102,8 @@ public class TestSolutions {
                         final Solution sol = (Solution) iter.next();
 
                         final String ls = getStringForLevel(l, levelsToFiles);
-                        System.out.print(" " + ls + " " + sol.length() + " moves");
+                        System.out.print(" " + ls + " " + sol.length()
+                                + " moves");
                         System.out.flush();
 
                         Level l2 = new Level(l);
@@ -108,18 +114,35 @@ public class TestSolutions {
                             System.out.print(" ");
                         }
 
-                        if (result == sol.length()) {
-                            System.out.println("OK");
-                            good++;
-                        } else if (result == -1) {
-                            System.out.println("BAD at " + sol.length()
-                                    + " (end)");
-                            bad++;
-                            new EscapeFrame(l, sol);
+                        boolean reject = rejectures.contains(md5s.get(l));
+
+                        if (reject) {
+                            if (result == sol.length()) {
+                                System.out.println("FAILURE");
+                                failure++;
+                                new EscapeFrame(l, sol);
+                            } else if (result == -1) {
+                                System.out.println("REJECTURE at "
+                                        + sol.length() + " (end)");
+                                rejecture++;
+                            } else {
+                                System.out.println("REJECTURE at " + result);
+                                rejecture++;
+                            }
                         } else {
-                            System.out.println("BAD at " + result);
-                            bad++;
-                            new EscapeFrame(l, sol);
+                            if (result == sol.length()) {
+                                System.out.println("OK");
+                                good++;
+                            } else if (result == -1) {
+                                System.out.println("BAD at " + sol.length()
+                                        + " (end)");
+                                bad++;
+                                new EscapeFrame(l, sol);
+                            } else {
+                                System.out.println("BAD at " + result);
+                                bad++;
+                                new EscapeFrame(l, sol);
+                            }
                         }
                     }
                 }
@@ -127,7 +150,8 @@ public class TestSolutions {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            System.out.println(good + " good, " + bad + " bad, " + unknown
+            System.out.println(good + " good, " + bad + " bad, " + rejecture
+                    + " rejecture, " + failure + " failure, " + unknown
                     + " unknown");
         }
     }
@@ -137,13 +161,13 @@ public class TestSolutions {
         return l.toString() + " [" + f.getName() + "]";
     }
 
-    private static void getAllStuff(File f, Map levels, Map levelsToFiles)
-            throws IOException {
+    private static void getAllStuff(File f, Map levels, Map md5s,
+            Map levelsToFiles) throws IOException {
         if (f.isDirectory()) {
             File files[] = f.listFiles(ff);
 
             for (int i = 0; i < files.length; i++) {
-                getAllStuff(files[i], levels, levelsToFiles);
+                getAllStuff(files[i], levels, md5s, levelsToFiles);
             }
         } else {
             // level
@@ -160,6 +184,7 @@ public class TestSolutions {
             Level ll = new Level(
                     new BitInputStream(new ByteArrayInputStream(l)));
             levels.put(md5, ll);
+            md5s.put(ll, md5);
             levelsToFiles.put(ll, f);
         }
     }
