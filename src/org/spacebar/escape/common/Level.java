@@ -650,19 +650,19 @@ public class Level {
         int goldX = newP.x, goldY = newP.y;
 
         /* remove gold block */
-        int replacement = ((flagAt(goldX, goldY) & TF_HASPANEL) != 0)?
-                realPanel(flagAt(goldX, goldY)):
-                T_FLOOR;
+        int replacement = ((flagAt(goldX, goldY) & TF_HASPANEL) != 0) ? realPanel(flagAt(
+                goldX, goldY))
+                : T_FLOOR;
 
         setTile(goldX, goldY, replacement);
-                
+
         IntPair tGold = new IntPair();
         while (travel(goldX, goldY, d, tGold)) {
             int next = tileAt(tGold.x, tGold.y);
             if (!(next == T_ELECTRIC || next == T_PANEL || next == T_BPANEL
                     || next == T_RPANEL || next == T_GPANEL || next == T_FLOOR)
-                    || isBotAt(tGold.x, tGold.y) || player.isAt(tGold.x,
-                    tGold.y)) {
+                    || isBotAt(tGold.x, tGold.y)
+                    || player.isAt(tGold.x, tGold.y)) {
                 break;
             }
 
@@ -1521,17 +1521,18 @@ public class Level {
         public boolean isAllDirty() {
             return allDirty;
         }
+
         /**
          * @return Returns the numDirty.
          */
         public int getNumDirty() {
             return numDirty;
         }
-        
+
         public int getDirty(int i) {
             return dirtyList[i];
         }
-        
+
         DirtyList() {
             int n = width * height;
             dirty = new boolean[n];
@@ -1542,7 +1543,7 @@ public class Level {
 
         public void clearDirty() {
             for (int i = numDirty - 1; i >= 0; i--) {
-                dirty[i] = false;
+                dirty[dirtyList[i]] = false;
             }
             numDirty = 0;
             allDirty = false;
@@ -1553,7 +1554,10 @@ public class Level {
         }
 
         public void setDirty(int i) {
+            System.out.println("setting (" + (i % width) + "," + (i / width)
+                    + ") dirty");
             if (dirty[i]) {
+                System.out.println(" already dirty!");
                 return;
             }
 
@@ -1577,7 +1581,7 @@ public class Level {
         public boolean isAnyDirty() {
             return allDirty || numDirty > 0;
         }
-        
+
         public String toString() {
             StringBuffer sb = new StringBuffer("DirtyList: ");
             if (allDirty) {
