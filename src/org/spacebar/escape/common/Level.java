@@ -816,7 +816,7 @@ public class Level {
 
             setTile(goldX, goldY, target);
 
-            boolean zapped = false;
+//            boolean zapped = false;
             if (landOn == T_ELECTRIC) {
                 /*
                  * gold zapped. however, if the electric was the newTarget of a
@@ -828,7 +828,7 @@ public class Level {
                 }
                 setTile(goldX, goldY, T_ELECTRIC);
 
-                zapped = true;
+//                zapped = true;
             }
 
             if (doSwapT) {
@@ -894,8 +894,8 @@ public class Level {
                 : T_FLOOR;
 
         boolean doSwap = false;
-        boolean zap = false;
-        boolean hole = false;
+//        boolean zap = false;
+//        boolean hole = false;
         IntPair dest;
 
         if (target == T_LR && (d == Entity.DIR_UP || d == Entity.DIR_DOWN))
@@ -923,7 +923,7 @@ public class Level {
                     setTile(newP.x, newP.y, replacement);
                 } else
                     return false;
-                zap = true;
+//                zap = true;
                 break;
             case T_HOLE:
                 /* only grey blocks into holes */
@@ -933,7 +933,7 @@ public class Level {
                     }
                     setTile(dest.x, dest.y, T_FLOOR);
                     setTile(newP.x, newP.y, replacement);
-                    hole = true;
+//                    hole = true;
                     break;
                 } else
                     return false;
@@ -998,9 +998,9 @@ public class Level {
             return false;
 
         /* what did we hit? */
-        int hitTile;
+        int hitTile = tileAt(dest.x, dest.y);
         boolean zap = false;
-        switch (hitTile = tileAt(dest.x, dest.y)) {
+        switch (hitTile) {
         /*
          * nb if we "hit" steel, then it's steel to the edge of the level, so no
          * push.
