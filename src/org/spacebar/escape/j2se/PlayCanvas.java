@@ -49,6 +49,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
                 effects.doLaser();
                 status = Characters.RED + "You died!" + Characters.POP;
 
+                // XXX: race condition
                 new Thread() {
                     public void run() {
                         if (Message.quick(PlayCanvas.this, "You've died.",
@@ -95,6 +96,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
                 }
                 System.out.println("]");
 
+                // XXX: race condition
                 new Thread() {
                     public void run() {
                         Message.quick(PlayCanvas.this, "You solved it!!",

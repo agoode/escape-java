@@ -171,7 +171,7 @@ public class Drawing {
 
     static private void paintLaser(Graphics2D g2, Level theLevel, int xScroll,
             int yScroll, int scale) {
-        IntTriple laser = theLevel.isDead();
+        IntTriple laser = theLevel.getLaser();
 
         if (laser == null) {
             return;

@@ -460,14 +460,10 @@ public class Level {
 
     // Return true if a laser can 'see' the player.
     public IntTriple isDead() {
-        if (laser != null) {
-            return laser;
-        }
-
-        // bots kill
+        // bots kill, without laser
         if (isBotAt(player.getX(), player.getY())) {
-            laser = new IntTriple(player.getX(), player.getY(), Entity.DIR_NONE);
-            return laser;
+            laser = null;
+            return new IntTriple(player.getX(), player.getY(), Entity.DIR_NONE);
         }
 
         // otherwise, look for lasers from the current dude
@@ -1726,5 +1722,9 @@ public class Level {
 
     public boolean isBotDeleted(int botIndex) {
         return bots[botIndex].getBotType() == Bot.B_DELETED;
+    }
+
+    public IntTriple getLaser() {
+        return laser;
     }
 }
