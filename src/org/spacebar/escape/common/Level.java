@@ -718,7 +718,7 @@ public class Level {
             }
 
             if (doSwap) {
-                swapO(destAt(goldX, goldY));
+                swapO(destAt(newP.x, newP.y));
             }
 
             if (e != null) {
