@@ -1,11 +1,7 @@
 package org.spacebar.escape.j2se;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 import org.spacebar.escape.common.BitInputStream;
 import org.spacebar.escape.common.Level;
@@ -51,19 +47,21 @@ public class PlayerInfo {
     }
 
     private void decodeTextFormat(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        
         String s;
 
         // get line after magic
-        Misc.getLine(in);
+        br.readLine();
 
         // get web stuff
-        webID = Integer.parseInt(Misc.getLine(in));
-        webSeqH = Integer.parseInt(Misc.getLine(in));
-        webSeqL = Integer.parseInt(Misc.getLine(in));
+        webID = Integer.parseInt(br.readLine());
+        webSeqH = Integer.parseInt(br.readLine());
+        webSeqL = Integer.parseInt(br.readLine());
 
         // skip over
         for (int i = 0; i < IGNORED_FIELDS; i++) {
-            Misc.getLine(in);
+            br.readLine();
         }
 
         // name
@@ -83,8 +81,8 @@ public class PlayerInfo {
             // XXX XXX
             StringTokenizer st = new StringTokenizer(s);
             // md5
-            MD5 md5 = new MD5(in);
-
+            String str = st.nextToken();
+            MD5 md5 = new MD5(str);
 
             // get solution
         }
