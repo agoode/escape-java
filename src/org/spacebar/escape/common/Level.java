@@ -173,26 +173,10 @@ public class Level {
     }
 
     /**
-     * @param author
-     *           The author to set.
-     */
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    /**
      * @return Returns the title.
      */
     public String getTitle() {
         return title;
-    }
-
-    /**
-     * @param title
-     *           The title to set.
-     */
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public int getBotX(int index) {
@@ -322,9 +306,9 @@ public class Level {
     // member variables
 
     // metadata
-    private String title;
+    private final String title;
 
-    private String author;
+    private final String author;
 
     // width, height
     final int width;
@@ -345,7 +329,7 @@ public class Level {
     // has a panel (under a pushable block)? etc.
     private final int flags[];
 
-    private Bot bots[];
+    private final Bot bots[];
 
     // dirty
     public final DirtyList dirty;
@@ -628,7 +612,7 @@ public class Level {
         if ((newP = travel(ent.getX(), ent.getY(), d)) != null) {
             return maybeDoMove(ent, d, e, newP);
         } else
-            return false;  // no move for sure
+            return false; // no move for sure
     }
 
     /**
@@ -707,7 +691,7 @@ public class Level {
         case T_LR:
         case T_UD:
 
-        case T_GREY: 
+        case T_GREY:
             return doSimpleBlockMove(ent, d, e, target, newP);
 
         case T_ELECTRIC:
@@ -740,8 +724,7 @@ public class Level {
      * @param newP
      * @return
      */
-    private boolean doSphereGoldMove(int d, Effects e, int target,
-            IntPair newP) {
+    private boolean doSphereGoldMove(int d, Effects e, int target, IntPair newP) {
         /*
          * spheres allow pushing in a line: ->OOOO becomes OOO ---->O
          * 
@@ -751,8 +734,7 @@ public class Level {
         IntPair t;
 
         while (isSphere(tileAt(newP.x, newP.y))
-                && !(player.isAt(newP.x, newP.y) || isBotAt(newP.x,
-                        newP.y))
+                && !(player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y))
                 && (t = travel(newP.x, newP.y, d)) != null
                 && isSphere(tileAt(t.x, t.y))) {
             newP = t;
@@ -816,7 +798,7 @@ public class Level {
 
             setTile(goldX, goldY, target);
 
-//            boolean zapped = false;
+            //            boolean zapped = false;
             if (landOn == T_ELECTRIC) {
                 /*
                  * gold zapped. however, if the electric was the newTarget of a
@@ -828,7 +810,7 @@ public class Level {
                 }
                 setTile(goldX, goldY, T_ELECTRIC);
 
-//                zapped = true;
+                //                zapped = true;
             }
 
             if (doSwapT) {
@@ -894,8 +876,8 @@ public class Level {
                 : T_FLOOR;
 
         boolean doSwap = false;
-//        boolean zap = false;
-//        boolean hole = false;
+        //        boolean zap = false;
+        //        boolean hole = false;
         IntPair dest;
 
         if (target == T_LR && (d == Entity.DIR_UP || d == Entity.DIR_DOWN))
@@ -923,7 +905,7 @@ public class Level {
                     setTile(newP.x, newP.y, replacement);
                 } else
                     return false;
-//                zap = true;
+                //                zap = true;
                 break;
             case T_HOLE:
                 /* only grey blocks into holes */
@@ -933,7 +915,7 @@ public class Level {
                     }
                     setTile(dest.x, dest.y, T_FLOOR);
                     setTile(newP.x, newP.y, replacement);
-//                    hole = true;
+                    //                    hole = true;
                     break;
                 } else
                     return false;
@@ -1027,13 +1009,13 @@ public class Level {
 
         /* move the steel blocks first. */
         {
-            int movex = dest.x, movey = dest.y;
-            while (!(movex == newP.x && movey == newP.y)) {
+            int moveX = dest.x, moveY = dest.y;
+            while (!(moveX == newP.x && moveY == newP.y)) {
                 IntPair next;
-                next = travel(movex, movey, revD);
-                setTile(movex, movey, tileAt(next.x, next.y));
-                movex = next.x;
-                movey = next.y;
+                next = travel(moveX, moveY, revD);
+                setTile(moveX, moveY, tileAt(next.x, next.y));
+                moveX = next.x;
+                moveY = next.y;
             }
         }
 
@@ -1066,46 +1048,46 @@ public class Level {
          * flag if the tile should do a swap afterwards.
          */
 
-        boolean swapnew = false;
+        boolean swapNew = false;
         {
-            int lookx = dest.x, looky = dest.y;
-            int prevt = T_FLOOR; /* anything that doesn't trigger */
-            while (!(lookx == newP.x && looky == newP.y)) {
+            int lookX = dest.x, lookY = dest.y;
+            int prevT = T_FLOOR; /* anything that doesn't trigger */
+            while (!(lookX == newP.x && lookY == newP.y)) {
 
-                int heret = tileAt(lookx, looky);
+                int hereT = tileAt(lookX, lookY);
 
                 /* triggerstatus for this location (lookx, looky) */
-                boolean triggerstatus_now = ((flagAt(lookx, looky) & TF_HASPANEL) == TF_HASPANEL)
-                        && triggers(heret, realPanel(flagAt(lookx, looky)));
+                boolean triggerStatusNow = ((flagAt(lookX, lookY) & TF_HASPANEL) == TF_HASPANEL)
+                        && triggers(hereT, realPanel(flagAt(lookX, lookY)));
 
-                boolean triggerstatus_old = ((flagAt(lookx, looky) & TF_HASPANEL) == TF_HASPANEL)
-                        && isSteel(prevt)
-                        && triggers(prevt, realPanel(flagAt(lookx, looky)));
+                boolean triggerStatusOld = ((flagAt(lookX, lookY) & TF_HASPANEL) == TF_HASPANEL)
+                        && isSteel(prevT)
+                        && triggers(prevT, realPanel(flagAt(lookX, lookY)));
 
-                if (triggerstatus_now != triggerstatus_old) {
-                    setFlag(lookx, looky, flagAt(lookx, looky) | TF_TEMP);
+                if (triggerStatusNow != triggerStatusOld) {
+                    setFlag(lookX, lookY, flagAt(lookX, lookY) | TF_TEMP);
                     //           printf("Yes swap at %d/%d\n", lookx, looky);
                 } else
-                    setFlag(lookx, looky, flagAt(lookx, looky) & ~TF_TEMP);
+                    setFlag(lookX, lookY, flagAt(lookX, lookY) & ~TF_TEMP);
 
-                prevt = heret;
+                prevT = hereT;
 
                 IntPair next;
-                next = travel(lookx, looky, revD);
+                next = travel(lookX, lookY, revD);
 
-                lookx = next.x;
-                looky = next.y;
+                lookX = next.x;
+                lookY = next.y;
             }
 
             /* first panel is slightly different */
             {
                 int first = tileAt(newP.x, newP.y);
-                boolean trig_now = (first == T_PANEL);
-                boolean trig_old = isPanel(first)
-                        && triggers(prevt, realPanel(flagAt(newP.x, newP.y)));
+                boolean trigNow = (first == T_PANEL);
+                boolean trigOld = isPanel(first)
+                        && triggers(prevT, realPanel(flagAt(newP.x, newP.y)));
 
-                if (trig_old != trig_now) {
-                    swapnew = true;
+                if (trigOld != trigNow) {
+                    swapNew = true;
                 }
             }
         } /* zap, if necessary, before swapping */
@@ -1122,7 +1104,7 @@ public class Level {
          * destination per location
          */
 
-        if (swapnew) {
+        if (swapNew) {
             swapO(destAt(newP.x, newP.y));
         }
 
@@ -1726,5 +1708,42 @@ public class Level {
 
     public IntTriple getLaser() {
         return laser;
+    }
+
+    public boolean equals(Object obj) {
+        if (obj instanceof Level) {
+            Level l = (Level) obj;
+
+            // metadata
+            if (!author.equals(l.author)) {
+                return false;
+            }
+            if (!title.equals(l.title)) {
+                return false;
+            }
+            if (width != l.width) {
+                return false;
+            }
+            if (height != l.height) {
+                return false;
+            }
+
+            // tiles
+            for (int i = 0; i < tiles.length; i++) {
+                if (tiles[i] != l.tiles[i] || oTiles[i] != l.oTiles[i]
+                        || dests[i] != l.dests[i] || flags[i] != l.flags[i]) {
+                    return false;
+                }
+            }
+
+            // entities
+            
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return super.hashCode();
     }
 }

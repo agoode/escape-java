@@ -13,48 +13,47 @@ package org.spacebar.escape.common;
  * Preferences - Java - Code Style - Code Templates
  */
 abstract public class Entity {
+    static private final int CAP_IS_PLAYER = 0;
+    static private final int CAP_CAN_TELEPORT = 1;
+    static private final int CAP_CRUSH_PLAYER = 2;
+    static private final int CAP_WALK_INTO_BOTS = 3;
+    static private final int CAP_PUSH_PLAYER = 4;
+    static private final int CAP_ZAP_SELF = 5;
+    static private final int CAP_PUSH_BOTS = 6;
+    static private final int NUM_CAPS = 7;
+    
     protected final void iCanTeleport() {
-        this.canTeleportB = true;
+        capabilities[CAP_CAN_TELEPORT] = true;
     }
     protected final void iCrushPlayer() {
-        this.crushPlayerB = true;
+        capabilities[CAP_CRUSH_PLAYER] = true;
     }
     protected final void iAmPlayer() {
-        this.isPlayerB = true;
+        capabilities[CAP_IS_PLAYER] = true;
     }
     protected final void iPushBots() {
-        this.pushBotsB = true;
+        capabilities[CAP_PUSH_BOTS] = true;
         iPushPlayer();
     }
     protected final void iPushPlayer() {
-        this.pushPlayerB = true;
+        capabilities[CAP_PUSH_PLAYER] = true;
     }
     protected final void iWalkIntoBots() {
-        this.walkIntoBotsB = true;
+        capabilities[CAP_WALK_INTO_BOTS] = true;
         iCrushPlayer();
     }
     protected final void iZapSelf() {
-        this.zapSelfB = true;
+        capabilities[CAP_ZAP_SELF] = true;
         iWalkIntoBots();
     }
     
     protected final void clearCapabilities() {
-        isPlayerB = false;
-        canTeleportB = false;
-        crushPlayerB = false;
-        walkIntoBotsB = false;
-        pushPlayerB = false;
-        zapSelfB = false;
-        pushBotsB = false;
+        for (int i = 0; i < capabilities.length; i++) {
+            capabilities[i] = false;
+        }
     }
     
-    private boolean isPlayerB;
-    private boolean canTeleportB;
-    private boolean crushPlayerB;
-    private boolean walkIntoBotsB;
-    private boolean pushPlayerB;
-    private boolean zapSelfB;
-    private boolean pushBotsB;
+    final private boolean capabilities[] = new boolean[NUM_CAPS];
     
     private int d;
 
@@ -170,5 +169,13 @@ abstract public class Entity {
         if (canPushBots()) s += " pushesBots";
         s += " ]";
         return s;
+    }
+    public boolean equals(Object obj) {
+        if (obj instanceof Entity) {
+            Entity e = (Entity) obj;
+            
+            
+        }
+        return false;
     }
 }
