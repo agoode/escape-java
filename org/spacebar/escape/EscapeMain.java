@@ -7,7 +7,10 @@
 package org.spacebar.escape;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 /**
@@ -24,6 +27,16 @@ public class EscapeMain extends JFrame {
 
     public EscapeMain(File f) {
         super("Escape");
+        
+        // icon
+        URL u = getClass().getClassLoader().getResource("org/spacebar/escape/resources/icon.png");
+        try {
+            setIconImage(ImageIO.read(u));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(STARTW, STARTH);
 
@@ -31,7 +44,7 @@ public class EscapeMain extends JFrame {
     }
 
     public static void main(String[] args) {
-        EscapeMain m;
+        JFrame m;
         m = new EscapeMain(new File(args[0]));
         m.setVisible(true);
     }

@@ -614,12 +614,11 @@ public class Level {
             }
             case T_0:
             case T_1: {
-                e.doSwap();
-                
                 int opp = (target == T_0 ? T_1 : T_0);
 
                 swapTiles(T_UD, T_LR);
 
+                e.doSwap();
                 setTile(newP.getX(), newP.getY(), opp);
 
                 return true;
@@ -668,7 +667,6 @@ public class Level {
 
                     if (next == T_ELECTRIC)
                         break;
-
                 }
 
                 /* goldx is dest, newx is source */
@@ -715,6 +713,7 @@ public class Level {
                     default:
                         ;
                     }
+                    e.doSlide();
                     setTile(goldX, goldY, target);
 
                     if (landOn == T_ELECTRIC) {
@@ -724,6 +723,7 @@ public class Level {
                          * swapped into the o world (along with the gold). So
                          * swap there.
                          */
+                        e.doZap();
                         setTile(goldX, goldY, T_ELECTRIC);
                     }
                     if (doSwap)
@@ -741,6 +741,7 @@ public class Level {
                 IntPair targ;
                 targ = where(dests[width * newP.getY() + newP.getX()]);
 
+                e.doTransport();
                 warp(targ.getX(), targ.getY());
 
                 return true;
@@ -824,10 +825,12 @@ public class Level {
                     }
                 }
 
+                e.doPulse();
                 return true;
             }
             case T_BROKEN:
                 setTile(newP.getX(), newP.getY(), T_FLOOR);
+                e.doBroken();
                 return true;
 
             case T_PANEL:
@@ -906,14 +909,17 @@ public class Level {
                         break;
                     case T_ELECTRIC:
                         /* Zap! */
-                        if (target != T_LR && target != T_UD)
+                        if (target != T_LR && target != T_UD) {
+                            e.doZap();
                             setTile(newP.getX(), newP.getY(), replacement);
+                        }
                         else
                             return false;
                         break;
                     case T_HOLE:
                         /* only grey blocks into holes */
                         if (target == T_GREY) {
+                            e.doHole();
                             setTile(dest.getX(), dest.getY(), T_FLOOR);
                             setTile(newP.getX(), newP.getY(), replacement);
                             break;
