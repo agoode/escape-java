@@ -1404,8 +1404,8 @@ public class Level {
         if (ent != player) {
             for (int b = 0; b < bots.length; b++) {
                 Bot bb = bots[b];
-                if (ent != bb && bb != null && x == bb.getX()
-                        && y == bb.getY()) {
+                if (ent != bb && bb.getBotType() != Bot.B_DELETED
+                        && x == bb.getX() && y == bb.getY()) {
                     bots[b].delete();
                     ((Bot) ent).setToType(Bot.B_BROKEN);
                 }
@@ -1413,7 +1413,6 @@ public class Level {
         }
     }
 
-    
     private boolean isBotAt(int x, int y) {
         return getBotAt(x, y) != null;
     }
