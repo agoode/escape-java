@@ -1172,14 +1172,23 @@ public class Level {
 
     private static int getIntFromStream(InputStream in) throws IOException {
         int r = 0;
-        r += in.read() << 24;
-        r += in.read() << 16;
-        r += in.read() << 8;
-        r += in.read();
+        
+        r += eofRead(in) << 24;
+        r += eofRead(in) << 16;
+        r += eofRead(in) << 8;
+        r += eofRead(in);
 
         return r;
     }
 
+    private static int eofRead(InputStream in) throws IOException {
+        int i = in.read();
+        if (i == -1) {
+            throw new EOFException();
+        }
+        return i;
+    }
+    
     private static String getStringFromStream(InputStream in, int size)
             throws IOException {
         byte buf[] = new byte[size];
