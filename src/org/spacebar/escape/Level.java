@@ -204,20 +204,20 @@ public class Level {
         return width;
     }
 
-    // dirty?
-    public boolean isDirty(int x, int y) {
-        return dirty[index(x, y)];
-    }
-
-    public void clearDirty() {
-        for (int i = 0; i < dirty.length; i++) {
-            dirty[i] = false;
-        }
-    }
-    
-    private void setDirty(int x, int y) {
-        dirty[index(x, y)] = true;
-    }
+//    // dirty?
+//    public boolean isDirty(int x, int y) {
+//        return dirty[index(x, y)];
+//    }
+//
+//    public void clearDirty() {
+//        for (int i = 0; i < dirty.length; i++) {
+//            dirty[i] = false;
+//        }
+//    }
+//    
+//    private void setDirty(int x, int y) {
+//        dirty[index(x, y)] = true;
+//    }
     
     // static functions
     static int turnLeft(int d) {
@@ -341,7 +341,7 @@ public class Level {
     private final int flags[];
     
     // dirty list
-    private final boolean dirty[];
+//    private final boolean dirty[];
     
     // the meat
     void warp(int targX, int targY) {
@@ -379,7 +379,7 @@ public class Level {
 
     void setTile(int i, int t) {
         tiles[i] = t;
-        dirty[i] = true;
+//        dirty[i] = true;
     }
     
     void setTile(int x, int y, int t) {
@@ -557,11 +557,11 @@ public class Level {
     }
 
     boolean move(int d, Effects e) {
-        setDirty(playerX, playerY);
+//        setDirty(playerX, playerY);
         boolean result = realMove(d, e);
         
         if (result) {
-            setDirty(playerX, playerY);
+//            setDirty(playerX, playerY);
             e.doStep();
         } else {
             e.doNoStep();
@@ -995,7 +995,7 @@ public class Level {
         oTiles = RunLengthEncoding.decode(in, width * height);
         dests = RunLengthEncoding.decode(in, width * height);
         flags = RunLengthEncoding.decode(in, width * height);
-        dirty = new boolean[width * height];
+//        dirty = new boolean[width * height];
     }
 
     public void print(PrintStream p) {

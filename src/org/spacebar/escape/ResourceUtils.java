@@ -31,8 +31,8 @@ public class ResourceUtils {
             AudioInputStream a = loadAudio(name);
             DataLine.Info dlInfo = new DataLine.Info(Clip.class, a.getFormat());
 
-            clip = (Clip) mixer.getLine(dlInfo);
-//            clip = (Clip) AudioSystem.getLine(dlInfo);
+//            clip = (Clip) mixer.getLine(dlInfo);
+            clip = (Clip) AudioSystem.getLine(dlInfo);
             System.out.print(" " + clip.getLineInfo() + "...");
             System.out.flush();
             clip.open(a);

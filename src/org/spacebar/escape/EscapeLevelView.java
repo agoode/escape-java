@@ -125,10 +125,10 @@ public class EscapeLevelView extends JComponent {
     private final static int TILES_ACROSS = 16;
 
     static {
-        Effects e1 = new NESEffects();
+//        Effects e1 = new NESEffects();
         Effects e2 = new TextEffects();
         CompoundEffects e = new CompoundEffects();
-        e.add(e1);
+//        e.add(e1);
         e.add(e2);
         effects = e;
     }
@@ -472,7 +472,6 @@ public class EscapeLevelView extends JComponent {
     void repairDamage() {
         bufferPaint();
         repaint();
-        theLevel.clearDirty();
     }
 
     void updateScroll() {
