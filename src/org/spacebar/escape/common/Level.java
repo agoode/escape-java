@@ -1,6 +1,10 @@
 package org.spacebar.escape.common;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Date;
 
 import org.spacebar.escape.common.hash.FNV32;
 
@@ -9,16 +13,64 @@ public class Level {
     public static class Solution {
         byte solution[];
 
-        int solutionCount;
+        int size;
 
-        public int getSolutionCount() {
-            return solutionCount;
+        String name;
+        
+        String author;
+        
+        Date date;
+        
+        public int length() {
+            return size;
+        }
+        
+        public Solution(String b64, boolean named) throws IOException {
+//            System.out.println("decoding " + b64);
+            byte[] b = Base64.decode(b64);
+            
+            for (int i = 0; i < b.length; i++) {
+                int v = b[i];
+                if (v < 0) {
+                    v += 256;
+                }
+//                System.out.print(Integer.toHexString(v) + " ");
+            }
+//            System.out.println();
+            
+            BitInputStream in = new BitInputStream(new ByteArrayInputStream(b));
+            
+            if (named) {
+                // date, name, author
+                int len;
+
+                // date
+                int date = in.readInt();
+                this.date = new Date(date * 1000L);
+                
+                // name
+                len = in.readInt();
+                name = Misc.getStringFromData(in, len);
+
+                // author
+                len = in.readInt();
+                author = Misc.getStringFromData(in, len);
+                
+                // remaining length (not really important)
+                len = in.readInt();
+            }
+            decodeSolution(in);
         }
         
         public Solution(BitInputStream in) throws IOException {
-            solutionCount = in.readInt();
+            decodeSolution(in);
+        }
+        
+        private void decodeSolution(BitInputStream in) throws IOException {
+            size = in.readInt();
+//            System.out.println("size: " + size);
             
-            int sol[] = RunLengthEncoding.decode(in, solutionCount);
+            int sol[] = RunLengthEncoding.decode(in, size);
             solution = new byte[sol.length];
             for (int i = 0; i < sol.length; i++) {
                 byte b = (byte) sol[i];
@@ -29,9 +81,20 @@ public class Level {
         public Solution() {}
 
         public String toString() {
-            StringBuffer sb = new StringBuffer();
-            sb.append("solution: [");
-            for (int i = 0; i < solutionCount; i++) {
+            StringBuffer sb = new StringBuffer("solution: ");
+
+            if (name != null) {
+                sb.append("\"" + name + "\" ");
+            }
+            if (author != null) {
+                sb.append("by " + author + " ");
+            }
+            if (date != null) {
+                sb.append("at " + date + " ");
+            }
+            
+            sb.append("[");
+            for (int i = 0; i < size; i++) {
                 int d = solution[i];
                 String s;
                 switch (d) {
@@ -55,7 +118,7 @@ public class Level {
                     s = "?";
                 }
                 sb.append(s);
-                if (i != solutionCount - 1) {
+                if (i != size - 1) {
                     sb.append(" ");
                 }
             }
@@ -68,16 +131,16 @@ public class Level {
                 solution = new byte[16];
             }
 
-            solutionCount++;
+            size++;
 
-            if (solutionCount == solution.length) {
+            if (size == solution.length) {
                 // extend
                 byte b[] = new byte[(int) (solution.length * 1.5)];
                 System.arraycopy(solution, 0, b, 0, solution.length);
                 solution = b;
             }
 
-            solution[solutionCount - 1] = (byte) dir;
+            solution[size - 1] = (byte) dir;
         }
     }
     

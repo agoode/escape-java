@@ -39,10 +39,10 @@ public class TestSolutions {
 
             List players = new ArrayList();
 
-            System.out.print("Loading...");
+            System.out.print("Loading  [");
             System.out.flush();
             getAllStuff(f, levels, players);
-            System.out.println(" " + levels.size() + " levels," + players.size() + " players");
+            System.out.println(" ]  " + levels.size() + " levels, " + players.size() + " players");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,6 +59,9 @@ public class TestSolutions {
             }
         } else if (f.getName().toLowerCase().endsWith(".esx")) {
             // level
+            System.out.print(" " + f.getName());
+            System.out.flush();
+
             byte l[] = Misc.getByteArrayFromInputStream(new FileInputStream(f));
             MessageDigest m = null;
 
@@ -73,6 +76,9 @@ public class TestSolutions {
                     new ByteArrayInputStream(l))));
         } else if (f.getName().toLowerCase().endsWith(".esp")) {
             // player
+            System.out.print(" " + f.getName());
+            System.out.flush();
+
             PlayerInfo p = new PlayerInfo(new BitInputStream(new FileInputStream(f)));
             players.add(p);
         }

@@ -1,10 +1,8 @@
 package org.spacebar.escape.common.hash;
 
-
 public class FNV32 {
     /*
      * fnv - Fowler/Noll/Vo- hash code
-     * 
      *  **
      * 
      * Fowler/Noll/Vo- hash
@@ -29,12 +27,10 @@ public class FNV32 {
      * 
      * http://www.isthe.com/chongo/tech/comp/fnv/index.html
      * 
-     * for more details as well as other forms of the FNV hash.
-     *  **
+     * for more details as well as other forms of the FNV hash. **
      * 
      * NOTE: The FNV-0 historic hash is not recommended. One should use the
-     * FNV-1 hash instead.
-     *  **
+     * FNV-1 hash instead. **
      * 
      * Please do not copyright this code. This code is in the public domain.
      * 
@@ -75,7 +71,7 @@ public class FNV32 {
         hval *= FNV_32_PRIME;
 
         /* xor the bottom with the current octet */
-        hval ^= octet & 0xFF;       // stupid sign extension
+        hval ^= octet & 0xFF; // stupid sign extension
     }
 
     public void fnv32(int dword) {
@@ -86,5 +82,17 @@ public class FNV32 {
         fnv32((byte) (dword & 0xFF));
         dword >>= 8;
         fnv32((byte) (dword & 0xFF));
+    }
+
+    public int hashCode() {
+        return hval;
+    }
+
+    public boolean equals(Object obj) {
+        if (obj instanceof FNV32) {
+            FNV32 f = (FNV32) obj;
+            return hval == f.hval;
+        }
+        return false;
     }
 }

@@ -65,7 +65,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
             } else if (theLevel.isWon()) {
                 effects.doExit();
                 status = Characters.GREEN + "Solved!" + Characters.POP;
-                System.out.println("won in " + solution.getSolutionCount()
+                System.out.println("won in " + solution.length()
                         + " steps");
                 System.out.println(solution);
 

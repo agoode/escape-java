@@ -74,6 +74,7 @@ public class PlayerInfo {
 
         for (;;) {
             s = br.readLine();
+//            System.out.println("'" + s + "'");
             if (s.equals(RAT_MARKER)) {
                 break;
             }
@@ -83,8 +84,22 @@ public class PlayerInfo {
             // md5
             String str = st.nextToken();
             MD5 md5 = new MD5(str);
-
-            // get solution
+            
+            str = st.nextToken();
+            
+            if (str.equals("*")) {
+                // named, and multiple solutions, ending with "!"
+                str = st.nextToken();
+                addSolution(md5, new Solution(str, true), true);
+                
+                // read rest of lines until !
+                while(!(s = br.readLine().trim()).equals("!")) {
+                    addSolution(md5, new Solution(s, true), true);
+                }
+            } else {
+                // old, single solution
+                addSolution(md5, new Solution(str, false), false);
+            }
         }
 
         // read optional ratings
@@ -119,7 +134,7 @@ public class PlayerInfo {
             in.readInt();
 
             // get solution
-            Level.Solution s = new Level.Solution(in);
+            Solution s = new Solution(in);
 
             addSolution(md5, s, false);
         }
@@ -142,7 +157,7 @@ public class PlayerInfo {
 
             Vector v = (Vector) solutions.get(md5);
             for (int i = 0; i < v.size(); i++) {
-                Level.Solution s = (Solution) v.elementAt(i);
+                Solution s = (Solution) v.elementAt(i);
                 sb.append(s.toString() + " ");
             }
             sb.append("\n");
@@ -150,7 +165,7 @@ public class PlayerInfo {
         return sb.toString();
     }
 
-    private void addSolution(MD5 md5, Level.Solution s, boolean append) {
+    private void addSolution(MD5 md5, Solution s, boolean append) {
         Vector v = (Vector) solutions.get(md5);
         if (v == null) {
             v = new Vector();
