@@ -469,7 +469,7 @@ public class Level {
             laser = new IntTriple(player.getX(), player.getY(), Entity.DIR_NONE);
             return laser;
         }
-        
+
         // otherwise, look for lasers from the current dude
         for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
             int lx = player.getX(), ly = player.getY();
@@ -603,7 +603,7 @@ public class Level {
             // move bots
             for (int i = 0; i < bots.length; i++) {
                 Bot b = bots[i];
-                if (b == null) {
+                if (b.getBotType() == Bot.B_DELETED) {
                     continue;
                 }
                 IntPair dirs = b.getDirChoices(player);
@@ -716,7 +716,7 @@ public class Level {
 
                         // zapping
                         if (fTarget == T_ELECTRIC && pushee != player) {
-                            deleteBot((Bot) pushee);
+                            ((Bot) pushee).delete();
                         }
 
                         // panels
@@ -1347,13 +1347,13 @@ public class Level {
                     // move
                     ent.setX(newP.x);
                     ent.setY(newP.y);
-                    
+
                     // kill
-                    deleteBot((Bot) ent);
+                    ((Bot) ent).delete();
                     return true;
                 } else
                     return false;
-                
+
             case T_BLUE:
             case T_HOLE:
             case T_LASER:
@@ -1401,25 +1401,26 @@ public class Level {
     }
 
     private void checkBotDeath(int x, int y, Entity ent) {
-        // TODO Auto-generated method stub
-
-    }
-
-    private void deleteBot(Bot bot) {
-        for (int i = 0; i < bots.length; i++) {
-            if (bots[i] == bot) {
-                bots[i] = null;
+        if (ent != player) {
+            for (int b = 0; b < bots.length; b++) {
+                Bot bb = bots[b];
+                if (ent != bb && bb != null && x == bb.getX()
+                        && y == bb.getY()) {
+                    bots[b].delete();
+                    ((Bot) ent).setToType(Bot.B_BROKEN);
+                }
             }
         }
     }
 
+    
     private boolean isBotAt(int x, int y) {
         return getBotAt(x, y) != null;
     }
 
     private Bot getBotAt(int x, int y) {
         for (int i = 0; i < bots.length; i++) {
-            if (bots[i] != null && bots[i].isAt(x, y)) {
+            if (bots[i].getBotType() != Bot.B_DELETED && bots[i].isAt(x, y)) {
                 return bots[i];
             }
         }
@@ -1462,8 +1463,7 @@ public class Level {
         for (int i = 0; i < this.bots.length; i++) {
             int x = botI[i] % width;
             int y = botI[i] / width;
-            this.bots[i] = Bot
-                    .createBotFromType(x, y, Entity.DIR_DOWN, botT[i]);
+            this.bots[i] = new Bot(x, y, Entity.DIR_DOWN, botT[i]);
         }
 
         dirty = new DirtyList();
@@ -1619,6 +1619,6 @@ public class Level {
     }
 
     public boolean isBotDeleted(int botIndex) {
-        return bots[botIndex] == null;
+        return bots[botIndex].getBotType() == Bot.B_DELETED;
     }
 }

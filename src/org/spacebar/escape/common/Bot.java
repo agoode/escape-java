@@ -12,42 +12,75 @@ package org.spacebar.escape.common;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-abstract public class Bot extends Entity {
+public class Bot extends Entity {
+    public final static int B_DELETED = -2;
+
     public final static int B_BROKEN = 0;
 
     public final static int B_DALEK = 1;
 
     public final static int B_HUGBOT = 2;
 
-    protected Bot(int x, int y, int d, int type) {
+    private final static IntPair brokenDirs = new IntPair(DIR_NONE, DIR_NONE);
+
+    public Bot(int x, int y, int d, int type) {
         super(x, y, d);
 
-        if (type != B_BROKEN && type != B_DALEK && type != B_HUGBOT) {
-            throw new IllegalArgumentException("Invalid bot type");
-        }
+        setToType(type);
+    }
+
+    public void delete() {
+        setToType(B_DELETED);
+    }
+    
+    public void setToType(int type) {
         botType = type;
-    }
-
-    private final int botType;
-
-    public int getBotType() {
-        return botType;
-    }
-
-    static public Bot createBotFromType(int x, int y, int d, int type) {
+        clearCapabilities();
+        
         switch (type) {
+        case B_DELETED:
         case B_BROKEN:
-            return new BrokenBot(x, y, d);
+            break;
+
         case B_DALEK:
-            return new Dalek(x, y, d);
+            setToDalek();
+            break;
         case B_HUGBOT:
-            return new Hugbot(x, y, d);
+            setToHugbot();
+            break;
+                
         default:
             throw new IllegalArgumentException("Invalid bot type");
         }
     }
 
-    abstract IntPair getDirChoices(Entity e);
+    private void setToHugbot() {
+        iPushPlayer();
+        iPushBots();
+    }
+
+    private void setToDalek() {
+        iCanTeleport();
+        iCrushPlayer();
+        iWalkIntoBots();
+    }
+
+    private int botType;
+
+    public int getBotType() {
+        return botType;
+    }
+
+    public IntPair getDirChoices(Entity e) {
+        switch (botType) {
+        case B_BROKEN:
+            return brokenDirs;
+        case B_DALEK:
+        case B_HUGBOT:
+        default:
+            return getMoveToDirChoices(e);
+        }
+    }
 
     // some bots always move toward player,
     // preferring left/right to up/down

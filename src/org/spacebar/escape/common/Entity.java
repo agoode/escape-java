@@ -37,6 +37,17 @@ abstract public class Entity {
         this.zapSelfB = true;
         iWalkIntoBots();
     }
+    
+    protected final void clearCapabilities() {
+        isPlayerB = false;
+        canTeleportB = false;
+        crushPlayerB = false;
+        walkIntoBotsB = false;
+        pushPlayerB = false;
+        zapSelfB = false;
+        pushBotsB = false;
+    }
+    
     private boolean isPlayerB;
     private boolean canTeleportB;
     private boolean crushPlayerB;
