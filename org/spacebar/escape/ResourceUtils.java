@@ -65,7 +65,7 @@ public class ResourceUtils {
         GraphicsDevice gd = ge.getDefaultScreenDevice();
         GraphicsConfiguration gc = gd.getDefaultConfiguration();
         BufferedImage img2 = gc.createCompatibleImage(img.getWidth(), img
-                .getHeight(), Transparency.TRANSLUCENT);
+                .getHeight(), img.getTransparency());
 
         Graphics2D g = img2.createGraphics();
         g.drawImage(img, 0, 0, null);
