@@ -41,6 +41,7 @@ public class TestSolutions {
         File f = new File(args[0]);
 
         int good = 0;
+        int dubious = 0;
         int bad = 0;
         int unknown = 0;
         int rejecture = 0;
@@ -117,29 +118,33 @@ public class TestSolutions {
                         boolean reject = rejectures.contains(md5s.get(l));
 
                         if (reject) {
-                            if (result == sol.length()) {
+                            if (result > 0) {
                                 System.out.println("FAILURE");
                                 failure++;
                                 new EscapeFrame(l, sol);
-                            } else if (result == -1) {
+                            } else if (result == -sol.length()) {
                                 System.out.println("REJECTURE at "
                                         + sol.length() + " (end)");
                                 rejecture++;
                             } else {
-                                System.out.println("REJECTURE at " + result);
+                                System.out.println("REJECTURE at " + -result);
                                 rejecture++;
                             }
                         } else {
                             if (result == sol.length()) {
                                 System.out.println("OK");
                                 good++;
-                            } else if (result == -1) {
+                            } else if (result > 0) {
+                                System.out.println("DUBIOUS at " + result);
+                                dubious++;
+                                new EscapeFrame(l, sol);
+                            } else if (result == -sol.length()) {
                                 System.out.println("BAD at " + sol.length()
                                         + " (end)");
                                 bad++;
                                 new EscapeFrame(l, sol);
                             } else {
-                                System.out.println("BAD at " + result);
+                                System.out.println("BAD at " + -result);
                                 bad++;
                                 new EscapeFrame(l, sol);
                             }
@@ -150,9 +155,9 @@ public class TestSolutions {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            System.out.println(good + " good, " + bad + " bad, " + rejecture
-                    + " rejecture, " + failure + " failure, " + unknown
-                    + " unknown");
+            System.out.println(good + " good, " + bad + " bad, " + dubious
+                    + " dubious, " + rejecture + " rejecture, " + failure
+                    + " failure, " + unknown + " unknown");
         }
     }
 

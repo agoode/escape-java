@@ -124,11 +124,15 @@ public class Solution {
 
     /**
      * @param l
-     * @return
+     * @return Positive value if reaches win state, negative value if failure,
+     *         absolute value is the last move number, zero undefined
      */
     public int verify(Level l, long sleepTime, PrintStream p) {
+        int moveNum = 0;
         for (int i = 0; i < size; i++) {
             int d = solution[i];
+
+            moveNum++;
 
             if (p != null) {
                 p.print(Entity.directionToString(d) + " ");
@@ -137,10 +141,10 @@ public class Solution {
 
             if (!l.move(d)) {
                 if (p != null) {
-                    p.print(" bad move ");
+                    p.print(" warn: bad move ");
                     p.flush();
                 }
-                return i;
+                //                return -moveNum;
             }
 
             // death is bad
@@ -149,16 +153,19 @@ public class Solution {
                     p.print(" bad dead ");
                     p.flush();
                 }
-                return i;
+                return -moveNum;
             }
 
-            // early winning is bad
-            if (l.isWon() && i != (size - 1)) {
-                if (p != null) {
-                    p.print(" early win ");
-                    p.flush();
+            // early winning is "okay"
+            if (l.isWon()) {
+                if (moveNum < solution.length) {
+                    if (p != null) {
+                        p.print(" warn: early win ("
+                                + (solution.length - moveNum) + " moves left)");
+                        p.flush();
+                    }
                 }
-                return i;
+                return moveNum;
             }
             //                System.out.println(d);
             if (sleepTime > 0) {
@@ -169,11 +176,7 @@ public class Solution {
                 }
             }
         }
-        if (l.isWon() && !l.isDead()) {
-            return size; // perfect
-        } else {
-            return -1; // failed at last move
-        }
+        return -moveNum; // failed at last move
     }
 
     public String getAuthor() {
