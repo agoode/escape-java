@@ -48,15 +48,19 @@ public class TestSolutions {
             getAllStuff(f, levels);
             System.out.println(" " + levels.size() + " levels loaded");
 
+            int maxLevelString = 0;
+
             for (int a = 1; a < args.length; a++) {
                 File pf = new File(args[a]);
-                
+
                 // for each solution, verify
                 PlayerInfo pi = new PlayerInfo(new BitInputStream(
                         new FileInputStream(pf)));
 
                 System.out.println("*** Player: " + pi);
                 Map s = pi.getSolutions();
+
+                Map levelsToSolutions = new HashMap();
 
                 // the levels we have solutions for
                 for (Iterator iterator = s.keySet().iterator(); iterator
@@ -70,24 +74,39 @@ public class TestSolutions {
                     }
 
                     List sols = (List) s.get(md5);
+                    levelsToSolutions.put(l, sols);
+                    maxLevelString = Math.max(maxLevelString, l.toString()
+                            .length());
+                }
 
-                    // the solutions for this level
-                    for (Iterator iterator2 = sols.iterator(); iterator2
-                            .hasNext();) {
-                        Solution sol = (Solution) iterator2.next();
+                // the solutions for this level
+                for (Iterator i = levelsToSolutions.keySet().iterator(); i
+                        .hasNext();) {
+                    Level l = (Level) i.next();
+                    List sols = (List) levelsToSolutions.get(l);
 
-                        System.out.print(" " + l);
-                        System.out.print(" " + sol.length() + " moves");
+                    for (Iterator iter = sols.iterator(); iter.hasNext();) {
+                        Solution sol = (Solution) iter.next();
+
+                        String ls = l.toString();
+                        System.out.print(" " + ls);
+//                        System.out.print(" " + sol.length() + " moves");
                         System.out.flush();
 
                         //                        DrawnLevel d = new DrawnLevel(l);
                         int result = sol.verify(l);
+
+                        int pad = maxLevelString - ls.length() + 5;
+                        while (pad-- > 0) {
+                            System.out.print(" ");
+                        }
+                        
                         if (result == sol.length()) {
-                            System.out.println(" \tOK");
+                            System.out.println("OK");
                         } else if (result == -1) {
-                            System.out.println(" \tFAILED at end");
+                            System.out.println("BAD at end");
                         } else {
-                            System.out.println(" \tFAILED at move " + result);
+                            System.out.println("BAD at " + result);
                         }
                         //                        d.dispose();
                     }
