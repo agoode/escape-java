@@ -121,13 +121,13 @@ public class PlayCanvas extends DoubleBufferCanvas {
         public void actionPerformed(ActionEvent e) {
             if (smaller) {
                 scale++;
-                if (scale > LevelDraw.SCALE_DOWN_FACTORS - 1) {
-                    scale = LevelDraw.SCALE_DOWN_FACTORS - 1;
+                if (scale > Drawing.SCALE_DOWN_FACTORS - 1) {
+                    scale = Drawing.SCALE_DOWN_FACTORS - 1;
                 }
             } else {
                 scale--;
-                if (scale < -LevelDraw.SCALE_UP_FACTORS) {
-                    scale = -LevelDraw.SCALE_UP_FACTORS;
+                if (scale < -Drawing.SCALE_UP_FACTORS) {
+                    scale = -Drawing.SCALE_UP_FACTORS;
                 }
             }
 
@@ -216,8 +216,8 @@ public class PlayCanvas extends DoubleBufferCanvas {
         paintAllLevel(g);
 
         // restore clip and draw the rest
-        g.setClip(clip);
         g.setTransform(origAT);
+        g.setClip(clip);
         paintArrows(g);
 
         // restore transform and draw title
@@ -264,7 +264,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
     }
 
     private void paintAllLevel(Graphics2D g) {
-        LevelDraw.paintAllLevel(g, theLevel, xScroll, yScroll, showBizarro,
+        Drawing.paintAllLevel(g, theLevel, xScroll, yScroll, showBizarro,
                 playerDir, scale);
     }
 
@@ -279,7 +279,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
             int x = 3;
             int y = h / 2;
             g.translate(x, y);
-            LevelDraw.drawString(g, Characters.PICS + Characters.ARROWL
+            Drawing.drawString(g, Characters.PICS + Characters.ARROWL
                     + Characters.POP);
             g.setTransform(t);
         }
@@ -288,7 +288,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
             int x = w / 2;
             int y = -4;
             g.translate(x, y);
-            LevelDraw.drawString(g, Characters.PICS + Characters.ARROWU
+            Drawing.drawString(g, Characters.PICS + Characters.ARROWU
                     + Characters.POP);
             g.setTransform(t);
         }
@@ -297,7 +297,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
             int x = w - LEVEL_MARGIN;
             int y = h / 2;
             g.translate(x, y);
-            LevelDraw.drawString(g, Characters.PICS + Characters.ARROWR
+            Drawing.drawString(g, Characters.PICS + Characters.ARROWR
                     + Characters.POP);
             g.setTransform(t);
         }
@@ -306,7 +306,7 @@ public class PlayCanvas extends DoubleBufferCanvas {
             int x = w / 2;
             int y = h - LEVEL_MARGIN;
             g.translate(x, y);
-            LevelDraw.drawString(g, Characters.PICS + Characters.ARROWD
+            Drawing.drawString(g, Characters.PICS + Characters.ARROWD
                     + Characters.POP);
             g.setTransform(t);
         }
@@ -317,17 +317,17 @@ public class PlayCanvas extends DoubleBufferCanvas {
                 + Characters.POP + Characters.BLUE + theLevel.getAuthor()
                 + Characters.POP;
 
-        LevelDraw.drawString(g2, text);
+        Drawing.drawString(g2, text);
     }
 
     private void paintStatus(Graphics2D g2) {
         if (status != null) {
-            LevelDraw.drawString(g2, status);
+            Drawing.drawString(g2, status);
         }
     }
 
     void updateScroll() {
-        int tileSize = LevelDraw.getTileSize(scale);
+        int tileSize = Drawing.getTileSize(scale);
 
         // keep at least LEVEL_MARGIN everywhere
         paintedTilesAcross = (int) ((getWidth() - (2 * LEVEL_MARGIN)) / tileSize);

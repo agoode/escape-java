@@ -212,13 +212,13 @@ public class Message implements Overlay {
 
         // text
         g.translate(Characters.FONT_ADVANCE, Characters.FONT_HEIGHT);
-        LevelDraw.drawString(g, title);
+        Drawing.drawString(g, title);
         g.translate(0, nlines * Characters.FONT_HEIGHT);
-        LevelDraw.drawString(g, Characters.YELLOW + "ENTER" + Characters.POP
+        Drawing.drawString(g, Characters.YELLOW + "ENTER" + Characters.POP
                 + ":  " + ok);
         if (cancel != null) {
             g.translate(0, Characters.FONT_HEIGHT);
-            LevelDraw.drawString(g, Characters.YELLOW + "ESCAPE"
+            Drawing.drawString(g, Characters.YELLOW + "ESCAPE"
                     + Characters.POP + ": " + cancel);
         }
 

@@ -22,7 +22,7 @@ import org.spacebar.escape.util.StyleStack;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class LevelDraw {
+public class Drawing {
     final static int SCALE_DOWN_FACTORS = 5;
 
     final static int SCALE_UP_FACTORS = 2;
@@ -157,11 +157,17 @@ public class LevelDraw {
         //        System.out.println("tilesize: " + tileSize);
         //        System.out.println("zoom: " + zoom);
 
-        for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
-            for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
+        Rectangle clip = g2.getClipBounds();
+
+        ROW: for (int j = 0; j < theLevel.getHeight() - yScroll; j++) {
+            COL: for (int i = 0; i < theLevel.getWidth() - xScroll; i++) {
                 int dx = i * tileSize;
                 int dy = j * tileSize;
 
+                if (clip != null && !clip.intersects(dx, dy, tileSize, tileSize)) {
+                    continue COL;
+                }
+                
                 int tile;
                 if (showBizarro) {
                     tile = theLevel.oTileAt(i + xScroll, j + yScroll);
@@ -219,6 +225,8 @@ public class LevelDraw {
     static public void drawString(Graphics2D g2, String text) {
         StyleStack s = new StyleStack();
 
+        //        System.out.println("drawString clip: " + g2.getClip());
+
         Composite ac = g2.getComposite();
 
         int dx = 0;
@@ -237,7 +245,7 @@ public class LevelDraw {
                 default:
                     s.push(ch);
                 }
-            } else if (ch == '\n'){
+            } else if (ch == '\n') {
                 dx = 0;
                 dy += Characters.FONT_HEIGHT;
             } else {

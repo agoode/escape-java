@@ -6,7 +6,6 @@
  */
 package org.spacebar.escape;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.VolatileImage;
@@ -25,19 +24,12 @@ abstract public class DoubleBufferCanvas extends JComponent {
 
     private Overlay overlay;
 
+    private boolean paintingActive = true;
+
     DoubleBufferCanvas() {
         super();
-        setBackground(Color.BLACK);
+        setDoubleBuffered(false);
         setOpaque(true);
-    }
-
-    final private void myBufferPaint(Graphics2D g) {
-        synchronized (backBuffer) {
-            bufferPaint(g);
-            if (overlay != null) {
-                overlay.draw(g, getWidth(), getHeight());
-            }
-        }
     }
 
     abstract protected void bufferPaint(Graphics2D g);
@@ -51,11 +43,6 @@ abstract public class DoubleBufferCanvas extends JComponent {
         }
     }
 
-    public void setOverlay(Overlay o) {
-        overlay = o;
-        bufferRepaint();
-    }
-
     public Overlay getOverlay() {
         return overlay;
     }
@@ -66,19 +53,26 @@ abstract public class DoubleBufferCanvas extends JComponent {
         //        System.out.println("backBuffer: " + backBuffer);
     }
 
-    final private void renderOffscreen() {
-        do {
-            if (backBuffer.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE) {
-                initBackBuffer();
+    public boolean isPaintingActive() {
+        return paintingActive;
+    }
+
+    final private void myBufferPaint(Graphics2D g) {
+        synchronized (backBuffer) {
+            bufferPaint(g);
+            if (overlay != null) {
+                overlay.draw(g, getWidth(), getHeight());
             }
-            Graphics2D g = backBuffer.createGraphics();
-            myBufferPaint(g);
-            g.dispose();
-        } while (backBuffer.contentsLost());
+        }
     }
 
     final protected void paintComponent(Graphics g) {
-        if (backBuffer == null) {
+        if (!paintingActive) {
+            return;
+        }
+
+        if (backBuffer == null || backBuffer.getHeight() != getHeight()
+                || backBuffer.getWidth() != getWidth()) {
             initBackBuffer();
             renderOffscreen();
         }
@@ -97,12 +91,32 @@ abstract public class DoubleBufferCanvas extends JComponent {
                 g.drawImage(backBuffer, 0, 0, this);
             }
         } while (backBuffer.contentsLost());
+    }
 
-        // avoid horrible flickering
-        if (backBuffer.getHeight() != getHeight()
-                || backBuffer.getWidth() != getWidth()) {
-            initBackBuffer();
-            bufferRepaint();
+    final private void renderOffscreen() {
+        if (!paintingActive) {
+            return;
+        }
+
+        do {
+            if (backBuffer.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE) {
+                initBackBuffer();
+            }
+            Graphics2D g = backBuffer.createGraphics();
+            myBufferPaint(g);
+            g.dispose();
+        } while (backBuffer.contentsLost());
+    }
+
+    public void setOverlay(Overlay o) {
+        overlay = o;
+        bufferRepaint();
+    }
+
+    public void setPaintingActive(boolean b) {
+        paintingActive = b;
+        if (!paintingActive) {
+            backBuffer = null;
         }
     }
 }
