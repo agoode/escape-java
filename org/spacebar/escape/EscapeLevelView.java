@@ -13,14 +13,16 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 
 import org.spacebar.escape.util.BitInputStream;
 import org.spacebar.escape.util.CharacterMap;
@@ -32,7 +34,7 @@ import org.spacebar.escape.util.IntTriple;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class EscapeLevelView extends JPanel {
+public class EscapeLevelView extends JComponent {
     private final static BufferedImage tiles = ResourceUtils
             .loadImage("tiles.png");
 
@@ -47,7 +49,7 @@ public class EscapeLevelView extends JPanel {
         Effects e1 = new NESEffects();
         Effects e2 = new TextEffects();
         CompoundEffects e = new CompoundEffects();
-        e.add(e1);
+        //        e.add(e1);
         e.add(e2);
         effects = e;
     }
@@ -57,6 +59,7 @@ public class EscapeLevelView extends JPanel {
     private final static int TILES_ACROSS = 16;
 
     private final static int FONT_WIDTH = 8;
+
     private final static int FONT_SPACE = 1;
 
     private final static int FONT_HEIGHT = 16;
@@ -76,6 +79,8 @@ public class EscapeLevelView extends JPanel {
     IntTriple laser;
 
     private int guyDir;
+
+    private BufferedImage backBuffer;
 
     /**
      * @return Returns the dir.
@@ -98,7 +103,7 @@ public class EscapeLevelView extends JPanel {
 
     public EscapeLevelView(File f) {
         super();
-        setBackground(Color.BLACK);
+        setOpaque(true);
 
         levelFile = f;
         initLevel();
@@ -106,13 +111,13 @@ public class EscapeLevelView extends JPanel {
         guyDir = Level.DIR_DOWN;
 
         // setup keys
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "goLeft");
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "goDown");
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "goRight");
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "goUp");
 
         Action m;
@@ -166,7 +171,6 @@ public class EscapeLevelView extends JPanel {
                 effects.doLaser();
                 System.out.println("dead");
                 done = true;
-                repaint();
             } else if (theLevel.isWon()) {
                 effects.doExit();
                 System.out.println("won");
@@ -177,9 +181,22 @@ public class EscapeLevelView extends JPanel {
     }
 
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        if (backBuffer == null
+                || (backBuffer.getHeight() != getHeight() && backBuffer
+                        .getWidth() != getWidth())) {
+            backBuffer = (BufferedImage) createImage(getWidth(), getHeight());
+            Graphics2D backG = backBuffer.createGraphics();
+            bufferPaint(backG);
+            backG.dispose();
+        }
+
+        // blit
+        g2.drawImage(backBuffer, 0, 0, this);
+    }
+
+    private void bufferPaint(Graphics2D g2) {
         AffineTransform trans = g2.getTransform();
 
         g2.translate(LEVEL_MARGIN, LEVEL_MARGIN);
@@ -191,40 +208,72 @@ public class EscapeLevelView extends JPanel {
 
         g2.translate(FONT_X_MARGIN, FONT_Y_MARGIN);
         paintTitle(g2);
+        g2.setTransform(trans);
     }
 
     private void paintTitle(Graphics2D g2) {
         String text = theLevel.getTitle() + " by " + theLevel.getAuthor();
 
-        AffineTransform a = AffineTransform.getTranslateInstance(0, 0);
+        int dx = 0;
+        int dy = 0;
         for (int i = 0; i < text.length(); i++) {
             int ch = CharacterMap.getIndexForChar(text.charAt(i));
-            g2.drawRenderedImage(getFontTile(ch), a);
-            a.translate(FONT_WIDTH, 0);
+            int tile = ch;
+
+            int sx = tile * (FONT_WIDTH + FONT_SPACE);
+            int sy = 0;
+
+            g2.drawImage(font, dx, dy, dx + FONT_WIDTH, dy + FONT_HEIGHT, sx,
+                    sy, sx + FONT_WIDTH, sy + FONT_HEIGHT, this);
+            dx += FONT_WIDTH;
         }
     }
 
     private void paintGuy(Graphics2D g2) {
-        double x = theLevel.getGuyX() * TILE_SIZE;
-        double y = theLevel.getGuyY() * TILE_SIZE;
+        int dx = theLevel.getGuyX() * TILE_SIZE;
+        int dy = theLevel.getGuyY() * TILE_SIZE;
 
-        AffineTransform trans = AffineTransform.getTranslateInstance(x, y);
-        g2.drawRenderedImage(getGuy(), trans);
+        int sx, sy;
+        switch (guyDir) {
+        case Level.DIR_LEFT:
+            sx = 0;
+            sy = 0;
+            break;
+        case Level.DIR_UP:
+            sx = TILE_SIZE;
+            sy = 0;
+            break;
+        case Level.DIR_RIGHT:
+            sx = TILE_SIZE;
+            sy = TILE_SIZE;
+            break;
+        case Level.DIR_DOWN:
+        default:
+            sx = 0;
+            sy = TILE_SIZE;
+            break;
+        }
+
+        g2.drawImage(guy, dx, dy, dx + TILE_SIZE, dy + TILE_SIZE, sx, sy, sx
+                + TILE_SIZE, sy + TILE_SIZE, this);
     }
 
     private void paintLevel(Graphics2D g2) {
         for (int j = 0; j < theLevel.getHeight(); j++) {
             for (int i = 0; i < theLevel.getWidth(); i++) {
-                double x = i * TILE_SIZE;
-                double y = j * TILE_SIZE;
+                int dx = i * TILE_SIZE;
+                int dy = j * TILE_SIZE;
 
                 Rectangle clip = g2.getClipBounds();
-                if (clip.intersects(x, y, TILE_SIZE, TILE_SIZE)) {
+                if (clip == null
+                        || clip.intersects(dx, dy, TILE_SIZE, TILE_SIZE)) {
                     int tile = theLevel.tileAt(i, j);
 
-                    AffineTransform trans = AffineTransform
-                            .getTranslateInstance(x, y);
-                    g2.drawRenderedImage(getTile(tile), trans);
+                    int sx = tile % TILES_ACROSS * TILE_SIZE;
+                    int sy = tile / TILES_ACROSS * TILE_SIZE;
+
+                    g2.drawImage(tiles, dx, dy, dx + TILE_SIZE, dy + TILE_SIZE,
+                            sx, sy, sx + TILE_SIZE, sy + TILE_SIZE, this);
                 }
             }
         }
@@ -237,37 +286,39 @@ public class EscapeLevelView extends JPanel {
 
         int d = laser.getD();
 
-        float gx = theLevel.getGuyX() * TILE_SIZE + TILE_SIZE * 0.5f;
-        float gy = theLevel.getGuyY() * TILE_SIZE + TILE_SIZE * 0.5f;
+        int gx = theLevel.getGuyX() * TILE_SIZE + (TILE_SIZE >> 1);
+        int gy = theLevel.getGuyY() * TILE_SIZE + (TILE_SIZE >> 1);
 
-        float lx = laser.getX() * TILE_SIZE;
-        float ly = laser.getY() * TILE_SIZE;
+        int lx = laser.getX() * TILE_SIZE;
+        int ly = laser.getY() * TILE_SIZE;
 
-        Rectangle2D.Float outer, inner;
+        Rectangle outer, inner;
+
         switch (d) {
         case Level.DIR_DOWN:
-            lx += TILE_SIZE * 0.5;
+            lx += TILE_SIZE >> 1;
             ly += TILE_SIZE;
-            outer = new Rectangle2D.Float(lx - 1, ly, 3, gy - ly);
-            inner = new Rectangle2D.Float(lx, ly, 1, gy - ly);
+            outer = new Rectangle(lx - 1, ly, 3, gy - ly);
+            inner = new Rectangle(lx, ly, 1, gy - ly);
             break;
         case Level.DIR_UP:
-            outer = new Rectangle2D.Float(gx - 1, gy + 1, 3, ly - gy);
-            inner = new Rectangle2D.Float(gx, gy + 1, 1, ly - gy);
+            outer = new Rectangle(gx - 1, gy + 1, 3, ly - gy);
+            inner = new Rectangle(gx, gy + 1, 1, ly - gy);
             break;
         case Level.DIR_RIGHT:
             lx += TILE_SIZE;
-            ly += TILE_SIZE * 0.5;
-            outer = new Rectangle2D.Float(lx, ly - 1, gx - lx, 3);
-            inner = new Rectangle2D.Float(lx, ly, gx - lx, 1);
+            ly += TILE_SIZE >> 1;
+            outer = new Rectangle(lx, ly - 1, gx - lx, 3);
+            inner = new Rectangle(lx, ly, gx - lx, 1);
             break;
         case Level.DIR_LEFT:
-            outer = new Rectangle2D.Float(gx + 1, gy - 1, lx - gx, 3);
-            inner = new Rectangle2D.Float(gx + 1, gy, lx - gx, 1);
+            outer = new Rectangle(gx + 1, gy - 1, lx - gx, 3);
+            inner = new Rectangle(gx + 1, gy, lx - gx, 1);
             break;
         default:
-            inner = outer = null;
+            outer = inner = null;
         }
+
         g2.setColor(Color.RED);
         g2.fill(outer);
         g2.setColor(Color.WHITE);
@@ -275,68 +326,18 @@ public class EscapeLevelView extends JPanel {
     }
 
     void repairDamage() {
-        for (int j = 0; j < theLevel.getHeight(); j++) {
-            for (int i = 0; i < theLevel.getWidth(); i++) {
-                if (theLevel.isDirty(i, j)) {
-                    repaint(getTileBounds(i, j));
-                }
-            }
-        }
-        RepaintManager.currentManager(this).paintDirtyRegions();
+//        for (int j = 0; j < theLevel.getHeight(); j++) {
+//            for (int i = 0; i < theLevel.getWidth(); i++) {
+//                if (theLevel.isDirty(i, j)) {
+//                    repaint(getTileBounds(i, j));
+//                }
+//            }
+//        }
+//        //        RepaintManager.currentManager(this).paintDirtyRegions();
+        Graphics2D g2 = backBuffer.createGraphics();
+        bufferPaint(g2);
+        g2.dispose();
+        repaint();
         theLevel.clearDirty();
-    }
-
-    private Rectangle getTileBounds(int x, int y) {
-        int w = TILE_SIZE;
-        int h = TILE_SIZE;
-        int myX = LEVEL_MARGIN + x * TILE_SIZE;
-        int myY = LEVEL_MARGIN + y * TILE_SIZE;
-
-        return new Rectangle(myX, myY, w, h);
-    }
-
-    private static BufferedImage getTile(int tile) {
-        int x = tile % TILES_ACROSS * TILE_SIZE;
-        int y = tile / TILES_ACROSS * TILE_SIZE;
-
-        return tiles.getSubimage(x, y, TILE_SIZE, TILE_SIZE);
-    }
-
-    private static BufferedImage getFontTile(int c) {
-        int tile = c;
-
-        int x = tile * (FONT_WIDTH + FONT_SPACE);
-        int y = 0;
-
-        System.out.println(c + " " + x + " " + y + " " + tile);
-
-        return font.getSubimage(x, y, FONT_WIDTH + FONT_SPACE, FONT_HEIGHT);
-    }
-
-    private BufferedImage getGuy() {
-        int x;
-        int y;
-
-        switch (guyDir) {
-        case Level.DIR_LEFT:
-            x = 0;
-            y = 0;
-            break;
-        case Level.DIR_UP:
-            x = TILE_SIZE;
-            y = 0;
-            break;
-        case Level.DIR_RIGHT:
-            x = TILE_SIZE;
-            y = TILE_SIZE;
-            break;
-        case Level.DIR_DOWN:
-        default:
-            x = 0;
-            y = TILE_SIZE;
-            break;
-        }
-
-        return guy.getSubimage(x, y, TILE_SIZE, TILE_SIZE);
     }
 }

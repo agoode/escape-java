@@ -6,6 +6,7 @@
  */
 package org.spacebar.escape;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,7 @@ public class EscapeMain extends JFrame {
 
     public EscapeMain(File f) {
         super("Escape");
+        setBackground(Color.BLACK);
         
         // icon
         InputStream in = ResourceUtils.getLocalResourceAsStream("icon.png");
@@ -40,7 +42,8 @@ public class EscapeMain extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(STARTW, STARTH);
 
-        getContentPane().add(new EscapeLevelView(f));
+        setContentPane(new EscapeLevelView(f));
+        getRootPane().setDoubleBuffered(false);
     }
 
     public static void main(String[] args) {
