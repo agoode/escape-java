@@ -158,6 +158,54 @@ public class Level {
 
     public final static int T_GPANEL = 50;
 
+    /**
+     * @return Returns the author.
+     */
+    public String getAuthor() {
+        return author;
+    }
+    /**
+     * @param author The author to set.
+     */
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+    /**
+     * @return Returns the title.
+     */
+    public String getTitle() {
+        return title;
+    }
+    /**
+     * @param title The title to set.
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    /**
+     * @return Returns the guyX.
+     */
+    public int getGuyX() {
+        return guyX;
+    }
+    /**
+     * @return Returns the guyY.
+     */
+    public int getGuyY() {
+        return guyY;
+    }
+    /**
+     * @return Returns the height.
+     */
+    public int getHeight() {
+        return height;
+    }
+    /**
+     * @return Returns the width.
+     */
+    public int getWidth() {
+        return width;
+    }
     // static functions
     static int turnLeft(int d) {
         switch (d) {
@@ -253,19 +301,19 @@ public class Level {
     // member variables
 
     // metadata
-    String title;
+    private String title;
 
-    String author;
+    private String author;
 
     // width, height
-    private final int w;
+    private final int width;
 
-    private final int h;
+    private final int height;
 
     // location of guy
-    int guyX;
+    private int guyX;
 
-    int guyY;
+    private int guyY;
 
     // shown
     private final int tiles[];
@@ -295,49 +343,49 @@ public class Level {
     }
 
     IntPair where(int idx) {
-        int x = idx % w;
-        int y = idx / w;
+        int x = idx % width;
+        int y = idx / width;
 
         return new IntPair(x, y);
     }
 
     int index(int x, int y) {
-        return (y * w) + x;
+        return (y * width) + x;
     }
 
     int tileAt(int x, int y) {
-        return tiles[y * w + x];
+        return tiles[y * width + x];
     }
 
     int oTileAt(int x, int y) {
-        return oTiles[y * w + x];
+        return oTiles[y * width + x];
     }
 
     void setTile(int x, int y, int t) {
-        tiles[y * w + x] = t;
+        tiles[y * width + x] = t;
     }
 
     void oSetTile(int x, int y, int t) {
-        oTiles[y * w + x] = t;
+        oTiles[y * width + x] = t;
     }
 
     void setDest(int x, int y, int xd, int yd) {
-        dests[y * w + x] = yd * w + xd;
+        dests[y * width + x] = yd * width + xd;
     }
 
     int destAt(int x, int y) {
-        return dests[y * w + x];
+        return dests[y * width + x];
     }
 
     IntPair getDest(int x, int y) {
-        int xd = dests[y * w + x] % w;
-        int yd = dests[y * w + x] / w;
+        int xd = dests[y * width + x] % width;
+        int yd = dests[y * width + x] / width;
 
         return new IntPair(xd, yd);
     }
 
     int flagAt(int x, int y) {
-        return flags[y * w + x];
+        return flags[y * width + x];
     }
 
     boolean isWon() {
@@ -353,7 +401,7 @@ public class Level {
                 return new IntPair(x, y - 1);
             }
         case DIR_DOWN:
-            if (y == (h - 1)) {
+            if (y == (height - 1)) {
                 return null;
             } else {
                 return new IntPair(x, y + 1);
@@ -365,7 +413,7 @@ public class Level {
                 return new IntPair(x - 1, y);
             }
         case DIR_RIGHT:
-            if (x == (w - 1)) {
+            if (x == (width - 1)) {
                 return null;
             } else {
                 return new IntPair(x + 1, y);
@@ -470,7 +518,7 @@ public class Level {
     }
 
     void swapTiles(int t1, int t2) {
-        for (int i = 0; i < w * h; i++) {
+        for (int i = 0; i < width * height; i++) {
             if (tiles[i] == t1)
                 tiles[i] = t2;
             else if (tiles[i] == t2)
@@ -479,7 +527,7 @@ public class Level {
     }
 
     void clearFlag(int fl) {
-        for (int i = 0; i < w * h; i++) {
+        for (int i = 0; i < width * height; i++) {
             flags[i] &= ~fl;
         }
     }
@@ -513,7 +561,7 @@ public class Level {
                 return true;
 
             case T_ON: {
-                for (int i = 0; i < w * h; i++) {
+                for (int i = 0; i < width * height; i++) {
                     if (tiles[i] == T_ELECTRIC)
                         tiles[i] = T_FLOOR;
                 }
@@ -646,7 +694,7 @@ public class Level {
             }
             case T_TRANSPORT: {
                 IntPair targ;
-                targ = where(dests[w * newP.getY() + newP.getX()]);
+                targ = where(dests[width * newP.getY() + newP.getX()]);
 
                 warp(targ.getX(), targ.getY());
 
@@ -882,8 +930,8 @@ public class Level {
             throw new IOException("Bad magic");
         }
         
-        w = getIntFromStream(in);
-        h = getIntFromStream(in);
+        width = getIntFromStream(in);
+        height = getIntFromStream(in);
         
         int size;
         
@@ -896,30 +944,30 @@ public class Level {
         guyX = getIntFromStream(in);
         guyY = getIntFromStream(in);
         
-        tiles = RunLengthEncoding.decode(in, w*h);
-        oTiles = RunLengthEncoding.decode(in, w*h);
-        dests = RunLengthEncoding.decode(in, w*h);
-        flags = RunLengthEncoding.decode(in, w*h);
+        tiles = RunLengthEncoding.decode(in, width*height);
+        oTiles = RunLengthEncoding.decode(in, width*height);
+        dests = RunLengthEncoding.decode(in, width*height);
+        flags = RunLengthEncoding.decode(in, width*height);
     }
     
     public void print(PrintStream p) {
-        p.println("\"" + title + "\" by " + author + " (" + w + "," + h + ")" +
+        p.println("\"" + title + "\" by " + author + " (" + width + "," + height + ")" +
                 " guy: (" + guyX + "," + guyY + ")");
         p.println();
         p.println("tiles");
-        printM(p, tiles, w);
+        printM(p, tiles, width);
         
         p.println();
         p.println("oTiles");
-        printM(p, oTiles, w);
+        printM(p, oTiles, width);
 
         p.println();
         p.println("dests");
-        printM(p, dests, w);
+        printM(p, dests, width);
 
         p.println();
         p.println("flags");
-        printM(p, flags, w);
+        printM(p, flags, width);
     }
     
     private void printM(PrintStream p, int[] m, int w) {
