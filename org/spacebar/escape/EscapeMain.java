@@ -8,7 +8,7 @@ package org.spacebar.escape;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -29,9 +29,9 @@ public class EscapeMain extends JFrame {
         super("Escape");
         
         // icon
-        URL u = ResourceUtils.getLocalResource("icon.png");
+        InputStream in = ResourceUtils.getLocalResourceAsStream("icon.png");
         try {
-            setIconImage(ImageIO.read(u));
+            setIconImage(ImageIO.read(in));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -158,24 +158,6 @@ public class Level {
 
     public final static int T_GPANEL = 50;
 
-    public Object clone() throws CloneNotSupportedException {
-        Level newL = new Level(width, height, title, author, guyX, guyY);
-
-        newL.replaceWith(this);
-
-        return newL;
-    }
-
-    /**
-     * @param newL
-     */
-    private void replaceWith(Level newL) {
-        System.arraycopy(newL.tiles, 0, tiles, 0, tiles.length);
-        System.arraycopy(newL.oTiles, 0, oTiles, 0, oTiles.length);
-        System.arraycopy(newL.dests, 0, dests, 0, dests.length);
-        System.arraycopy(newL.flags, 0, flags, 0, flags.length);
-    }
-
     /**
      * @return Returns the author.
      */
@@ -1000,22 +982,6 @@ public class Level {
         flags = RunLengthEncoding.decode(in, width * height);
     }
 
-    private Level(int w, int h, String title, String author, int guyX, int guyY) {
-        this.width = w;
-        this.height = h;
-
-        this.title = title;
-        this.author = author;
-
-        this.guyX = guyX;
-        this.guyY = guyY;
-
-        tiles = new int[width * height];
-        oTiles = new int[width * height];
-        dests = new int[width * height];
-        flags = new int[width * height];
-    }
-
     public void print(PrintStream p) {
         p.println("\"" + title + "\" by " + author + " (" + width + ","
                 + height + ")" + " guy: (" + guyX + "," + guyY + ")");
@@ -1066,17 +1032,5 @@ public class Level {
 
         String result = new String(buf);
         return (result);
-    }
-
-    public static void main(String args[]) {
-        File f = new File(args[0]);
-        try {
-            Level l = new Level(new BitInputStream(new FileInputStream(f)));
-            l.print(System.out);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

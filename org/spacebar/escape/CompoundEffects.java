@@ -13,13 +13,13 @@ package org.spacebar.escape;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class EffectsCombiner implements Effects {
+public class CompoundEffects implements Effects {
     static final int INITIAL_SIZE = 2;
     
     int count;
     Effects theEffects[];
 
-    EffectsCombiner() {
+    CompoundEffects() {
         clear();  // initalize
     }
     
