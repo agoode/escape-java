@@ -862,7 +862,7 @@ public class Level {
          * then, update panel states. this is tricky.
          */
 
-        IntPair dest = newP;
+        IntPair dest = new IntPair(newP);
         {
             int curx = newP.x, cury = newP.y;
             /*
