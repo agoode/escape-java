@@ -1214,6 +1214,10 @@ public class Level {
      * @return
      */
     private boolean doElectricOffMove(Effects e, IntPair newP) {
+        if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+            return false;
+        }
+
         if (e != null) {
             e.doElectricOff();
         }
