@@ -104,11 +104,11 @@ abstract public class Entity {
         return isPlayerB;
     }
 
-    final public boolean pushesBots() {
+    final public boolean canPushBots() {
         return pushBotsB;
     }
     
-    final public boolean pushesPlayer() {
+    final public boolean canPushPlayer() {
         return pushPlayerB;
     }
 
@@ -136,6 +136,10 @@ abstract public class Entity {
         this.y = y;
     }
 
+    final public boolean isAt(int x, int y) {
+        return this.x == x && this.y == y;
+    }
+    
     final public boolean walksIntoBots() {
         return walkIntoBotsB;
     }
@@ -150,9 +154,9 @@ abstract public class Entity {
         if (canTeleport()) s += " canTeleport";
         if (crushesPlayer()) s += " crushesPlayer";
         if (walksIntoBots()) s += " walksIntoBots";
-        if (pushesPlayer()) s += " pushesPlayer";
+        if (canPushPlayer()) s += " pushesPlayer";
         if (zapsSelf()) s += " zapsSelf";
-        if (pushesBots()) s += " pushesBots";
+        if (canPushBots()) s += " pushesBots";
         s += " ]";
         return s;
     }

@@ -206,13 +206,13 @@ public class Level {
     public int getBotType(int index) {
         return bots[index].getBotType();
     }
-    
+
     public int getPlayerX() {
-        return p.getX();
+        return player.getX();
     }
 
     public int getPlayerY() {
-        return p.getY();
+        return player.getY();
     }
 
     public int getHeight() {
@@ -331,7 +331,7 @@ public class Level {
 
     final int height;
 
-    final private Player p;
+    final private Player player;
 
     // shown
     private final int tiles[];
@@ -346,7 +346,7 @@ public class Level {
     private final int flags[];
 
     private Bot bots[];
-    
+
     // dirty
     public final DirtyList dirty;
 
@@ -424,7 +424,7 @@ public class Level {
     }
 
     public boolean isWon() {
-        return tileAt(p.getX(), p.getY()) == T_EXIT;
+        return tileAt(player.getX(), player.getY()) == T_EXIT;
     }
 
     private IntPair travel(int x, int y, int d) {
@@ -466,7 +466,7 @@ public class Level {
 
         // easiest way is to look for lasers from the current dude.
         for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
-            int lx = p.getX(), ly = p.getY();
+            int lx = player.getX(), ly = player.getY();
 
             IntPair r;
             while ((r = travel(lx, ly, dd)) != null) {
@@ -579,19 +579,22 @@ public class Level {
     }
 
     public boolean move(int d, Effects e) {
-        p.setDir(d);  // always set dir
-        boolean result = realMove(p, d, e);
+        player.setDir(d); // always set dir
+        boolean result = realMove(player, d, e);
 
         if (result) {
             if (e != null) {
                 e.doStep();
             }
-            
+
             // move bots
             for (int i = 0; i < bots.length; i++) {
                 Bot b = bots[i];
-                IntPair dirs = b.getDirChoices(p);
-                
+                if (b == null) {
+                    continue;
+                }
+                IntPair dirs = b.getDirChoices(player);
+
                 if (dirs.x != Entity.DIR_NONE) {
                     boolean bm = realMove(b, dirs.x, e);
 
@@ -631,7 +634,124 @@ public class Level {
             case T_BDOWN:
             case T_RDOWN:
             case T_GDOWN:
-            case T_EXIT: /* now we allow player to walk onto exit */
+            case T_PANEL:
+                // sometimes we will push
+                Entity pushee = null;
+                Bot b;
+                if (player.isAt(newP.x, newP.y)) { // ent is not player!
+                    // if player is on bot, no pushing either of them
+                    if (getBotAt(newP.x, newP.y) != null) {
+                        return false;
+                    }
+
+                    if (ent.canPushPlayer()) {
+                        pushee = player;
+                    } else if (ent.crushesPlayer()) {
+                        pushee = null; // CRUSH! not push
+                    } else {
+                        return false;
+                    }
+                } else if ((b = getBotAt(newP.x, newP.y)) != null) {
+                    if (ent.canPushBots()) {
+                        pushee = b;
+                    } else if (ent.walksIntoBots()) {
+                        pushee = null; // WALK! not push
+                    } else {
+                        return false;
+                    }
+                }
+
+                if (pushee != null) {
+                    // we are pushing, do some sort of recursive push
+                    IntPair far = travel(newP.x, newP.y, d);
+                    if (far != null) {
+                        int fTarget = tileAt(far.x, far.y);
+                        switch (fTarget) {
+                        case T_ELECTRIC:
+                            // only bots can go into electric
+                            if (pushee == player) {
+                                return false;
+                            }
+                            break;
+                        case T_TRAP2:
+                        case T_TRAP1:
+                        case T_FLOOR:
+                        case T_ROUGH:
+                        case T_RDOWN:
+                        case T_GDOWN:
+                        case T_BDOWN:
+                        case T_PANEL:
+                        case T_RPANEL:
+                        case T_GPANEL:
+                        case T_BPANEL:
+                            break;
+                        default:
+                            return false;
+                        }
+
+                        // can't push 2 entities
+                        if (isBotAt(far.x, far.y)) {
+                            return false;
+                        }
+                        if (player.isAt(far.x, far.y)) {
+                            return false;
+                        }
+
+                        // push
+                        pushee.setX(far.x);
+                        pushee.setY(far.y);
+
+                        // zapping
+                        if (fTarget == T_ELECTRIC && pushee != player) {
+                            deleteBot((Bot) pushee);
+                        }
+
+                        // panels
+                        if (fTarget == T_PANEL) {
+                            swapO(destAt(far.x, far.y));
+                        }
+
+                        // handle leaving current (pushed) position
+                        if (target == T_PANEL) {
+                            // do nothing, or else get a double flip
+                            // since pusher is going on here now
+                        } else {
+                            checkStepOff(newP.x, newP.y);
+                        }
+
+                        // handle leaving pusher position
+                        checkStepOff(ent.getX(), ent.getY());
+
+                        // then move
+                        ent.setX(newP.x);
+                        ent.setY(newP.y);
+
+                        // done?
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    checkBotDeath(newP.x, newP.y, ent); // might have stepped
+                    // onto bot
+
+                    // panels again
+                    checkStepOff(ent.getX(), ent.getY());
+                    if (target == T_PANEL) {
+                        swapO(destAt(newP.x, newP.y));
+                    }
+
+                    ent.setX(newP.x);
+                    ent.setY(newP.y);
+
+                    return true;
+                }
+
+            case T_EXIT:
+                // bots don't exit
+                if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+                    return false;
+                }
 
                 checkStepOff(ent.getX(), ent.getY());
                 ent.setX(newP.x);
@@ -677,10 +797,17 @@ public class Level {
                  */
                 IntPair t;
                 while (isSphere(tileAt(newP.x, newP.y))
+                        && !(player.isAt(newP.x, newP.y) || isBotAt(newP.x,
+                                newP.y))
                         && (t = travel(newP.x, newP.y, d)) != null
                         && isSphere(tileAt(t.x, t.y))) {
                     newP = t;
                     target = tileAt(t.x, t.y);
+                }
+
+                // can't push if entity there
+                if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
+                    return false;
                 }
 
                 int goldX = newP.x, goldY = newP.y;
@@ -696,10 +823,13 @@ public class Level {
                 while ((tGold = travel(goldX, goldY, d)) != null) {
 
                     int next = tileAt(tGold.x, tGold.y);
-                    if (next != T_ELECTRIC && next != T_PANEL
-                            && next != T_BPANEL && next != T_RPANEL
-                            && next != T_GPANEL && next != T_FLOOR)
+                    if (!(next == T_ELECTRIC || next == T_PANEL
+                            || next == T_BPANEL || next == T_RPANEL
+                            || next == T_GPANEL || next == T_FLOOR
+                            || isBotAt(tGold.x, tGold.y) || player.isAt(
+                            tGold.x, tGold.y))) {
                         break;
+                    }
 
                     goldX = tGold.x;
                     goldY = tGold.y;
@@ -882,13 +1012,6 @@ public class Level {
                 }
                 return true;
 
-            case T_PANEL:
-                swapO(destAt(newP.x, newP.y));
-                checkStepOff(ent.getX(), ent.getY());
-                ent.setX(newP.x);
-                ent.setY(newP.y);
-                return true;
-
             case T_GREEN: {
                 IntPair dest;
                 if ((dest = travel(newP.x, newP.y, d)) != null) {
@@ -1028,6 +1151,32 @@ public class Level {
             return false;
     }
 
+    private void checkBotDeath(int x, int y, Entity ent) {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void deleteBot(Bot bot) {
+        for (int i = 0; i < bots.length; i++) {
+            if (bots[i] == bot) {
+                bots[i] = null;
+            }
+        }
+    }
+
+    private boolean isBotAt(int x, int y) {
+        return getBotAt(x, y) != null;
+    }
+
+    private Bot getBotAt(int x, int y) {
+        for (int i = 0; i < bots.length; i++) {
+            if (bots[i] != null && bots[i].isAt(x, y)) {
+                return bots[i];
+            }
+        }
+        return null;
+    }
+
     public Level(BitInputStream in) throws IOException {
         MetaData m = getMetaData(in);
 
@@ -1040,8 +1189,8 @@ public class Level {
         int playerX = getIntFromStream(in);
         int playerY = getIntFromStream(in);
 
-        p = new Player(playerX, playerY, Entity.DIR_DOWN);
-        
+        player = new Player(playerX, playerY, Entity.DIR_DOWN);
+
         tiles = RunLengthEncoding.decode(in, width * height);
         oTiles = RunLengthEncoding.decode(in, width * height);
         dests = RunLengthEncoding.decode(in, width * height);
@@ -1062,7 +1211,8 @@ public class Level {
         for (int i = 0; i < this.bots.length; i++) {
             int x = botI[i] % width;
             int y = botI[i] / width;
-            this.bots[i] = Bot.createBotFromType(x, y, Entity.DIR_DOWN, botT[i]);
+            this.bots[i] = Bot
+                    .createBotFromType(x, y, Entity.DIR_DOWN, botT[i]);
         }
 
         dirty = new DirtyList();
@@ -1149,8 +1299,8 @@ public class Level {
 
     public void print(PrintStream p) {
         p.println("\"" + title + "\" by " + author + " (" + width + ","
-                + height + ")" + " player: (" + this.p.getX() + ","
-                + this.p.getY() + ")");
+                + height + ")" + " player: (" + this.player.getX() + ","
+                + this.player.getY() + ")");
         p.println();
         p.println("tiles");
         printM(p, tiles, width);
@@ -1214,6 +1364,10 @@ public class Level {
     }
 
     public int getPlayerDir() {
-        return p.getDir();
+        return player.getDir();
+    }
+
+    public boolean isBotDeleted(int botIndex) {
+        return bots[botIndex] == null;
     }
 }
