@@ -34,7 +34,7 @@ public class PlayerInfo {
 
     public PlayerInfo(BitInputStream in) throws IOException {
         // read magic
-        String magic = Misc.getStringFromStream(in, 4);
+        String magic = Misc.getStringFromData(in, 4);
 
         // decide
         if (magic.equals(PLAYER_MAGIC)) {
@@ -65,15 +65,15 @@ public class PlayerInfo {
         }
 
         // name
-        name = Misc.getLine(in);
+        name = br.readLine();
 
         // all solutions
-        if (!Misc.getLine(in).equals(SOL_MARKER)) {
+        if (!br.readLine().equals(SOL_MARKER)) {
             throw new IOException("Solution marker not found");
         }
 
         for (;;) {
-            s = Misc.getLine(in);
+            s = br.readLine();
             if (s.equals(RAT_MARKER)) {
                 break;
             }
@@ -96,27 +96,27 @@ public class PlayerInfo {
 
     private void decodeBinaryFormat(BitInputStream in) throws IOException {
         // get web stuff
-        webID = Misc.getIntFromStream(in);
-        webSeqH = Misc.getIntFromStream(in);
-        webSeqL = Misc.getIntFromStream(in);
+        webID = in.readInt();
+        webSeqH = in.readInt();
+        webSeqL = in.readInt();
 
         // skip over
         for (int i = 0; i < IGNORED_FIELDS; i++) {
-            Misc.getIntFromStream(in);
+            in.readInt();
         }
 
         // name
-        int len = Misc.getIntFromStream(in);
-        name = Misc.getStringFromStream(in, len);
+        int len = in.readInt();
+        name = Misc.getStringFromData(in, len);
 
         // all solutions
-        int numSolutions = Misc.getIntFromStream(in);
+        int numSolutions = in.readInt();
         while (numSolutions-- > 0) {
             // md5
             MD5 md5 = new MD5(in);
 
             // discard length of rle encoded bytes
-            Misc.getIntFromStream(in);
+            in.readInt();
 
             // get solution
             Level.Solution s = new Level.Solution(in);
