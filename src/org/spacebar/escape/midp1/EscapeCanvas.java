@@ -30,6 +30,8 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     private static final int TILES_BUFFERED = 8;
 
+    private static final int PLAYER_BORDER = 2;
+
     private static final Font font = Font.getFont(Font.FACE_PROPORTIONAL,
             Font.STYLE_PLAIN, Font.SIZE_MEDIUM);
 
@@ -54,13 +56,17 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     private int bufH;
 
     private int playerDir;
-    
+
     final private Escape theApp;
-    
+
     final private Continuation theWayOut;
 
     final Loader loader = new Loader();
-    
+
+    private int xScroll;
+
+    private int yScroll;
+
     EscapeCanvas(byte[] level, Escape m, Continuation c) {
         theApp = m;
         theWayOut = c;
@@ -69,7 +75,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         playerDir = Level.DIR_DOWN;
 
         setCommandListener(this);
-        
+
         addCommand(Escape.RESTART_COMMAND);
         addCommand(Escape.BACK_COMMAND);
 
@@ -87,6 +93,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
                         e.printStackTrace();
                     }
 
+                    updateScroll();
                     done = false;
                     repaint();
                 }
@@ -134,10 +141,13 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         // nudge
         g.translate(-TILE_SIZE / 2, font.getBaselinePosition());
 
+        // level
+        g.translate(-xScroll * TILE_SIZE, -yScroll * TILE_SIZE);
         g.drawImage(levelBuffer, 0, 0, Graphics.TOP | Graphics.LEFT);
         drawPlayer(g);
         drawLaser(g);
 
+        // title
         g.setFont(font);
         g.setColor(255, 255, 255);
         g.drawString(theLevel.getTitle(), -g.getTranslateX(), -g
@@ -294,10 +304,77 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         case DOWN:
             doMove(Level.DIR_DOWN);
             break;
-        case FIRE:
-            initLevel();
-            break;
+        //        case FIRE:
+        //            initLevel();
+        //            break;
         }
+    }
+
+    void updateScroll() {
+        int w = theLevel.getWidth();
+        int h = theLevel.getHeight();
+
+        final int paintedTilesAcross = Math.min((getWidth() / TILE_SIZE) + 1, w);
+        final int paintedTilesDown = Math.min((getHeight() / TILE_SIZE) + 1, h);
+
+        int playerBorderX = PLAYER_BORDER;
+        int playerBorderY = PLAYER_BORDER;
+
+        if (paintedTilesAcross < playerBorderX * 2 - 1) {
+            playerBorderX = paintedTilesAcross / 2 + 1;
+            if (playerBorderX < 0) {
+                playerBorderX = 0;
+            }
+        }
+
+        if (paintedTilesDown < playerBorderY * 2 - 1) {
+            playerBorderY = paintedTilesDown / 2 + 1;
+            if (playerBorderY < 0) {
+                playerBorderY = 0;
+            }
+        }
+
+        System.out.println("pbx: " + playerBorderX + ", pby: " + playerBorderY);
+
+        final int playerX = theLevel.getPlayerX();
+        final int playerY = theLevel.getPlayerY();
+        final int playerScreenX = playerX - xScroll;
+        final int playerScreenY = playerY - yScroll;
+
+        if (playerScreenX < playerBorderX) {
+            System.out.println("scroll left!");
+            xScroll = playerX - playerBorderX;
+        } else if (playerScreenX > (paintedTilesAcross - 1) - playerBorderX) {
+            System.out.println("scroll right!");
+            xScroll = playerX - (paintedTilesAcross - 1) + playerBorderX;
+        }
+
+        if (playerScreenY < playerBorderY) {
+            System.out.println("scroll up!");
+            yScroll = playerY - playerBorderY;
+        } else if (playerScreenY > (paintedTilesDown - 1) - playerBorderY) {
+            System.out.println("scroll down!");
+            yScroll = playerY - (paintedTilesDown - 1) + playerBorderY;
+        }
+
+        // normalize
+        final int maxXScroll = w - paintedTilesAcross;
+        final int maxYScroll = h - paintedTilesDown;
+
+        if (xScroll < 0) {
+            xScroll = 0;
+        } else if (xScroll > maxXScroll) {
+            xScroll = maxXScroll;
+        }
+
+        if (yScroll < 0) {
+            yScroll = 0;
+        } else if (yScroll > maxYScroll) {
+            yScroll = maxYScroll;
+        }
+
+        System.out.println("pta: " + paintedTilesAcross + ", ptd: "
+                + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
     }
 
     private void initLevel() {
@@ -314,6 +391,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         playerDir = dir;
 
         theLevel.move(dir, null);
+        updateScroll();
 
         if (theLevel.isDead() != null) {
             done = true;
@@ -340,7 +418,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     public void commandAction(Command c, Displayable d) {
         if (c == Escape.RESTART_COMMAND) {
             initLevel();
-        } else if (c == Escape.EXIT_COMMAND) {
+        } else if (c == Escape.BACK_COMMAND) {
             theWayOut.invoke();
         }
     }

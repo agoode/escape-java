@@ -35,6 +35,7 @@ public class Escape extends MIDlet {
     });
 
     public void startApp() throws MIDletStateChangeException {
+        System.out.println("Escape startApp() called");
         //        display.setCurrent(canvas);
         displayLevelChooser();
     }
