@@ -10,7 +10,7 @@
    xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="tester.svg"
-   sodipodi:docbase="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources"
+   sodipodi:docbase="/home/agoode/workspace/Escape/src/org/spacebar/escape/j2se/resources"
    height="297mm"
    width="210mm"
    inkscape:version="0.41"
@@ -35,11 +35,11 @@
      id="defs1343" />
   <sodipodi:namedview
      inkscape:current-layer="svg1340"
-     inkscape:window-y="151"
-     inkscape:window-x="7"
-     inkscape:cy="743.88379"
-     inkscape:cx="634.33235"
-     inkscape:zoom="1.7789460"
+     inkscape:window-y="120"
+     inkscape:window-x="1"
+     inkscape:cy="851.25294"
+     inkscape:cx="487.59241"
+     inkscape:zoom="0.88947300"
      inkscape:window-height="868"
      inkscape:window-width="1028"
      inkscape:pageshadow="2"
@@ -53,7 +53,7 @@
      height="192.00000"
      width="512.00000"
      sodipodi:absref="/home/adam/tom7misc/escapex/tiles.png"
-     xlink:href="/home/adam/tom7misc/escapex/tiles.png" />
+     xlink:href="tiles.png" />
   <g
      id="g8124"
      transform="translate(-10.73213,9.142186)">
@@ -166,7 +166,7 @@
      height="37.000000"
      width="32.000000"
      sodipodi:absref="/home/adam/tom7misc/escapex/animation/dalek_forward_1.png"
-     xlink:href="/home/adam/tom7misc/escapex/animation/dalek_forward_1.png" />
+     xlink:href="animation/dalek_forward_1.png" />
   <path
      id="path2392"
      d="M 337.13519,289.73429 C 336.58519,289.55082 334.87212,289.12136 333.32837,288.77993 C 331.14539,288.29712 330.65436,287.74074 331.11905,286.27661 C 331.44767,285.24122 331.24824,284.10466 330.67587,283.75091 C 330.06340,283.37239 329.63519,278.84811 329.63519,272.75565 C 329.63519,262.42359 329.64114,262.39855 332.71192,259.81466 C 334.40411,258.39077 335.30411,257.22577 334.71192,257.22577 C 334.11972,257.22577 333.63519,256.55077 333.63519,255.72577 C 333.63519,254.90077 334.31019,254.22577 335.13519,254.22577 C 335.96019,254.22577 336.63519,254.85312 336.63519,255.61988 C 336.63519,256.66447 338.62180,257.10422 344.55883,257.37383 C 351.27997,257.67905 352.87345,258.10098 355.05883,260.15403 C 357.50285,262.45007 357.63519,263.10177 357.63519,272.84107 C 357.63519,278.87436 357.20607,283.37294 356.59451,283.75091 C 356.02214,284.10466 355.81885,285.22907 356.14275,286.24960 C 356.61468,287.73652 355.97714,288.31465 352.93343,289.15987 C 349.41233,290.13765 339.43220,290.50053 337.13519,289.73429 z "
@@ -219,7 +219,7 @@
      style="fill:#990a0a;fill-opacity:1.0000000;fill-rule:evenodd;stroke:none;stroke-width:3.8625000;stroke-linejoin:round;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000"
      sodipodi:type="arc" />
   <image
-     xlink:href="/home/adam/tom7misc/escapex/animation/deadrobot.png"
+     xlink:href="animation/deadrobot.png"
      sodipodi:absref="/home/adam/tom7misc/escapex/animation/deadrobot.png"
      width="32.000000"
      height="32.000000"
@@ -267,7 +267,7 @@
        id="path9560" />
   </g>
   <image
-     xlink:href="/home/adam/tom7misc/escapex/animation/walk_forward_0.png"
+     xlink:href="animation/walk_forward_0.png"
      sodipodi:absref="/home/adam/tom7misc/escapex/animation/walk_forward_0.png"
      width="32.000000"
      height="36.000000"
@@ -280,8 +280,8 @@
      id="image2224"
      height="37.000000"
      width="32.000000"
-     sodipodi:absref="/home/adam/tom7misc/escapex/animation/dalek_forward_0.png"
-     xlink:href="/home/adam/tom7misc/escapex/animation/dalek_forward_0.png" />
+     sodipodi:absref="animation/dalek_forward_0.png"
+     xlink:href="animation/dalek_forward_0.png" />
   <g
      id="g6493"
      transform="translate(11.53098,3.843659)"
@@ -322,8 +322,8 @@
        id="path5952" />
   </g>
   <image
-     xlink:href="/tmp/1.png"
-     sodipodi:absref="/tmp/1.png"
+     xlink:href="tiles/01.png"
+     sodipodi:absref="tiles/01.png"
      width="32.000000"
      height="32.000000"
      id="image6541"
@@ -398,8 +398,8 @@
        id="path6564" />
   </g>
   <image
-     xlink:href="/tmp/2.png"
-     sodipodi:absref="/tmp/2.png"
+     xlink:href="tiles/02.png"
+     sodipodi:absref="tiles/02.png"
      width="32.000000"
      height="32.000000"
      id="image6684"
@@ -498,8 +498,8 @@
      rx="4.9189057"
      ry="4.9189057" />
   <image
-     xlink:href="/tmp/hugbot_forward_0.png"
-     sodipodi:absref="/tmp/hugbot_forward_0.png"
+     xlink:href="animation/hugbot_forward_0.png"
+     sodipodi:absref="animation/hugbot_forward_0.png"
      width="32.000000"
      height="37.000000"
      id="image8495"
@@ -530,16 +530,16 @@
      d="M 518.70503,349.55935 C 517.06992,344.17651 517.16243,344.03256 520.99949,345.98881 C 525.68082,348.37548 534.58305,348.39135 539.23176,346.02131 L 542.73890,344.23327 L 542.31804,347.10072 C 541.82803,350.43939 539.66325,351.61253 537.02860,349.96717 C 534.75754,348.54887 524.50128,348.42791 523.64750,349.80935 C 522.76813,351.23220 519.15770,351.04957 518.70503,349.55935 z M 521.98203,347.68593 C 520.03872,346.45407 519.14750,346.62065 519.14750,348.21573 C 519.14750,349.14879 519.84905,349.43865 521.23203,349.07699 C 522.81689,348.66254 522.99667,348.32910 521.98203,347.68593 z M 541.14750,347.69272 C 541.14750,346.64725 540.82850,346.61079 538.72929,347.41634 C 536.43321,348.29743 536.78593,349.71666 539.14750,349.09910 C 540.24750,348.81144 541.14750,348.17857 541.14750,347.69272 z M 516.51273,333.30935 C 516.51013,327.80935 516.67592,325.43176 516.88117,328.02583 C 517.08642,330.61989 517.08855,335.11989 516.88590,338.02583 C 516.68326,340.93176 516.51533,338.80935 516.51273,333.30935 z M 524.37959,342.09482 C 525.88224,341.86665 528.58224,341.86206 530.37959,342.08462 C 532.17694,342.30718 530.94750,342.49387 527.64750,342.49948 C 524.34750,342.50509 522.87694,342.32300 524.37959,342.09482 z M 543.51273,333.30935 C 543.51013,327.80935 543.67592,325.43176 543.88117,328.02583 C 544.08642,330.61989 544.08855,335.11989 543.88590,338.02583 C 543.68326,340.93176 543.51533,338.80935 543.51273,333.30935 z M 528.54750,337.40935 C 528.18144,336.45541 528.37693,335.17992 528.98193,334.57492 C 529.78194,333.77492 530.26345,333.94794 530.74750,335.20935 C 531.11356,336.16329 530.91807,337.43879 530.31307,338.04378 C 529.51306,338.84379 529.03155,338.67076 528.54750,337.40935 z M 529.75167,335.08018 C 529.41938,334.74789 529.18303,335.33852 529.22645,336.39268 C 529.27443,337.55763 529.51139,337.79458 529.83061,336.99685 C 530.11949,336.27497 530.08396,335.41248 529.75167,335.08018 z M 522.54104,336.39251 C 521.71336,334.23561 522.86497,331.54851 524.39803,332.05953 C 526.02214,332.60089 526.02214,337.01781 524.39803,337.55917 C 523.71082,337.78824 522.87517,337.26324 522.54104,336.39251 z M 525.14750,334.80935 C 525.14750,333.70935 524.69750,332.80935 524.14750,332.80935 C 523.59750,332.80935 523.14750,333.70935 523.14750,334.80935 C 523.14750,335.90935 523.59750,336.80935 524.14750,336.80935 C 524.69750,336.80935 525.14750,335.90935 525.14750,334.80935 z M 519.14750,320.75246 C 520.52250,319.55588 521.64809,317.84167 521.64882,316.94310 C 521.64954,316.04454 522.09954,315.52105 522.64882,315.77980 C 523.19809,316.03854 523.54078,316.71354 523.41035,317.27980 C 523.26337,317.91793 525.13323,318.17330 528.32865,317.95149 C 534.02321,317.55620 540.27018,319.04731 542.08604,321.23530 C 542.86549,322.17447 541.99147,322.00438 539.49323,320.73070 C 534.44982,318.15942 524.68534,318.05656 523.22760,320.55935 C 522.54344,321.73398 522.19832,321.86056 522.17791,320.94434 C 522.15383,319.86334 521.57533,319.92770 519.39750,321.25369 L 516.64750,322.92805 L 519.14750,320.75246 z "
      id="path9443" />
   <image
-     xlink:href="/tmp/hugbot_forward_0.png"
-     sodipodi:absref="/tmp/hugbot_forward_0.png"
+     xlink:href="animation/hugbot_forward_0.png"
+     sodipodi:absref="animation/hugbot_forward_0.png"
      width="32.000000"
      height="37.000000"
      id="image9170"
      x="595.03601"
      y="244.34976" />
   <image
-     xlink:href="/tmp/hugbot_forward_0.png"
-     sodipodi:absref="/tmp/hugbot_forward_0.png"
+     xlink:href="animation/hugbot_forward_0.png"
+     sodipodi:absref="animation/hugbot_forward_0.png"
      width="32.000000"
      height="37.000000"
      id="image9438"
@@ -549,14 +549,6 @@
      style="fill:none;fill-opacity:0.75000000;fill-rule:evenodd;stroke:#000000;stroke-width:1.2262965px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000"
      d="M 522.43216,342.25278 L 533.49038,342.25278"
      id="path9556" />
-  <image
-     y="237.01245"
-     x="670.92358"
-     id="image1765"
-     height="32.000000"
-     width="32.000000"
-     sodipodi:absref="/tmp/Untitled.png"
-     xlink:href="/tmp/Untitled.png" />
   <g
      transform="translate(15.73966,37.10061)"
      id="g1768">
@@ -583,16 +575,15 @@
      id="image2072"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/aaa.png"
-     xlink:href="/tmp/aaa.png" />
+     sodipodi:absref="tiles/00.png"
+     xlink:href="tiles/00.png" />
   <image
      y="267.64856"
      x="634.10400"
      id="image2584"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/10aaa.png"
-     xlink:href="/tmp/10aaa.png" />
+     xlink:href="tiles/10.png" />
   <g
      transform="translate(16.30179,19.39350)"
      id="g2587">
@@ -655,8 +646,8 @@
      id="image5014"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/21aaa.png"
-     xlink:href="/tmp/21aaa.png" />
+     sodipodi:absref="/tmp/21.png"
+     xlink:href="tiles/21.png" />
   <g
      transform="translate(-136.8788,-41.03553)"
      id="g5017">
@@ -695,8 +686,8 @@
      id="image5925"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/19aaa.png"
-     xlink:href="/tmp/19aaa.png" />
+     sodipodi:absref="tiles/19.png"
+     xlink:href="tiles/19.png" />
   <g
      transform="translate(37.10062,27.26333)"
      id="g5928">
@@ -759,8 +750,8 @@
      id="image8781"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/6aaa.png"
-     xlink:href="/tmp/6aaa.png" />
+     sodipodi:absref="tiles/06.png"
+     xlink:href="tiles/06.png" />
   <path
      id="path8796"
      d="M 677.38810,380.61610 L 677.38810,364.61610 L 693.38810,364.61610 L 709.38810,364.61610 L 709.38810,380.61610 L 709.38810,396.61610 L 693.38810,396.61610 L 677.38810,396.61610 L 677.38810,380.61610 z "
@@ -791,8 +782,8 @@
      id="image11605"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/8aaa.png"
-     xlink:href="/tmp/8aaa.png" />
+     sodipodi:absref="tiles/08.png"
+     xlink:href="tiles/08.png" />
   <g
      transform="translate(35.42793,0.938220)"
      id="g11608">
@@ -887,8 +878,8 @@
      id="image15142"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/46aaa.png"
-     xlink:href="/tmp/46aaa.png" />
+     sodipodi:absref="tiles/46.png"
+     xlink:href="tiles/46.png" />
   <path
      id="path15163"
      d="M 709.30689,200.11024 L 709.30689,184.11024 L 725.30689,184.11024 L 741.30689,184.11024 L 741.30689,200.11024 L 741.30689,216.11024 L 725.30689,216.11024 L 709.30689,216.11024 L 709.30689,200.11024 z "
@@ -925,14 +916,6 @@
      id="path15147"
      d="M 718.75731,214.70364 C 708.66746,210.30878 706.28463,196.89721 714.18924,188.99259 C 720.67579,182.50604 729.93799,182.50604 736.42454,188.99259 C 748.83576,201.40382 734.87331,221.72333 718.75731,214.70364 z M 734.13138,212.42879 C 740.33212,207.88464 742.07241,197.35388 737.62544,191.28575 C 733.08129,185.08501 722.55053,183.34472 716.48240,187.79169 C 710.28166,192.33584 708.54137,202.86660 712.98834,208.93473 C 717.53249,215.13547 728.06325,216.87576 734.13138,212.42879 z "
      style="fill:#000000" />
-  <image
-     y="222.39706"
-     x="716.45624"
-     id="image17000"
-     height="32.000000"
-     width="32.000000"
-     sodipodi:absref="/tmp/58aaa.png"
-     xlink:href="/tmp/58aaa.png" />
   <g
      inkscape:export-ydpi="89.690002"
      inkscape:export-xdpi="89.690002"
@@ -998,8 +981,8 @@
      id="image18429"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/3aaa.png"
-     xlink:href="/tmp/3aaa.png" />
+     sodipodi:absref="tiles/03.png"
+     xlink:href="tiles/03.png" />
   <g
      transform="translate(20.23670,33.44678)"
      id="g18432">
@@ -1026,8 +1009,8 @@
      id="image20337"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/33aaa.png"
-     xlink:href="/tmp/33aaa.png" />
+     sodipodi:absref="tiles/33.png"
+     xlink:href="tiles/33.png" />
   <g
      transform="translate(14.33433,43.28406)"
      id="g20340">
@@ -1074,8 +1057,8 @@
      id="image26257"
      height="32.000000"
      width="32.000000"
-     sodipodi:absref="/tmp/5aaa.png"
-     xlink:href="/tmp/5aaa.png" />
+     sodipodi:absref="tiles/05.png"
+     xlink:href="tiles/05.png" />
   <g
      transform="translate(15.17753,32.32251)"
      id="g26260">
