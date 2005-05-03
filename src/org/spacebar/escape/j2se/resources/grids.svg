@@ -2179,7 +2179,6 @@
     </g>
     <image
        xlink:href="tiles/07.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/07.png"
        width="32.000000"
        height="32.000000"
        id="image9213"
@@ -2218,7 +2217,6 @@
     </g>
     <image
        xlink:href="tiles/51.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/51.png"
        width="32.000000"
        height="32.000000"
        id="image9317"
@@ -2258,7 +2256,6 @@
     </g>
     <image
        xlink:href="tiles/52.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/52.png"
        width="32.000000"
        height="32.000000"
        id="image10417"
@@ -2266,7 +2263,6 @@
        y="348.36218" />
     <image
        xlink:href="tiles/53.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/53.png"
        width="32.000000"
        height="32.000000"
        id="image10481"
@@ -2274,7 +2270,6 @@
        y="348.36218" />
     <image
        xlink:href="tiles/54.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/54.png"
        width="32.000000"
        height="32.000000"
        id="image10545"
@@ -2379,7 +2374,6 @@
     <g
        inkscape:export-ydpi="90.000000"
        inkscape:export-xdpi="90.000000"
-       inkscape:export-filename="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/g32246.png"
        transform="translate(320.0000,64.00000)"
        id="g10674">
       <rect
@@ -2416,7 +2410,6 @@
        id="image16107"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/agoode/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/00.png"
        xlink:href="tiles/00.png" />
     <use
        height="1052.3622"
@@ -2484,7 +2477,6 @@
        id="image17633"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/agoode/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/16.png"
        xlink:href="tiles/16.png" />
     <g
        inkscape:export-ydpi="720.00000"
@@ -2596,7 +2588,6 @@
     </g>
     <image
        xlink:href="light-brick.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/light-brick.png"
        width="32.000000"
        height="32.000000"
        id="image13198"
@@ -2620,7 +2611,6 @@
     </g>
     <image
        xlink:href="brick-grid.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/brick-grid.png"
        width="96.000000"
        height="96.000000"
        id="image13273"
@@ -2889,7 +2879,6 @@
        id="image20230"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/agoode/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/06.png"
        xlink:href="tiles/06.png" />
     <image
        y="220.36218"
@@ -2897,7 +2886,6 @@
        id="image20697"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/agoode/workspace/Escape/src/org/spacebar/escape/j2se/resources/hole.png"
        xlink:href="hole.png" />
     <path
        id="path22542"
@@ -2993,7 +2981,6 @@
        id="image3945"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/47.png"
        xlink:href="tiles/47.png" />
     <g
        transform="translate(119.5035,98.94191)"
@@ -3043,7 +3030,6 @@
     </g>
     <image
        xlink:href="tiles/36.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/36.png"
        width="32.000000"
        height="32.000000"
        id="image13038"
@@ -3083,7 +3069,6 @@
     </g>
     <image
        xlink:href="tiles/37.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/37.png"
        width="32.000000"
        height="32.000000"
        id="image13174"
@@ -3091,7 +3076,6 @@
        y="476.36218" />
     <image
        xlink:href="tiles/38.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/38.png"
        width="32.000000"
        height="32.000000"
        id="image13310"
@@ -3099,7 +3083,6 @@
        y="476.36218" />
     <image
        xlink:href="tiles/39.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/39.png"
        width="32.000000"
        height="32.000000"
        id="image13423"
@@ -3107,7 +3090,6 @@
        y="476.36218" />
     <image
        xlink:href="tiles/40.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/40.png"
        width="32.000000"
        height="32.000000"
        id="image13536"
@@ -3115,7 +3097,6 @@
        y="476.36218" />
     <image
        xlink:href="tiles/41.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/41.png"
        width="32.000000"
        height="32.000000"
        id="image13672"
@@ -3291,7 +3272,6 @@
        id="image6676"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/48.png"
        xlink:href="tiles/48.png" />
     <g
        id="g7445"
@@ -3446,7 +3426,6 @@
        id="image8681"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/49.png"
        xlink:href="tiles/49.png" />
     <image
        y="493.36218"
@@ -3454,7 +3433,6 @@
        id="image11173"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/50.png"
        xlink:href="tiles/50.png" />
     <image
        y="493.36218"
@@ -3462,7 +3440,6 @@
        id="image11804"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/09.png"
        xlink:href="tiles/09.png" />
     <g
        transform="translate(-150.0000,16.99998)"
@@ -3519,7 +3496,6 @@
        id="image12449"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/11.png"
        xlink:href="tiles/11.png" />
     <g
        transform="translate(-1.866562e-15,32.00000)"
@@ -3560,7 +3536,6 @@
        id="image13365"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/12.png"
        xlink:href="tiles/12.png" />
     <path
        id="path13391"
@@ -3678,7 +3653,6 @@
        id="image13601"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/13.png"
        xlink:href="tiles/13.png" />
     <image
        y="732.36218"
@@ -3686,7 +3660,6 @@
        id="image13737"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/14.png"
        xlink:href="tiles/14.png" />
     <g
        id="g14019">
@@ -3764,7 +3737,6 @@
        id="image14541"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/05.png"
        xlink:href="tiles/05.png" />
     <g
        transform="translate(3.072273e-2,32.00000)"
@@ -3812,7 +3784,6 @@
     </g>
     <image
        xlink:href="tiles/10.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/10.png"
        width="32.000000"
        height="32.000000"
        id="image15630"
@@ -3866,7 +3837,6 @@
     </g>
     <image
        xlink:href="tiles/42.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/42.png"
        width="32.000000"
        height="32.000000"
        id="image20015"
@@ -3908,7 +3878,6 @@
        id="image4535"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/43.png"
        xlink:href="tiles/43.png" />
     <image
        y="284.36218"
@@ -3916,7 +3885,6 @@
        id="image4971"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/44.png"
        xlink:href="tiles/44.png" />
     <image
        y="316.36218"
@@ -3924,7 +3892,6 @@
        id="image5985"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/45.png"
        xlink:href="tiles/45.png" />
     <g
        id="g5988"
@@ -4022,7 +3989,6 @@
        id="image6488"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/55.png"
        xlink:href="tiles/55.png" />
     <g
        inkscape:export-ydpi="360.00000"
@@ -4070,7 +4036,6 @@
        id="image6718"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/56.png"
        xlink:href="tiles/56.png" />
     <g
        transform="translate(33.00000,0.000000)"
@@ -4132,7 +4097,6 @@
        id="image7650"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/08.png"
        xlink:href="tiles/08.png" />
     <g
        transform="translate(32.00000,-0.106077)"
@@ -4174,7 +4138,6 @@
        id="image8261"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/15.png"
        xlink:href="tiles/15.png" />
     <path
        id="path8302"
@@ -4190,7 +4153,6 @@
        id="image8539"
        height="128.00000"
        width="128.00000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/blur-rough.png"
        xlink:href="blur-rough.png" />
     <g
        inkscape:tile-cy="14.362176"
@@ -4731,7 +4693,6 @@
        id="image9781"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/23.png"
        xlink:href="tiles/23.png" />
     <image
        y="60.362183"
@@ -4739,7 +4700,6 @@
        id="image10301"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/24.png"
        xlink:href="tiles/24.png" />
     <image
        y="28.362183"
@@ -4747,7 +4707,6 @@
        id="image10425"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/17.png"
        xlink:href="tiles/17.png" />
     <g
        transform="translate(34.00000,-3.828125e-7)"
@@ -4891,7 +4850,6 @@
     </g>
     <image
        xlink:href="tiles/18.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/18.png"
        width="32.000000"
        height="32.000000"
        id="image3294"
@@ -5083,7 +5041,6 @@
     </g>
     <image
        xlink:href="tiles/19.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/19.png"
        width="32.000000"
        height="32.000000"
        id="image6479"
@@ -5188,7 +5145,6 @@
     </g>
     <image
        xlink:href="tiles/20.png"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/20.png"
        width="32.000000"
        height="32.000000"
        id="image8203"
@@ -5259,7 +5215,6 @@
        id="image2335"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/21.png"
        xlink:href="tiles/21.png" />
     <g
        transform="translate(49.00000,2.617187e-6)"
@@ -5292,7 +5247,6 @@
        id="image2422"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/22.png"
        xlink:href="tiles/22.png" />
     <g
        transform="translate(49.00000,2.617187e-6)"
@@ -5326,7 +5280,6 @@
        id="image2734"
        height="32.000000"
        width="32.000000"
-       sodipodi:absref="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles/25.png"
        xlink:href="tiles/25.png" />
     <g
        transform="translate(6.293577e-15,32.00000)"
@@ -5707,14 +5660,42 @@
        xlink:href="inner-inner-green.png" />
     <g
        id="g14204">
-      <use
-         height="1052.3622"
-         width="744.09448"
-         transform="translate(-48.00000,2.617187e-6)"
-         id="use12258"
-         xlink:href="#g12222"
-         y="0.0000000"
-         x="0.0000000" />
+      <g
+         transform="translate(-48.00000,32.00000)"
+         id="use12258">
+        <path
+           id="path16303"
+           d="M 624.00000,764.36218 L 624.00000,748.36218 L 640.00000,748.36218 L 656.00000,748.36218 L 656.00000,764.36218 L 656.00000,780.36218 L 640.00000,780.36218 L 624.00000,780.36218 L 624.00000,764.36218 z "
+           style="fill:#8c8c8c;fill-opacity:1.0000000" />
+        <path
+           sodipodi:nodetypes="ccccccccccccc"
+           id="path16305"
+           d="M 624.22461,764.61218 L 624.50000,748.86218 L 640.25000,748.58679 L 656.00000,748.36218 L 656.00000,764.33679 L 656.00000,780.36218 L 639.97461,780.36218 L 624.00000,780.36218 L 624.22461,764.61218 z M 628.00000,751.98462 C 628.00000,751.77697 627.21250,750.98947 626.25000,750.23462 C 624.66394,748.99075 624.62857,749.02612 625.87244,750.61218 C 627.17881,752.27793 628.00000,752.80766 628.00000,751.98462 z "
+           style="fill:#7a7a7a;fill-opacity:1.0000000" />
+        <path
+           sodipodi:nodetypes="cccccccccccc"
+           id="path16307"
+           d="M 625.34501,778.53344 C 627.44878,776.20881 627.55316,769.78842 625.50000,769.00055 C 623.51603,768.23923 624.00000,760.36218 625.42012,759.66187 C 626.20118,759.22204 626.98868,757.28718 627.17012,755.36218 C 627.47121,752.16759 627.80541,751.83339 631.00000,751.53230 C 632.92500,751.35086 634.85986,750.56336 635.29969,749.78230 C 636.40273,747.82348 644.00000,748.36218 644.36163,749.86218 C 645.15212,751.92216 651.84051,751.81649 654.17126,749.70719 C 655.93574,748.11036 656.00000,748.61984 656.00000,764.20719 L 656.00000,780.36218 L 639.84501,780.36218 C 624.25766,780.36218 623.74818,780.29792 625.34501,778.53344 z "
+           style="fill:#686868;fill-opacity:1.0000000" />
+        <path
+           sodipodi:nodetypes="ccccccccccccccccccccccccccccc"
+           id="path16309"
+           d="M 625.82569,778.04773 C 627.02156,776.77478 628.00000,774.52478 628.00000,773.04773 C 628.00000,770.71677 628.42912,770.34144 631.25000,770.20508 C 633.58636,770.09214 633.09439,769.88130 629.50000,769.45508 L 624.50000,768.86218 L 624.19564,764.67645 C 623.95257,761.33352 624.29154,760.27652 625.87918,759.42684 C 626.97253,758.84170 628.00949,757.12528 628.18354,755.61256 C 628.44480,753.34190 629.04906,752.80885 631.64795,752.55643 C 633.76719,752.35060 634.96204,751.61533 635.30433,750.30643 C 635.70296,748.78206 636.69271,748.36218 639.88733,748.36218 C 644.29137,748.36218 644.53414,748.71967 645.32002,756.36218 L 645.67993,759.86218 L 645.83996,756.11218 C 645.98347,752.74948 646.27737,752.36218 648.68555,752.36218 C 650.16260,752.36218 652.41260,751.38374 653.68555,750.18787 L 656.00000,748.36218 L 656.00000,764.18787 L 656.00000,780.36218 L 639.82569,780.36218 L 624.00000,780.36218 L 625.82569,778.04773 z M 649.30684,770.08134 C 652.38106,769.69712 652.36032,769.67629 648.75000,769.52222 L 645.00000,769.36218 L 645.16810,773.61218 L 645.33621,777.86218 L 645.72494,774.17130 C 646.07231,770.87322 646.45351,770.43795 649.30684,770.08134 z "
+           style="fill:#575757;fill-opacity:1.0000000" />
+        <path
+           id="path16311"
+           d="M 626.00000,778.86218 C 626.71490,778.00077 628.89568,777.36218 631.12244,777.36218 L 635.00000,777.36218 L 635.00000,772.86218 L 635.00000,768.36218 L 629.50000,768.36218 L 624.00000,768.36218 L 624.00000,764.46917 C 624.00000,760.07918 624.99426,759.36218 631.08179,759.36218 C 634.97274,759.36218 635.00000,759.33492 635.00000,755.44397 C 635.00000,749.35644 635.71700,748.36218 640.10699,748.36218 L 644.00000,748.36218 L 644.00000,754.46917 C 644.00000,759.62710 644.24582,760.48183 645.58179,759.96917 C 646.45177,759.63532 648.47677,759.36218 650.08179,759.36218 C 652.80434,759.36218 653.00000,759.10220 653.00000,755.48462 C 653.00000,753.25786 653.63860,751.07708 654.50000,750.36218 C 655.82245,749.26465 656.00000,750.96650 656.00000,764.73973 L 656.00000,780.36218 L 640.37756,780.36218 C 626.60432,780.36218 624.90247,780.18463 626.00000,778.86218 z M 653.16393,772.76891 L 653.51441,768.36218 L 648.75721,768.36218 L 644.00000,768.36218 L 644.00000,773.11939 L 644.00000,777.87659 L 648.40673,777.52611 L 652.81345,777.17563 L 653.16393,772.76891 z "
+           style="fill:#454545;fill-opacity:1.0000000" />
+        <path
+           id="path16313"
+           d="M 636.00000,774.36218 L 636.00000,768.36218 L 630.00000,768.36218 L 624.00000,768.36218 L 624.00000,764.36218 L 624.00000,760.36218 L 630.00000,760.36218 L 636.00000,760.36218 L 636.00000,754.36218 L 636.00000,748.36218 L 640.00000,748.36218 L 644.00000,748.36218 L 644.00000,754.36218 L 644.00000,760.36218 L 650.00000,760.36218 L 656.00000,760.36218 L 656.00000,764.36218 L 656.00000,768.36218 L 650.00000,768.36218 L 644.00000,768.36218 L 644.00000,774.36218 L 644.00000,780.36218 L 640.00000,780.36218 L 636.00000,780.36218 L 636.00000,774.36218 z "
+           style="fill:#333333;fill-opacity:1.0000000" />
+        <path
+           sodipodi:nodetypes="ccccczzcccccczzcc"
+           id="path16315"
+           d="M 638.00000,748.36218 L 638.00000,760.36218 C 638.00000,761.30499 636.94281,762.36218 636.00000,762.36218 L 624.00000,762.36218 L 624.00000,766.36218 L 636.00000,766.34936 C 636.94281,766.34836 638.00000,767.40655 638.00000,768.34936 L 638.00000,780.36218 L 642.00000,780.36218 L 642.00000,768.36218 C 642.00000,767.41937 643.05719,766.36218 644.00000,766.36218 L 656.00000,766.36218 L 656.00000,762.36218 L 644.00000,762.34936 C 643.05719,762.34836 642.00000,761.29217 642.00000,760.34936 L 642.00000,748.36218 L 638.00000,748.36218 z "
+           style="fill:#232323;fill-opacity:1.0000000;fill-rule:evenodd;stroke:none;stroke-width:1.0000000px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000" />
+      </g>
       <g
          transform="translate(0.000000,1.282000e-2)"
          id="g13503">
@@ -5736,284 +5717,223 @@
              width="2.0000000"
              id="rect12367"
              style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+          <rect
+             y="827.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13071"
-             transform="translate(2.000000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="829.36218"
+             x="634.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13073"
-             transform="translate(0.000000,4.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="831.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13075"
-             transform="translate(2.000000,6.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="833.36218"
+             x="634.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13077"
-             transform="translate(0.000000,8.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="835.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13079"
-             transform="translate(2.000000,10.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="837.36218"
+             x="634.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13081"
-             transform="translate(0.000000,12.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="839.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13083"
-             transform="translate(2.000000,14.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="634.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13085"
-             transform="translate(0.000000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13087"
-             transform="translate(2.000000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="825.36218"
+             x="638.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13089"
-             transform="translate(4.000000,0.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="827.36218"
+             x="640.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13091"
-             transform="translate(6.000000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="638.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13105"
-             transform="translate(4.000000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="640.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13107"
-             transform="translate(6.000000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="825.36218"
+             x="642.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13129"
-             transform="translate(8.000000,0.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="827.36218"
+             x="644.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13131"
-             transform="translate(10.00000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="642.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13145"
-             transform="translate(8.000000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="644.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13147"
-             transform="translate(10.00000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="825.36218"
+             x="646.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13169"
-             transform="translate(12.00000,0.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="827.36218"
+             x="648.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13171"
-             transform="translate(14.00000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="646.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13185"
-             transform="translate(12.00000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="648.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13187"
-             transform="translate(14.00000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="825.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13209"
-             transform="translate(16.00000,0.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="827.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13211"
-             transform="translate(18.00000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="829.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13213"
-             transform="translate(16.00000,4.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="831.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13215"
-             transform="translate(18.00000,6.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="833.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13217"
-             transform="translate(16.00000,8.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="835.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13219"
-             transform="translate(18.00000,10.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="839.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13223"
-             transform="translate(18.00000,14.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13225"
-             transform="translate(16.00000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13227"
-             transform="translate(18.00000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
-             transform="translate(16.00000,12.00000)"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="837.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13267"
-             xlink:href="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
         </g>
         <g
            transform="translate(-23.00000,-76.00000)"
@@ -6107,284 +6027,223 @@
              width="2.0000000"
              id="rect13553"
              style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+          <rect
+             y="827.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13555"
-             transform="translate(2.000000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="829.36218"
+             x="634.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13557"
-             transform="translate(0.000000,4.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="831.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13559"
-             transform="translate(2.000000,6.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="833.36218"
+             x="634.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13561"
-             transform="translate(0.000000,8.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="835.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13563"
-             transform="translate(2.000000,10.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="837.36218"
+             x="634.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13565"
-             transform="translate(0.000000,12.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="839.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13567"
-             transform="translate(2.000000,14.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="634.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13569"
-             transform="translate(0.000000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="636.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13571"
-             transform="translate(2.000000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="825.36218"
+             x="638.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13573"
-             transform="translate(4.000000,0.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="827.36218"
+             x="640.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13575"
-             transform="translate(6.000000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="638.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13577"
-             transform="translate(4.000000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="640.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13579"
-             transform="translate(6.000000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="825.36218"
+             x="642.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13581"
-             transform="translate(8.000000,0.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="827.36218"
+             x="644.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13583"
-             transform="translate(10.00000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="642.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13585"
-             transform="translate(8.000000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="644.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13587"
-             transform="translate(10.00000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="825.36218"
+             x="646.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13589"
-             transform="translate(12.00000,0.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="827.36218"
+             x="648.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13591"
-             transform="translate(14.00000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="646.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13593"
-             transform="translate(12.00000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="648.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13595"
-             transform="translate(14.00000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="825.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13597"
-             transform="translate(16.00000,0.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="827.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13599"
-             transform="translate(18.00000,2.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="829.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13601"
-             transform="translate(16.00000,4.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="831.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13603"
-             transform="translate(18.00000,6.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="833.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13605"
-             transform="translate(16.00000,8.000000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="835.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13607"
-             transform="translate(18.00000,10.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="839.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13609"
-             transform="translate(18.00000,14.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="841.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13611"
-             transform="translate(16.00000,16.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="843.36218"
+             x="652.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13613"
-             transform="translate(18.00000,18.00000)"
-             xlink:href="#rect12367"
-             inkscape:tiled-clone-of="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
-          <use
-             height="1052.3622"
-             width="744.09448"
-             transform="translate(16.00000,12.00000)"
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
+          <rect
+             y="837.36218"
+             x="650.00000"
+             height="2.0000000"
+             width="2.0000000"
              id="use13615"
-             xlink:href="#rect12367"
-             y="0.0000000"
-             x="0.0000000" />
+             style="color:#000000;fill:#fff700;fill-opacity:1.0000000;fill-rule:nonzero;stroke:none;stroke-width:1.8000000;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:inline;overflow:visible" />
         </g>
         <g
            transform="translate(-23.00000,-76.00000)"
