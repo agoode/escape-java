@@ -8,63 +8,63 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   sodipodi:docname="22.svg"
-   sodipodi:docbase="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles"
-   inkscape:version="0.41"
-   sodipodi:version="0.32"
-   id="svg2511"
+   width="32px"
    height="32px"
-   width="32px">
+   id="svg2511"
+   sodipodi:version="0.32"
+   inkscape:version="0.41"
+   sodipodi:docbase="/home/adam/workspace/Escape/src/org/spacebar/escape/j2se/resources/tiles"
+   sodipodi:docname="22.svg">
   <defs
      id="defs3" />
   <sodipodi:namedview
-     inkscape:window-y="483"
-     inkscape:window-x="946"
-     inkscape:window-height="536"
-     inkscape:window-width="640"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     showgrid="true"
-     inkscape:current-layer="layer1"
-     inkscape:cy="15.999999"
-     inkscape:cx="16.000000"
-     inkscape:zoom="11.197802"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     borderopacity="1.0"
-     bordercolor="#666666"
+     id="base"
      pagecolor="#ffffff"
-     id="base" />
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="11.197802"
+     inkscape:cx="16.000000"
+     inkscape:cy="15.999999"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:window-width="640"
+     inkscape:window-height="536"
+     inkscape:window-x="946"
+     inkscape:window-y="483" />
   <metadata
      id="metadata4">
     <rdf:RDF
        id="RDF5">
       <cc:Work
-         id="Work6"
-         rdf:about="">
+         rdf:about=""
+         id="Work6">
         <dc:format
            id="format7">image/svg+xml</dc:format>
         <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage"
-           id="type9" />
+           id="type9"
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:groupmode="layer"
+     id="layer1"
      inkscape:label="Layer 1"
-     id="layer1">
+     inkscape:groupmode="layer">
     <g
        transform="translate(-527.0000,-604.3622)"
        id="g2437">
       <path
          id="path2447"
          d="M 527.00000,620.36218 L 527.00000,604.36218 L 543.00000,604.36218 L 559.00000,604.36218 L 559.00000,620.36218 L 559.00000,636.36218 L 543.00000,636.36218 L 527.00000,636.36218 L 527.00000,620.36218 z "
-         style="fill:#aaaaaa" />
+         style="fill:#c2c2c2;fill-opacity:1.0000000" />
       <path
-         sodipodi:nodetypes="ccccccccccccccccccccccccccc"
+         sodipodi:nodetypes="ccccccccccccccccccccccccz"
          id="path2445"
-         d="M 527.00000,620.36218 L 527.00000,604.36218 L 543.00000,604.36218 L 559.00000,604.36218 L 559.00000,620.36218 L 559.00000,636.36218 L 543.00000,636.36218 L 527.00000,636.36218 L 527.00000,620.36218 z M 540.00000,626.01717 C 540.00000,625.82741 538.98750,624.81491 537.75000,623.76717 L 535.50000,621.86218 L 537.40499,624.11218 C 539.19521,626.22663 540.00000,626.81742 540.00000,626.01717 z M 543.87578,624.00250 C 546.54924,621.04836 545.74777,620.93731 542.99630,623.86612 C 541.70659,625.23895 541.11007,626.36218 541.67070,626.36218 C 542.23133,626.36218 542.87724,625.10587 543.87578,624.00250 z M 542.73483,617.16894 C 542.73483,615.90394 542.88707,615.88074 543.44435,615.32346 C 544.12868,614.63913 545.12949,612.94467 543.26324,611.29894 L 540.50000,608.86218 L 542.92431,611.61218 C 544.92817,613.88524 545.05825,614.36218 543.67431,614.36218 C 542.48063,614.36218 542.00000,615.22337 542.00000,617.36218 C 542.00000,619.01218 542.45000,620.36218 543.00000,620.36218 C 543.55000,620.36218 542.73483,618.43394 542.73483,617.16894 z "
+         d="M 527.00000,620.36218 L 527.00000,604.36218 L 543.00000,604.36218 L 559.00000,604.36218 L 559.00000,620.36218 L 559.00000,636.36218 L 543.00000,636.36218 L 527.00000,636.36218 L 527.00000,620.36218 z M 540.00000,626.01717 C 540.00000,625.82741 538.98750,624.81491 537.75000,623.76717 L 535.50000,621.86218 L 537.40499,624.11218 C 539.19521,626.22663 540.00000,626.81742 540.00000,626.01717 z M 543.87578,624.00250 C 546.54924,621.04836 545.74777,620.93731 542.99630,623.86612 C 541.70659,625.23895 541.11007,626.36218 541.67070,626.36218 C 542.23133,626.36218 542.87724,625.10587 543.87578,624.00250 z M 542.82858,615.66894 C 542.42233,614.77894 545.12949,612.94467 543.26324,611.29894 L 540.50000,608.86218 L 542.92431,611.61218 C 544.92817,613.88524 542.37500,616.22337 542.37500,618.36218 C 542.37500,620.01218 542.45000,620.36218 543.00000,620.36218 C 543.55000,620.36218 543.29914,616.69983 542.82858,615.66894 z "
          style="fill:#979797" />
       <path
          id="path2443"
