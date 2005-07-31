@@ -817,12 +817,18 @@ public class Level {
 	private boolean doZapMove(Entity ent, IntPair newP) {
 		// some bots are stupid enough to zap themselves
 		if (ent != player && ent.zapsSelf()) {
+			int oldX = ent.getX();
+			int oldY = ent.getY();
+			
 			// move
 			ent.setX(newP.x);
 			ent.setY(newP.y);
-
+			
 			// kill
 			((Bot) ent).delete();
+			
+			// might have stepped off
+			checkStepOff(oldX, oldY);
 			return true;
 		} else
 			return false;
@@ -1494,9 +1500,9 @@ public class Level {
 			} else {
 				return false;
 			}
-		} else {
-			checkBotDeath(newP.x, newP.y, ent); // might have stepped
-			// onto bot
+		} else { 
+			// might have stepped onto bot
+			checkBotDeath(newP.x, newP.y, ent);
 
 			// panels again
 			checkStepOff(ent.getX(), ent.getY());
