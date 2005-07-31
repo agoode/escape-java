@@ -435,7 +435,11 @@ public class Level {
 	/* actions on the player stepping off of a tile */
 	private void checkStepOff(int x, int y) {
 		/* nb: only for regular panels */
+		checkTrap(x, y);
 		checkLeavePanel(x, y);
+	}
+
+	private void checkTrap(int x, int y) {
 		if (tileAt(x, y) == T_TRAP1) {
 			setTile(x, y, T_HOLE);
 		} else if (tileAt(x, y) == T_TRAP2) {
@@ -1236,15 +1240,12 @@ public class Level {
 					continue;
 
 				case T_TRANSPONDER: {
-					// printf("transponder at %d/%d\n", pulsex, pulsey);
 					if (!travel(pulse.x, pulse.y, pd, pulse))
 						pd = Entity.DIR_NONE;
 					else {
 						/* keep going until we hit another transponder. */
 						do {
 							int ta = tileAt(pulse.x, pulse.y);
-							// printf(" ... at %d/%d: %d\n", pulsex, pulsey,
-							// ta);
 							if (!allowBeam(ta) || isBotAt(pulse.x, pulse.y)
 									|| player.isAt(pulse.x, pulse.y)) {
 								/* hit something. is it a transponder? */
@@ -1263,7 +1264,6 @@ public class Level {
 							/* otherwise keep going... */
 						} while (travel(pulse.x, pulse.y, pd, pulse));
 					}
-
 					break;
 				}
 
@@ -1451,31 +1451,44 @@ public class Level {
 				pushee.setX(far.x);
 				pushee.setY(far.y);
 
+				// handle leaving current (pusher) position
+				checkTrap(ent.getX(), ent.getY());
+				
+				// still need to check panels later
+				int srcX = ent.getX();
+				int srcY = ent.getY();
+				boolean swapSrc = tileAt(ent.getX(), ent.getY()) == T_PANEL;
+				
+				// move pusher
+				ent.setX(newP.x);
+				ent.setY(newP.y);
+				
 				// zapping
 				if (fTarget == T_ELECTRIC && pushee != player) {
 					((Bot) pushee).delete();
 				}
 
-				// panels
+				// the tile in the middle is being stepped off
+				// and stepped on; if it's a panel, don't do anything
+				// (to avoid a double swap)
+				if (target == T_PANEL) {
+					// nothing
+				} else {
+					checkTrap(newP.x, newP.y);
+				}
+
+				// -- panel phase --
+
+				// first, if pusher stepped off a panel, it swaps
+				if (swapSrc) {
+					swapO(destAt(srcX, srcY));
+				}
+
+				// pushed entity is stepping onto new panel, perhaps
 				if (fTarget == T_PANEL) {
 					swapO(destAt(far.x, far.y));
 				}
-
-				// handle leaving current (pushed) position
-				if (target == T_PANEL) {
-					// do nothing, or else get a double flip
-					// since pusher is going on here now
-				} else {
-					checkStepOff(newP.x, newP.y);
-				}
-
-				// handle leaving pusher position
-				checkStepOff(ent.getX(), ent.getY());
-
-				// then move
-				ent.setX(newP.x);
-				ent.setY(newP.y);
-
+				
 				// done?
 				return true;
 			} else {
@@ -1487,13 +1500,13 @@ public class Level {
 
 			// panels again
 			checkStepOff(ent.getX(), ent.getY());
-			if (target == T_PANEL) {
-				swapO(destAt(newP.x, newP.y));
-			}
 
 			ent.setX(newP.x);
 			ent.setY(newP.y);
 
+			if (target == T_PANEL) {
+				swapO(destAt(newP.x, newP.y));
+			}
 			return true;
 		}
 	}
