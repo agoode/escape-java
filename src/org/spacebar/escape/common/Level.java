@@ -602,6 +602,8 @@ public class Level {
 		case T_LR:
 		case T_UD:
 
+		case T_TRANSPONDER:
+			
 		case T_GREY:
 			return doSimpleBlockMove(ent, d, e, target, newP);
 
@@ -1230,6 +1232,41 @@ public class Level {
 						pd = Entity.DIR_NONE;
 					break;
 
+				case T_NSWE:
+					continue;
+
+				case T_TRANSPONDER: {
+					// printf("transponder at %d/%d\n", pulsex, pulsey);
+					if (!travel(pulse.x, pulse.y, pd, pulse))
+						pd = Entity.DIR_NONE;
+					else {
+						/* keep going until we hit another transponder. */
+						do {
+							int ta = tileAt(pulse.x, pulse.y);
+							// printf(" ... at %d/%d: %d\n", pulsex, pulsey,
+							// ta);
+							if (!allowBeam(ta) || isBotAt(pulse.x, pulse.y)
+									|| player.isAt(pulse.x, pulse.y)) {
+								/* hit something. is it a transponder? */
+								if (ta == T_TRANSPONDER) {
+									/*
+									 * okay, then we are on the 'old' tile with
+									 * the direction set, so we're ready to
+									 * continue the pulse loop
+									 */
+								} else {
+									/* stop. */
+									pd = Entity.DIR_NONE;
+								}
+								break;
+							}
+							/* otherwise keep going... */
+						} while (travel(pulse.x, pulse.y, pd, pulse));
+					}
+
+					break;
+				}
+
 				default:
 					pd = Entity.DIR_NONE;
 				}
@@ -1240,6 +1277,14 @@ public class Level {
 			e.doPulse();
 		}
 		return true;
+	}
+
+	private boolean allowBeam(int tt) {
+		return (tt == T_FLOOR || tt == T_ELECTRIC || tt == T_ROUGH
+				|| tt == T_RDOWN || tt == T_GDOWN || tt == T_BDOWN
+				|| tt == T_TRAP2 || tt == T_TRAP1 || tt == T_PANEL
+				|| tt == T_BPANEL || tt == T_GPANEL || tt == T_RPANEL
+				|| tt == T_BLACK || tt == T_HOLE);
 	}
 
 	/**
