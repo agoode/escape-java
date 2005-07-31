@@ -26,8 +26,10 @@ abstract public class Entity {
     static private final int CAP_ZAP_SELF = 5;
 
     static private final int CAP_PUSH_BOTS = 6;
+    
+    static private final int CAP_HEARTFRAMERS = 7;
 
-    static private final int NUM_CAPS = 7;
+    static private final int NUM_CAPS = 8;
 
     protected final void iCanTeleport() {
         capabilities[CAP_CAN_TELEPORT] = true;
@@ -58,6 +60,10 @@ abstract public class Entity {
 
     protected final void iZapSelf() {
         iWalkIntoBots();
+    }
+    
+    protected final void iGetHeartFramers() {
+    	capabilities[CAP_HEARTFRAMERS] = true;
     }
 
     protected final void clearCapabilities() {
@@ -214,11 +220,18 @@ abstract public class Entity {
             s += " zapsSelf";
         if (canPushBots())
             s += " pushesBots";
+        if (canGetHeartframers()) {
+        	s += " heartframers";
+        }
         s += " ]";
         return s;
     }
 
-    public boolean equals(Object obj) {
+    public boolean canGetHeartframers() {
+    	return capabilities[CAP_HEARTFRAMERS];
+	}
+
+	public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -332,6 +345,10 @@ abstract public class Entity {
     public static final int B_DALEK = 1;
 
     public static final int B_HUGBOT = 2;
+    
+    public static final int B_DALEK_ASLEEP = 3;
+    
+    public static final int B_HUGBOT_ASLEEP = 4;
 
     protected int type;
 }

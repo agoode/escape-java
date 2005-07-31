@@ -7,6 +7,7 @@ public class Player extends Entity {
         iAmPlayer();
         iCanTeleport();
         iPushBots();
+        iGetHeartFramers();
         
         type = B_PLAYER;
     }
