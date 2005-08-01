@@ -23,7 +23,9 @@ public class LevelChooser extends List implements Continuation, CommandListener 
 	public final static String levels[] = { "/lev151.esx", "/lev152.esx",
 			"/lev153.esx", "/lev202.esx", "/lev155.esx", "/lev156.esx",
 			"/lev203.esx", "/lev204.esx", "/lev205.esx", "/lev160.esx",
-			"/lev161.esx", "/lev162.esx", "/lev163.esx" };
+			"/lev161.esx", "/lev162.esx", "/lev163.esx", "/lev367.esx",
+			"/lev410.esx", "/lev411.esx", "/lev412.esx", "/lev575.esx",
+			"/lev665.esx", "/lev750.esx"};
 
 	final Escape theApp;
 
