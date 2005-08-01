@@ -602,6 +602,7 @@ public class Level {
 		case T_SE:
 		case T_SW:
 		case T_WE:
+		case T_NSWE:
 
 		case T_LR:
 		case T_UD:
