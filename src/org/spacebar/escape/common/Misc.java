@@ -30,9 +30,11 @@ public class Misc {
     public static String getStringFromData(DataInput in, int size)
             throws IOException {
         byte buf[] = new byte[size];
+//        System.out.println("reading string of length " + size + "...");
         in.readFully(buf);
     
         String result = new String(buf);
+//        System.out.println("\"" + result + "\"");
         return (result);
     }
 }

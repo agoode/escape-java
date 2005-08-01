@@ -26,6 +26,10 @@ public class Escape extends MIDlet {
     final static Command RESTART_COMMAND = new Command("Restart",
             Command.SCREEN, 1);
 
+    static {
+    	System.out.println("Loading Escape...");
+    }
+    
     final Display display = Display.getDisplay(this);
 
     private LevelChooser lc = new LevelChooser(this, new Continuation() {

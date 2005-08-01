@@ -1663,10 +1663,12 @@ public class Level {
 			throw new IOException("Bad magic: '" + magic + "'");
 		}
 
+//		System.out.println("going to read width...");
 		int width = in.readInt();
+//		System.out.println("going to read height...");
 		int height = in.readInt();
 
-		// System.out.println("width: " + width + ", height: " + height);
+//		System.out.println("width: " + width + ", height: " + height);	
 
 		int size;
 

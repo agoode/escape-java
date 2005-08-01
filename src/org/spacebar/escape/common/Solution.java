@@ -110,7 +110,7 @@ public class Solution {
 
         if (size == solution.length) {
             // extend
-            byte b[] = new byte[(int) (solution.length * 1.5)];
+            byte b[] = new byte[(solution.length * 3 / 2)];
             System.arraycopy(solution, 0, b, 0, solution.length);
             solution = b;
         }
