@@ -816,6 +816,10 @@ public class Level {
 	 */
 	private boolean doZapMove(Entity ent, IntPair newP) {
 		// some bots are stupid enough to zap themselves
+		if (isBotAt(newP.x, newP.y) || player.isAt(newP.x, newP.y)) {
+			return false;
+		}
+		
 		if (ent != player && ent.zapsSelf()) {
 			int oldX = ent.getX();
 			int oldY = ent.getY();
@@ -1172,6 +1176,11 @@ public class Level {
 			return false;
 		}
 
+		// swaps delayed until the end
+		int bSwaps = 0;
+		int rSwaps = 0;
+		int gSwaps = 0;
+		
 		for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
 			/* send a pulse in that direction. */
 			IntPair pulse = new IntPair(newP);
@@ -1180,16 +1189,16 @@ public class Level {
 			while (pd != Entity.DIR_NONE && travel(pulse.x, pulse.y, pd, pulse)) {
 				switch (tileAt(pulse.x, pulse.y)) {
 				case T_BLIGHT:
-					swapTiles(T_BUP, T_BDOWN);
 					pd = Entity.DIR_NONE;
+					bSwaps++;
 					break;
 				case T_RLIGHT:
-					swapTiles(T_RUP, T_RDOWN);
 					pd = Entity.DIR_NONE;
+					rSwaps++;
 					break;
 				case T_GLIGHT:
-					swapTiles(T_GUP, T_GDOWN);
 					pd = Entity.DIR_NONE;
+					gSwaps++;
 					break;
 
 				case T_NS:
@@ -1246,21 +1255,19 @@ public class Level {
 					continue;
 
 				case T_TRANSPONDER: {
+//					System.out.println("transponder at " + pulse.x + "/" + pulse.y);
 					if (!travel(pulse.x, pulse.y, pd, pulse))
 						pd = Entity.DIR_NONE;
 					else {
 						/* keep going until we hit another transponder. */
 						do {
 							int ta = tileAt(pulse.x, pulse.y);
+//							System.out.println(" ... at " + pulse.x + "/" + pulse.y + ": " + ta);
 							if (!allowBeam(ta) || isBotAt(pulse.x, pulse.y)
 									|| player.isAt(pulse.x, pulse.y)) {
 								/* hit something. is it a transponder? */
 								if (ta == T_TRANSPONDER) {
-									/*
-									 * okay, then we are on the 'old' tile with
-									 * the direction set, so we're ready to
-									 * continue the pulse loop
-									 */
+									// animation stuff
 								} else {
 									/* stop. */
 									pd = Entity.DIR_NONE;
@@ -1279,6 +1286,17 @@ public class Level {
 			}
 		}
 
+		// do the swaps
+		if (bSwaps % 2 == 1) {
+			swapTiles(T_BUP, T_BDOWN);
+		}
+		if (rSwaps % 2 == 1) {
+			swapTiles(T_RUP, T_RDOWN);
+		}
+		if (gSwaps % 2 == 1) {
+			swapTiles(T_GUP, T_GDOWN);
+		}
+		
 		if (e != null) {
 			e.doPulse();
 		}
