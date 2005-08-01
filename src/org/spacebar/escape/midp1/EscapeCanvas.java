@@ -12,10 +12,6 @@ import java.io.IOException;
 import javax.microedition.lcdui.*;
 
 import org.spacebar.escape.common.*;
-import org.spacebar.escape.common.BitInputStream;
-import org.spacebar.escape.common.Continuation;
-import org.spacebar.escape.common.IntTriple;
-import org.spacebar.escape.common.Level;
 
 /**
  * @author adam
@@ -146,6 +142,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         g.translate(-xScroll * TILE_SIZE, -yScroll * TILE_SIZE);
         g.drawImage(levelBuffer, 0, 0, Graphics.TOP | Graphics.LEFT);
         drawPlayer(g);
+        drawBots(g);
         drawLaser(g);
 
         // title
@@ -155,7 +152,12 @@ public class EscapeCanvas extends Canvas implements CommandListener {
                 .getTranslateY(), Graphics.TOP | Graphics.LEFT);
     }
 
-    private void paintLoading(Graphics g, int w, int h) {
+    private void drawBots(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void paintLoading(Graphics g, int w, int h) {
         g.setColor(0, 0, 0);
         g.fillRect(0, 0, w, h);
 
