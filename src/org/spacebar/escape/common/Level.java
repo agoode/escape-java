@@ -665,12 +665,12 @@ public class Level {
 				/* also bots */
 				for (int i = 0; i < getBotCount(); i++) {
 					switch (getBotType(i)) {
-					case Bot.B_DALEK_ASLEEP:
-						bots[i].setToType(Bot.B_DALEK);
+					case Entity.B_DALEK_ASLEEP:
+						bots[i].setToType(Entity.B_DALEK);
 						break;
 
-					case Bot.B_HUGBOT_ASLEEP:
-						bots[i].setToType(Bot.B_HUGBOT);
+					case Entity.B_HUGBOT_ASLEEP:
+						bots[i].setToType(Entity.B_HUGBOT);
 
 						break;
 					}
