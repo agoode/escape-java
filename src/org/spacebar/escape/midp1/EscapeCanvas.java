@@ -165,11 +165,6 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     private void drawBots(Graphics g) {
         int bc = theLevel.getBotCount();
         for (int i = 0; i < bc; i++) {
-            int dx = theLevel.getBotX(i) * TILE_SIZE;
-            int dy = theLevel.getBotY(i) * TILE_SIZE;
-
-            g.translate(dx, dy);
-
             Image img;
             switch (theLevel.getBotType(i)) {
             case Entity.B_BROKEN:
@@ -188,8 +183,13 @@ public class EscapeCanvas extends Canvas implements CommandListener {
                 img = hugbotS;
                 break;
             default:
-                img = null;
+                continue;  // no bot, deleted
             }
+
+            int dx = theLevel.getBotX(i) * TILE_SIZE;
+            int dy = theLevel.getBotY(i) * TILE_SIZE;
+
+            g.translate(dx, dy);
 
             g.drawImage(img, 0, 0, Graphics.TOP | Graphics.LEFT);
             g.translate(-dx, -dy);
