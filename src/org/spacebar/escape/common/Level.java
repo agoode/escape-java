@@ -222,16 +222,16 @@ public class Level {
 	}
 
 	// metadata
-	private final String title;
+	protected final String title;
 
-	private final String author;
+	protected final String author;
 
 	// width, height
-	final int width;
+	protected final int width;
 
-	final int height;
+	protected final int height;
 
-	final private Player player;
+	protected final Player player;
 
 	// shown
 	protected final int tiles[];
@@ -240,10 +240,10 @@ public class Level {
 	protected final int oTiles[];
 
 	// destinations for transporters and panels (as index into tiles)
-	private final int dests[];
+	protected final int dests[];
 
 	// has a panel (under a pushable block)? etc.
-	private final int flags[];
+	protected final int flags[];
 
 	protected final Bot bots[];
 
@@ -1755,30 +1755,24 @@ public class Level {
 			return allDirty || numDirty > 0;
 		}
 
-		public String toString() {
-			StringBuffer sb = new StringBuffer("DirtyList: ");
+		public void print(PrintStream p) {
+			p.print("DirtyList: ");
 			if (allDirty) {
-				sb.append("all dirty");
+				p.print("all dirty");
 			} else if (numDirty > 0) {
-				sb.append("some dirty [");
+				p.print("some dirty [");
 				for (int i = 0; i < numDirty; i++) {
 					int idx = dirtyList[i];
 					int x = idx % width;
 					int y = idx / width;
-					sb.append(" (" + x + "," + y + ")");
+					p.print(" (" + x + "," + y + ")");
 				}
-				sb.append(" ]");
+				p.print(" ]");
 			} else {
-				sb.append("clean");
+				p.print("clean");
 			}
-			return sb.toString();
-		}
-	}
-
-	public String toString() {
-		return "[\"" + title + "\" by " + author + " (" + width + "x" + height
-				+ ")" + " player: (" + this.player.getX() + ","
-				+ this.player.getY() + ")]";
+			p.println();
+        }
 	}
 
 	public void print(PrintStream p) {
@@ -1829,53 +1823,5 @@ public class Level {
 
 	public IntTriple getLaser() {
 		return laser;
-	}
-
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (obj instanceof Level) {
-			Level l = (Level) obj;
-
-			// metadata
-			if (!author.equals(l.author)) {
-				return false;
-			}
-			if (!title.equals(l.title)) {
-				return false;
-			}
-			if (width != l.width) {
-				return false;
-			}
-			if (height != l.height) {
-				return false;
-			}
-
-			// tiles
-			for (int i = 0; i < tiles.length; i++) {
-				if (tiles[i] != l.tiles[i] || oTiles[i] != l.oTiles[i]
-						|| dests[i] != l.dests[i] || flags[i] != l.flags[i]) {
-					return false;
-				}
-			}
-
-			// entities
-			if (!player.equals(l.player)) {
-				return false;
-			}
-
-			try {
-				for (int i = 0; i < bots.length; i++) {
-					if (!bots[i].equals(l.bots[i])) {
-						return false;
-					}
-				}
-			} catch (ArrayIndexOutOfBoundsException e) {
-				return false;
-			}
-		}
-		return true;
 	}
 }
