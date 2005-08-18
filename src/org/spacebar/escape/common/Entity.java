@@ -6,6 +6,8 @@
  */
 package org.spacebar.escape.common;
 
+import java.io.PrintStream;
+
 /**
  * @author adam
  * 
@@ -204,27 +206,26 @@ abstract public class Entity {
         return capabilities[CAP_ZAP_SELF];
     }
 
-    public String toString() {
-        String s = getClass().getName() + ": (" + x + "," + y + "," + d + ") [";
+    public void print(PrintStream p) {
+        p.print(getClass().getName() + ": (" + x + "," + y + "," + d + ") [");
         if (isPlayer())
-            s += " isPlayer";
+            p.print(" isPlayer");
         if (canTeleport())
-            s += " canTeleport";
+            p.print(" canTeleport");
         if (crushesPlayer())
-            s += " crushesPlayer";
+            p.print(" crushesPlayer");
         if (walksIntoBots())
-            s += " walksIntoBots";
+            p.print(" walksIntoBots");
         if (canPushPlayer())
-            s += " pushesPlayer";
+            p.print(" pushesPlayer");
         if (zapsSelf())
-            s += " zapsSelf";
+            p.print(" zapsSelf");
         if (canPushBots())
-            s += " pushesBots";
+            p.print(" pushesBots");
         if (canGetHeartframers()) {
-        	s += " heartframers";
+        	p.print(" heartframers");
         }
-        s += " ]";
-        return s;
+        p.print(" ]");
     }
 
     public boolean canGetHeartframers() {

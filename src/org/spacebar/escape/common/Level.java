@@ -1302,7 +1302,7 @@ public class Level {
 		return true;
 	}
 
-	private boolean allowBeam(int tt) {
+	private static boolean allowBeam(int tt) {
 		return (tt == T_FLOOR || tt == T_ELECTRIC || tt == T_ROUGH
 				|| tt == T_RDOWN || tt == T_GDOWN || tt == T_BDOWN
 				|| tt == T_TRAP2 || tt == T_TRAP1 || tt == T_PANEL
