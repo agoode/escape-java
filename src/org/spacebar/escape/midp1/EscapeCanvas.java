@@ -32,7 +32,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     private static final Font font = Font.getFont(Font.FACE_PROPORTIONAL,
             Font.STYLE_PLAIN, Font.SIZE_MEDIUM);
 
-    //    private static final byte NUM_IMAGES = 4;
+    // private static final byte NUM_IMAGES = 4;
 
     boolean done;
 
@@ -45,6 +45,16 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     final static Image tiles = ResourceUtil.loadImage("/tiles8x8i.png");
 
     final static Image player = ResourceUtil.loadImage("/player8x8i.png");
+
+    final static Image dalek = ResourceUtil.loadImage("/dalek8x8i.png");
+
+    final static Image dalekS = ResourceUtil.loadImage("/sleepdalek8x8i.png");
+
+    final static Image hugbot = ResourceUtil.loadImage("/hugbot8x8i.png");
+
+    final static Image hugbotS = ResourceUtil.loadImage("/sleephugbot8x8i.png");
+
+    final static Image brokenbot = ResourceUtil.loadImage("/brokenbot8x8i.png");
 
     private Image levelBuffer;
 
@@ -103,16 +113,16 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         int sx = tile % TILES_ACROSS * TILE_SIZE;
         int sy = tile / TILES_ACROSS * TILE_SIZE;
 
-        //        int cx = g.getClipX();
-        //        int cy = g.getClipY();
-        //        int cw = g.getClipWidth();
-        //        int ch = g.getClipHeight();
+        // int cx = g.getClipX();
+        // int cy = g.getClipY();
+        // int cw = g.getClipWidth();
+        // int ch = g.getClipHeight();
 
         g.setClip(0, 0, TILE_SIZE, TILE_SIZE);
         g.drawImage(tiles, -sx, -sy, Graphics.TOP | Graphics.LEFT);
 
-        //        System.out.println("s: " + sx + " " + sy + ", d: " + dx + " " + dy
-        //                + ", p:" + px + " " + py);
+        // System.out.println("s: " + sx + " " + sy + ", d: " + dx + " " + dy
+        // + ", p:" + px + " " + py);
     }
 
     protected void paint(Graphics g) {
@@ -153,11 +163,40 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     }
 
     private void drawBots(Graphics g) {
-		// TODO Auto-generated method stub
-		
-	}
+        int bc = theLevel.getBotCount();
+        for (int i = 0; i < bc; i++) {
+            int dx = theLevel.getBotX(i) * TILE_SIZE;
+            int dy = theLevel.getBotY(i) * TILE_SIZE;
 
-	private void paintLoading(Graphics g, int w, int h) {
+            g.translate(dx, dy);
+
+            Image img;
+            switch (theLevel.getBotType(i)) {
+            case Entity.B_BROKEN:
+                img = brokenbot;
+                break;
+            case Entity.B_DALEK:
+                img = dalek;
+                break;
+            case Entity.B_DALEK_ASLEEP:
+                img = dalekS;
+                break;
+            case Entity.B_HUGBOT:
+                img = hugbot;
+                break;
+            case Entity.B_HUGBOT_ASLEEP:
+                img = hugbotS;
+                break;
+            default:
+                img = null;
+            }
+
+            g.drawImage(img, 0, 0, Graphics.TOP | Graphics.LEFT);
+            g.translate(-dx, -dy);
+        }
+    }
+
+    private void paintLoading(Graphics g, int w, int h) {
         g.setColor(0, 0, 0);
         g.fillRect(0, 0, w, h);
 
@@ -307,9 +346,9 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         case DOWN:
             doMove(Entity.DIR_DOWN);
             break;
-        //        case FIRE:
-        //            initLevel();
-        //            break;
+        // case FIRE:
+        // initLevel();
+        // break;
         }
     }
 
@@ -317,7 +356,8 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         int w = theLevel.getWidth();
         int h = theLevel.getHeight();
 
-        final int paintedTilesAcross = Math.min((getWidth() / TILE_SIZE) + 1, w);
+        final int paintedTilesAcross = Math
+                .min((getWidth() / TILE_SIZE) + 1, w);
         final int paintedTilesDown = Math.min((getHeight() / TILE_SIZE) + 1, h);
 
         int playerBorderX = PLAYER_BORDER;
