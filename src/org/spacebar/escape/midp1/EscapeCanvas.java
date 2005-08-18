@@ -190,7 +190,6 @@ public class EscapeCanvas extends Canvas implements CommandListener {
             int dy = theLevel.getBotY(i) * TILE_SIZE;
 
             g.translate(dx, dy);
-
             g.drawImage(img, 0, 0, Graphics.TOP | Graphics.LEFT);
             g.translate(-dx, -dy);
         }

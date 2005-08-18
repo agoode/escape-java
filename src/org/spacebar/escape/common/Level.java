@@ -4,8 +4,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.spacebar.escape.common.hash.FNV32;
-
 public class Level {
 
 	public static class MetaData {
@@ -236,10 +234,10 @@ public class Level {
 	final private Player player;
 
 	// shown
-	private final int tiles[];
+	protected final int tiles[];
 
 	// "other" (tiles swapped into bizarro world by panels)
-	private final int oTiles[];
+	protected final int oTiles[];
 
 	// destinations for transporters and panels (as index into tiles)
 	private final int dests[];
@@ -247,7 +245,7 @@ public class Level {
 	// has a panel (under a pushable block)? etc.
 	private final int flags[];
 
-	private final Bot bots[];
+	protected final Bot bots[];
 
 	// dirty
 	public final DirtyList dirty;
@@ -1879,35 +1877,5 @@ public class Level {
 			}
 		}
 		return true;
-	}
-
-	public int hashCode() {
-		// Like Tom,
-		/*
-		 * ignore title, author, w/h, dests, flags, since these don't change.
-		 * also ignore botd and guyd, which are presentational.
-		 */
-
-		FNV32 hash = new FNV32();
-
-		// player
-		hash.fnv32(player.getX());
-		hash.fnv32(player.getY());
-
-		// tiles, oTiles
-		for (int i = 0; i < tiles.length; i++) {
-			hash.fnv32(tiles[i]);
-			hash.fnv32(oTiles[i]);
-		}
-
-		// bots
-		for (int i = 0; i < bots.length; i++) {
-			Bot b = bots[i];
-			hash.fnv32(b.getBotType());
-			hash.fnv32(b.getX());
-			hash.fnv32(b.getY());
-		}
-
-		return hash.hval;
 	}
 }
