@@ -42,11 +42,11 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     volatile Level theLevel;
 
-    final static Image tiles = ResourceUtil.loadImage("/tiles8x8i.png");
+    final static Image tiles = ResourceUtil.loadImage("/t.png");
 
-    final static Image player = ResourceUtil.loadImage("/player8x8i.png");
+    final static Image player = ResourceUtil.loadImage("/p.png");
 
-    final static Image bots = ResourceUtil.loadImage("/botsi.png");
+    final static Image bots = ResourceUtil.loadImage("/b.png");
 
     private Image levelBuffer;
 
@@ -155,21 +155,21 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     }
 
     private void drawBots(Graphics g) {
-        int bc = theLevel.getBotCount();
+        final int bc = theLevel.getBotCount();
         for (int i = 0; i < bc; i++) {
-
-            int dx = theLevel.getBotX(i) * TILE_SIZE;
-            int dy = theLevel.getBotY(i) * TILE_SIZE;
+            final int dx = theLevel.getBotX(i) * TILE_SIZE;
+            final int dy = (theLevel.getBotY(i) + 1) * TILE_SIZE;
 
             g.translate(dx, dy);
-            int ch = g.getClipHeight();
-            int cw = g.getClipWidth();
-            int cx = g.getClipX();
-            int cy = g.getClipY();
+            final int ch = g.getClipHeight();
+            final int cw = g.getClipWidth();
+            final int cx = g.getClipX();
+            final int cy = g.getClipY();
 
-            g.clipRect(0, 0, TILE_SIZE, TILE_SIZE);
-            g.drawImage(bots, theLevel.getBotType(i) * TILE_SIZE, bots
-                    .getHeight(), Graphics.BOTTOM | Graphics.LEFT);
+            final int bh = bots.getHeight();
+            g.clipRect(0, -bh, TILE_SIZE, bh);
+            g.drawImage(bots, -theLevel.getBotType(i) * TILE_SIZE, 0,
+                    Graphics.BOTTOM | Graphics.LEFT);
             g.setClip(cx, cy, cw, ch);
             g.translate(-dx, -dy);
         }
@@ -242,40 +242,20 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     // assume translation is at 0,0 of level
     private void drawPlayer(Graphics g) {
-        int dx = theLevel.getPlayerX() * TILE_SIZE;
-        int dy = theLevel.getPlayerY() * TILE_SIZE;
-
-        int sx = 0;
-        int sy = 0;
-
-        switch (playerDir) {
-        case Entity.DIR_LEFT:
-            sx = 0;
-            sy = TILE_SIZE;
-            break;
-        case Entity.DIR_UP:
-            sx = -TILE_SIZE;
-            sy = 0;
-            break;
-        case Entity.DIR_DOWN:
-            sx = 0;
-            sy = 0;
-            break;
-        case Entity.DIR_RIGHT:
-            sx = -TILE_SIZE;
-            sy = 0;
-            break;
-        }
+        final int dx = theLevel.getPlayerX() * TILE_SIZE;
+        final int dy = (theLevel.getPlayerY() + 1) * TILE_SIZE;
 
         g.translate(dx, dy);
 
-        int ch = g.getClipHeight();
-        int cw = g.getClipWidth();
-        int cx = g.getClipX();
-        int cy = g.getClipY();
+        final int ch = g.getClipHeight();
+        final int cw = g.getClipWidth();
+        final int cx = g.getClipX();
+        final int cy = g.getClipY();
 
-        g.clipRect(0, 0, TILE_SIZE, TILE_SIZE);
-        g.drawImage(player, sx, sy, Graphics.BOTTOM | Graphics.LEFT);
+        final int ph = player.getHeight();
+        g.clipRect(0, -ph, TILE_SIZE, ph);
+        g.drawImage(player, -TILE_SIZE * (playerDir - 1), 0, Graphics.BOTTOM
+                | Graphics.LEFT);
         g.setClip(cx, cy, cw, ch);
 
         g.translate(-dx, -dy);
