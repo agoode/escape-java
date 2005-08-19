@@ -46,15 +46,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     final static Image player = ResourceUtil.loadImage("/player8x8i.png");
 
-    final static Image dalek = ResourceUtil.loadImage("/dalek8x8i.png");
-
-    final static Image dalekS = ResourceUtil.loadImage("/sleepdalek8x8i.png");
-
-    final static Image hugbot = ResourceUtil.loadImage("/hugbot8x8i.png");
-
-    final static Image hugbotS = ResourceUtil.loadImage("/sleephugbot8x8i.png");
-
-    final static Image brokenbot = ResourceUtil.loadImage("/brokenbot8x8i.png");
+    final static Image bots = ResourceUtil.loadImage("/botsi.png");
 
     private Image levelBuffer;
 
@@ -165,32 +157,20 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     private void drawBots(Graphics g) {
         int bc = theLevel.getBotCount();
         for (int i = 0; i < bc; i++) {
-            Image img;
-            switch (theLevel.getBotType(i)) {
-            case Entity.B_BROKEN:
-                img = brokenbot;
-                break;
-            case Entity.B_DALEK:
-                img = dalek;
-                break;
-            case Entity.B_DALEK_ASLEEP:
-                img = dalekS;
-                break;
-            case Entity.B_HUGBOT:
-                img = hugbot;
-                break;
-            case Entity.B_HUGBOT_ASLEEP:
-                img = hugbotS;
-                break;
-            default:
-                continue;  // no bot, deleted
-            }
 
             int dx = theLevel.getBotX(i) * TILE_SIZE;
             int dy = theLevel.getBotY(i) * TILE_SIZE;
 
             g.translate(dx, dy);
-            g.drawImage(img, 0, 0, Graphics.TOP | Graphics.LEFT);
+            int ch = g.getClipHeight();
+            int cw = g.getClipWidth();
+            int cx = g.getClipX();
+            int cy = g.getClipY();
+
+            g.clipRect(0, 0, TILE_SIZE, TILE_SIZE);
+            g.drawImage(bots, theLevel.getBotType(i) * TILE_SIZE, bots
+                    .getHeight(), Graphics.BOTTOM | Graphics.LEFT);
+            g.setClip(cx, cy, cw, ch);
             g.translate(-dx, -dy);
         }
     }
@@ -271,7 +251,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         switch (playerDir) {
         case Entity.DIR_LEFT:
             sx = 0;
-            sy = 0;
+            sy = TILE_SIZE;
             break;
         case Entity.DIR_UP:
             sx = -TILE_SIZE;
@@ -279,11 +259,11 @@ public class EscapeCanvas extends Canvas implements CommandListener {
             break;
         case Entity.DIR_DOWN:
             sx = 0;
-            sy = -TILE_SIZE;
+            sy = 0;
             break;
         case Entity.DIR_RIGHT:
             sx = -TILE_SIZE;
-            sy = -TILE_SIZE;
+            sy = 0;
             break;
         }
 
@@ -295,7 +275,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         int cy = g.getClipY();
 
         g.clipRect(0, 0, TILE_SIZE, TILE_SIZE);
-        g.drawImage(player, sx, sy, Graphics.TOP | Graphics.LEFT);
+        g.drawImage(player, sx, sy, Graphics.BOTTOM | Graphics.LEFT);
         g.setClip(cx, cy, cw, ch);
 
         g.translate(-dx, -dy);
