@@ -104,7 +104,7 @@ public class StyleStack {
         public FontAttribute(int what, int value, FontAttribute next) {
             if (what != TYPE_ALPHA && what != TYPE_COLOR) {
                 throw new IllegalArgumentException(
-                        "what must by TYPE_ALPHA or TYPE_COLOR");
+                        "what must be TYPE_ALPHA or TYPE_COLOR");
             }
 
             this.what = what;
