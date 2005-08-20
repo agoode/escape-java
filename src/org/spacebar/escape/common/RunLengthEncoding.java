@@ -72,7 +72,7 @@ public class RunLengthEncoding {
             }
         }
 
-        in.readRestOfByte();
+        in.discardRestOfByte();
         return result;
     }
 }
