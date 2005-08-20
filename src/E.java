@@ -1,3 +1,4 @@
+
 import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
@@ -11,7 +12,7 @@ import org.spacebar.escape.midp1.LevelChooser;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class Escape extends MIDlet {
+public class E extends MIDlet {
     static {
         System.out.println("Loading Escape...");
     }
