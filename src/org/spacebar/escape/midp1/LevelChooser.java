@@ -9,9 +9,17 @@ package org.spacebar.escape.midp1;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.microedition.lcdui.*;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.List;
+import javax.microedition.midlet.MIDlet;
 
-import org.spacebar.escape.common.*;
+import org.spacebar.escape.common.BitInputStream;
+import org.spacebar.escape.common.Continuation;
+import org.spacebar.escape.common.Level;
+import org.spacebar.escape.common.Misc;
 
 /**
  * @author adam
@@ -27,11 +35,11 @@ public class LevelChooser extends List implements Continuation, CommandListener 
 			"/lev410.esx", "/lev411.esx", "/lev412.esx", "/lev575.esx",
 			"/lev665.esx", "/lev750.esx"};
 
-	final Escape theApp;
+	final MIDlet theApp;
 
 	final Continuation theWayOut;
 
-	LevelChooser(Escape app, Continuation c) {
+	public LevelChooser(MIDlet app, Continuation c) {
 		super("Select Level", IMPLICIT);
 
 		System.out.println("Initializing level chooser...");
@@ -54,7 +62,7 @@ public class LevelChooser extends List implements Continuation, CommandListener 
 				e.printStackTrace();
 			}
 		}
-		addCommand(Escape.EXIT_COMMAND);
+		addCommand(EscapeCanvas.EXIT_COMMAND);
 
 		setCommandListener(this);
 	}
@@ -71,7 +79,7 @@ public class LevelChooser extends List implements Continuation, CommandListener 
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (c == Escape.EXIT_COMMAND) {
+		} else if (c == EscapeCanvas.EXIT_COMMAND) {
 			theWayOut.invoke();
 		}
 	}

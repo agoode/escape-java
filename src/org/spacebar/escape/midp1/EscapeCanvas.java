@@ -10,8 +10,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.microedition.lcdui.*;
+import javax.microedition.midlet.MIDlet;
 
-import org.spacebar.escape.common.*;
+import org.spacebar.escape.common.BitInputStream;
+import org.spacebar.escape.common.Continuation;
+import org.spacebar.escape.common.Entity;
+import org.spacebar.escape.common.IntTriple;
+import org.spacebar.escape.common.Level;
 
 /**
  * @author adam
@@ -48,6 +53,12 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     final static Image bots = ResourceUtil.loadImage("/b.png");
 
+    final static Command BACK_COMMAND = new Command("Back", Command.BACK, 1);
+
+    final static Command EXIT_COMMAND = new Command("Exit", Command.EXIT, 1);
+
+    final static Command RESTART_COMMAND = new Command("Restart", Command.SCREEN, 1);
+
     private Image levelBuffer;
 
     private int bufW;
@@ -56,7 +67,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     private int playerDir;
 
-    final private Escape theApp;
+    final private MIDlet theApp;
 
     final private Continuation theWayOut;
 
@@ -66,7 +77,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     private int yScroll;
 
-    EscapeCanvas(byte[] level, Escape m, Continuation c) {
+    EscapeCanvas(byte[] level, MIDlet m, Continuation c) {
         theApp = m;
         theWayOut = c;
         display = Display.getDisplay(theApp);
@@ -75,8 +86,8 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
         setCommandListener(this);
 
-        addCommand(Escape.RESTART_COMMAND);
-        addCommand(Escape.BACK_COMMAND);
+        addCommand(RESTART_COMMAND);
+        addCommand(BACK_COMMAND);
 
         initLevel();
     }
@@ -418,9 +429,9 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     }
 
     public void commandAction(Command c, Displayable d) {
-        if (c == Escape.RESTART_COMMAND) {
+        if (c == RESTART_COMMAND) {
             initLevel();
-        } else if (c == Escape.BACK_COMMAND) {
+        } else if (c == BACK_COMMAND) {
             theWayOut.invoke();
         }
     }
