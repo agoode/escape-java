@@ -149,7 +149,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         }
 
         // nudge
-        g.translate(-TILE_SIZE / 2, font.getBaselinePosition());
+        g.translate(0, font.getBaselinePosition());
 
         // level
         g.translate(-xScroll * TILE_SIZE, -yScroll * TILE_SIZE);
