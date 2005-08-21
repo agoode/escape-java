@@ -42,19 +42,19 @@ public class LevelChooser extends List implements Continuation, CommandListener 
 	public LevelChooser(MIDlet app, Continuation c) {
 		super("Select Level", IMPLICIT);
 
-		System.out.println("Initializing level chooser...");
+//		System.out.println("Initializing level chooser...");
 
 		this.theApp = app;
 		this.theWayOut = c;
 
 		for (int i = 0; i < levels.length; i++) {
-			System.out.println("loading level " + levels[i] + "...");
+//			System.out.println("loading level " + levels[i] + "...");
 			try {
-				System.out.println("getting resource...");
+//				System.out.println("getting resource...");
 				InputStream lev = getClass().getResourceAsStream(levels[i]);
-				System.out.println("initializing BitInputStream...");
+//				System.out.println("initializing BitInputStream...");
 				BitInputStream in = new BitInputStream(lev);
-				System.out.println("loading metadata...");
+//				System.out.println("loading metadata...");
 				Level.MetaData m = Level.getMetaData(in);
 
 				append(m.title + " by " + m.author, null);

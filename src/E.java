@@ -13,9 +13,9 @@ import org.spacebar.escape.midp1.LevelChooser;
  * Preferences - Java - Code Style - Code Templates
  */
 public class E extends MIDlet {
-    static {
-        System.out.println("Loading Escape...");
-    }
+//    static {
+//        System.out.println("Loading Escape...");
+//    }
 
     final Display display = Display.getDisplay(this);
 
@@ -26,7 +26,7 @@ public class E extends MIDlet {
     });
 
     public void startApp() throws MIDletStateChangeException {
-        System.out.println("Escape startApp() called");
+//        System.out.println("Escape startApp() called");
         // display.setCurrent(canvas);
         displayLevelChooser();
     }
