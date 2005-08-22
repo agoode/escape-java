@@ -9,11 +9,7 @@ import java.io.IOException;
 import javax.microedition.lcdui.*;
 import javax.microedition.midlet.MIDlet;
 
-import org.spacebar.escape.common.BitInputStream;
-import org.spacebar.escape.common.Continuation;
-import org.spacebar.escape.common.Entity;
-import org.spacebar.escape.common.IntTriple;
-import org.spacebar.escape.common.Level;
+import org.spacebar.escape.common.*;
 
 /**
  * @author adam
@@ -26,7 +22,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     private static final int TILES_BUFFERED = 8;
 
-    private static final int PLAYER_BORDER = 2;
+    private static final int PLAYER_BORDER = 3;
 
     private static final Font font = Font.getFont(Font.FACE_PROPORTIONAL,
             Font.STYLE_PLAIN, Font.SIZE_MEDIUM);
@@ -71,6 +67,8 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     private int xScroll;
 
     private int yScroll;
+    
+    private Effects e;
 
     EscapeCanvas(byte[] level, MIDlet m, Continuation c) {
         theApp = m;
@@ -84,6 +82,13 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         addCommand(RESTART_COMMAND);
         addCommand(BACK_COMMAND);
 
+        e = new DefaultEffects() {
+            public void requestRedraw() {
+                repaint();
+                serviceRepaints();
+            }
+        };
+        
         initLevel();
     }
 
@@ -317,6 +322,8 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         }
     }
 
+    
+    // TODO correct scrolling with potemkin thing
     void updateScroll() {
         int w = theLevel.getWidth();
         int h = theLevel.getHeight();
@@ -400,7 +407,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
         playerDir = dir;
 
-        theLevel.move(dir, null);
+        theLevel.move(dir, e);
         updateScroll();
 
         if (theLevel.isDead()) {

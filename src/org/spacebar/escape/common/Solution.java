@@ -128,6 +128,7 @@ public class Solution {
      *         absolute value is the last move number, zero undefined
      */
     public int verify(Level l, long sleepTime, PrintStream p) {
+        Effects eff = new DefaultEffects();
         int moveNum = 0;
         for (int i = 0; i < size; i++) {
             int d = solution[i];
@@ -139,7 +140,7 @@ public class Solution {
                 p.flush();
             }
 
-            if (!l.move(d)) {
+            if (!l.move(d, eff)) {
                 if (p != null) {
                     p.print(" warn: bad move ");
                     p.flush();

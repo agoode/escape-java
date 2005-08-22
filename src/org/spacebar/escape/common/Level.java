@@ -480,18 +480,13 @@ public class Level {
 		}
 	}
 
-	public boolean move(int d) {
-		return move(d, null);
-	}
-
 	public boolean move(int d, Effects e) {
 		player.setDir(d); // always set dir
 		boolean result = realMove(player, d, e);
 
 		if (result) {
-			if (e != null) {
-				e.doStep();
-			}
+		    e.doStep();
+		    e.requestRedraw();
 
 			// move bots
 			for (int i = 0; i < bots.length; i++) {
@@ -504,16 +499,19 @@ public class Level {
 				if (dirs.x != Entity.DIR_NONE) {
 					boolean bm = realMove(b, dirs.x, e);
 
+                    boolean bm2 = false;
 					// no good? try 2nd move
 					if (!bm && dirs.y != Entity.DIR_NONE) {
-						realMove(b, dirs.y, e);
+						bm2 = realMove(b, dirs.y, e);
 					}
+                    
+                    if (bm || bm2) {
+                        e.requestRedraw();
+                    }
 				}
 			}
 		} else {
-			if (e != null) {
-				e.doNoStep();
-			}
+		    e.doNoStep();
 		}
 
 		isDead(); // update laser cache
@@ -779,9 +777,7 @@ public class Level {
 				 * panel that we just left, the electric has been swapped into
 				 * the o world (along with the gold). So swap there.
 				 */
-				if (e != null) {
-					e.doZap();
-				}
+			    e.doZap();
 				setTile(goldX, goldY, T_ELECTRIC);
 
 				// zapped = true;
@@ -795,9 +791,7 @@ public class Level {
 				swapO(destAt(newP.x, newP.y));
 			}
 
-			if (e != null) {
-				e.doSlide();
-			}
+			e.doSlide();
 
 			return true;
 		} else {
@@ -887,9 +881,7 @@ public class Level {
 			case T_ELECTRIC:
 				/* Zap! */
 				if (target != T_LR && target != T_UD) {
-					if (e != null) {
-						e.doZap();
-					}
+				    e.doZap();
 					setTile(newP.x, newP.y, replacement);
 				} else
 					return false;
@@ -898,9 +890,7 @@ public class Level {
 			case T_HOLE:
 				/* only grey blocks into holes */
 				if (target == T_GREY) {
-					if (e != null) {
-						e.doHole();
-					}
+				    e.doHole();
 					setTile(dest.x, dest.y, T_FLOOR);
 					setTile(newP.x, newP.y, replacement);
 					// hole = true;
@@ -1081,7 +1071,6 @@ public class Level {
 		} /* zap, if necessary, before swapping */
 		if (zap) {
 			setTile(dest.x, dest.y, T_ELECTRIC);
-			/* XXX animate */
 		}
 
 		/* now we can start swapping. */
@@ -1159,9 +1148,7 @@ public class Level {
 			return false;
 		}
 		setTile(newP.x, newP.y, T_FLOOR);
-		if (e != null) {
-			e.doBroken();
-		}
+		e.doBroken();
 		return true;
 	}
 
@@ -1296,9 +1283,7 @@ public class Level {
 			swapTiles(T_GUP, T_GDOWN);
 		}
 		
-		if (e != null) {
-			e.doPulse();
-		}
+		e.doPulse();
 		return true;
 	}
 
@@ -1326,9 +1311,7 @@ public class Level {
 			IntPair targ;
 			targ = where(dests[width * newP.y + newP.x]);
 
-			if (e != null) {
-				e.doTransport();
-			}
+			e.doTransport();
 			warp(ent, targ.x, targ.y);
 
 			checkBotDeath(targ.x, targ.y, ent);
@@ -1354,9 +1337,7 @@ public class Level {
 
 		swapTiles(T_UD, T_LR);
 
-		if (e != null) {
-			e.doSwap();
-		}
+		e.doSwap();
 		setTile(newP.x, newP.y, opp);
 
 		return true;
@@ -1372,9 +1353,7 @@ public class Level {
 			return false;
 		}
 
-		if (e != null) {
-			e.doElectricOff();
-		}
+		e.doElectricOff();
 		for (int i = (width * height) - 1; i >= 0; i--) {
 			if (tiles[i] == T_ELECTRIC)
 				setTile(i, T_FLOOR);

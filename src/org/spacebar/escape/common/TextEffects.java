@@ -53,4 +53,8 @@ public class TextEffects implements Effects {
     public void doZap() {
         System.out.println("zap");
     }
+
+    public void requestRedraw() {
+        System.out.println("redraw");
+    }
 }

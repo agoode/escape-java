@@ -30,4 +30,6 @@ public interface Effects {
     void doTransport();
     
     void doZap();
+    
+    void requestRedraw();
 }

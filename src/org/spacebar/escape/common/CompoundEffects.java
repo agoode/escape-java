@@ -121,4 +121,11 @@ public class CompoundEffects implements Effects {
             theEffects[i].doZap();
         }
     }
+
+    public void requestRedraw() {
+        for (int i = 0; i < count; i++) {
+            theEffects[i].requestRedraw();
+        }
+        
+    }
 }
