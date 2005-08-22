@@ -1,8 +1,5 @@
 /*
  * Created on Mar 22, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package org.spacebar.escape.common;
 
@@ -10,9 +7,6 @@ import java.io.PrintStream;
 
 /**
  * @author adam
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
  */
 abstract public class Entity {
     static private final int CAP_IS_PLAYER = 0;

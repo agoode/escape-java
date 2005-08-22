@@ -1,8 +1,5 @@
 /*
  * Created on Dec 28, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package org.spacebar.escape.midp1;
 
@@ -20,9 +17,6 @@ import org.spacebar.escape.common.Level;
 
 /**
  * @author adam
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
  */
 public class EscapeCanvas extends Canvas implements CommandListener {
 
@@ -57,7 +51,8 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     final static Command EXIT_COMMAND = new Command("Exit", Command.EXIT, 1);
 
-    final static Command RESTART_COMMAND = new Command("Restart", Command.SCREEN, 1);
+    final static Command RESTART_COMMAND = new Command("Restart",
+            Command.SCREEN, 1);
 
     private Image levelBuffer;
 
@@ -326,9 +321,8 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         int w = theLevel.getWidth();
         int h = theLevel.getHeight();
 
-        final int paintedTilesAcross = Math
-                .min((getWidth() / TILE_SIZE) + 1, w);
-        final int paintedTilesDown = Math.min((getHeight() / TILE_SIZE) + 1, h);
+        final int paintedTilesAcross = Math.min(getWidth() / TILE_SIZE, w);
+        final int paintedTilesDown = Math.min(getHeight() / TILE_SIZE, h);
 
         int playerBorderX = PLAYER_BORDER;
         int playerBorderY = PLAYER_BORDER;
@@ -347,12 +341,15 @@ public class EscapeCanvas extends Canvas implements CommandListener {
             }
         }
 
-//        System.out.println("pbx: " + playerBorderX + ", pby: " + playerBorderY);
+        // System.out.println("pbx: " + playerBorderX + ", pby: " +
+        // playerBorderY);
 
         final int playerX = theLevel.getPlayerX();
         final int playerY = theLevel.getPlayerY();
         final int playerScreenX = playerX - xScroll;
         final int playerScreenY = playerY - yScroll;
+
+//        System.out.println("psx: " + playerScreenX + ", psy: " + playerScreenY);
 
         if (playerScreenX < playerBorderX) {
 //            System.out.println("scroll left!");
@@ -386,8 +383,8 @@ public class EscapeCanvas extends Canvas implements CommandListener {
             yScroll = maxYScroll;
         }
 
-//        System.out.println("pta: " + paintedTilesAcross + ", ptd: "
-//                + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
+        // System.out.println("pta: " + paintedTilesAcross + ", ptd: "
+        // + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
     }
 
     private void initLevel() {

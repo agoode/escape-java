@@ -8,9 +8,6 @@ import org.spacebar.escape.midp1.LevelChooser;
 
 /**
  * @author adam
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
  */
 public class E extends MIDlet {
 //    static {

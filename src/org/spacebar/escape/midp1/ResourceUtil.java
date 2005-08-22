@@ -1,8 +1,5 @@
 /*
  * Created on Dec 28, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package org.spacebar.escape.midp1;
 
@@ -13,9 +10,6 @@ import javax.microedition.lcdui.Image;
 
 /**
  * @author adam
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
  */
 public class ResourceUtil {
     static public Image loadImage(String name) {

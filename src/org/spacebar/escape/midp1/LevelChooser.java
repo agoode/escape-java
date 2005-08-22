@@ -1,8 +1,5 @@
 /*
  * Created on Dec 29, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package org.spacebar.escape.midp1;
 
@@ -21,12 +18,9 @@ import org.spacebar.escape.common.LevelPack;
 
 /**
  * @author adam
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
  */
 public class LevelChooser extends List implements Continuation, CommandListener {
-    public final static String levelPacks[] = { "/t.p" };
+    public final static String levelPacks[] = { "/t.epl" };
 
     final MIDlet theApp;
 
@@ -67,7 +61,6 @@ public class LevelChooser extends List implements Continuation, CommandListener 
                 Display.getDisplay(theApp).setCurrent(
                         new EscapeCanvas(theLevel, theApp, LevelChooser.this));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } else if (c == EscapeCanvas.EXIT_COMMAND) {
