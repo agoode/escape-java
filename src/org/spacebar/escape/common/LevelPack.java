@@ -5,7 +5,7 @@ import java.io.*;
 public class LevelPack {
     /* Defines a format for packing levels into a single seekable file.
      * 
-     * Integer format: little endian
+     * Integer format: MSB first
      * 
      * Format of file:
      * 
@@ -22,26 +22,103 @@ public class LevelPack {
 
     
     private final String resource;
-    private BitInputStream in;
+    private DataInputStream in;
     private int levelsRead;
-    private final int levelCount;
+    private final int sizes[];
+    private byte currentData[];
+    
     
     public LevelPack(String resource) throws IOException {
         this.resource = resource;
         initStream();
-        levelCount = in.readInt();
+        int levelCount = in.readInt();
+        sizes = new int[levelCount];
+        initSizes();
     }
 
+    private void initSizes() throws IOException {
+        for (int i = 0; i < sizes.length; i++) {
+            sizes[i] = in.readInt();
+        }
+    }
+
+    public void reset() {
+        try {
+            initStream();
+            
+            // skip headers and sizes
+            int bytesToSkip = 4 * (sizes.length + 1);
+            skipBytesFully(bytesToSkip);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void skipBytesFully(int bytesToSkip) throws IOException {
+        while (bytesToSkip > 0) {
+            bytesToSkip -= in.skipBytes(bytesToSkip);
+        }
+    }
+
+    public Level getNextLevel() throws IOException {
+        if (levelsRead == sizes.length) {
+            return null;
+        }
+
+        loadData();
+        
+        return new Level(new BitInputStream(new ByteArrayInputStream(currentData)));
+    }
+
+    public byte[] getNextLevelData() throws IOException {
+        if (levelsRead == sizes.length) {
+            return null;
+        }
+
+        loadData();
+
+        return currentData;
+    }
+    
+    private void loadData() throws IOException {
+        currentData = new byte[sizes[levelsRead]];
+        levelsRead++;
+        in.readFully(currentData);
+    }
+    
+    public Level.MetaData getNextLevelMetaData() throws IOException {
+        if (levelsRead == sizes.length) {
+            return null;
+        }
+
+        loadData();
+        
+        return Level.getMetaData(new BitInputStream(new ByteArrayInputStream(currentData)));
+    }
+    
+    public void skipLevels(int num) throws IOException {
+        while (num > 0 && levelsRead != sizes.length) {
+            int numBytes = sizes[levelsRead];
+            levelsRead++;
+            skipBytesFully(numBytes);
+            num--;
+        }
+    }
+    
     private void initStream() throws IOException {
         if (in != null) {
             in.close();
         }
         levelsRead = 0;
-        in = new BitInputStream(this.getClass().getResourceAsStream(resource));
+        in = new BitInputStream(getClass().getResourceAsStream(resource));
     }
     
     public int getLevelCount() {
-        return levelCount;
+        return sizes.length;
+    }
+
+    public int getLevelsRead() {
+        return levelsRead;
     }
     
     static public void pack(InputStream levels[], OutputStream pack) throws IOException {

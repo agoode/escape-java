@@ -1611,7 +1611,8 @@ public class Level {
 		isDead();
 	}
 
-	public Level(BitInputStream in) throws IOException {
+
+    public Level(BitInputStream in) throws IOException {
 		MetaData m = getMetaData(in);
 
 		width = m.width;
