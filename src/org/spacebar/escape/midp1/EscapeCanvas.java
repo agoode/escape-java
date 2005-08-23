@@ -31,7 +31,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     boolean done;
 
-    final byte origLevel[];
+    final Level origLevel;
 
     final Display display;
 
@@ -50,6 +50,11 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     final static Command RESTART_COMMAND = new Command("Restart",
             Command.SCREEN, 1);
 
+    final static Command SCROLL_COMMAND = new Command("Scroll", Command.SCREEN,
+            1);
+
+    final static Command UNDO_COMMAND = new Command("Undo", Command.SCREEN, 1);
+
     private Image levelBuffer;
 
     private int bufW;
@@ -62,25 +67,34 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     final private Continuation theWayOut;
 
-    final Loader loader = new Loader();
-
     private int xScroll;
 
     private int yScroll;
-    
+
     private Effects e;
+
+    private boolean inFreeScroll = false;
 
     EscapeCanvas(byte[] level, MIDlet m, Continuation c) {
         theApp = m;
         theWayOut = c;
         display = Display.getDisplay(theApp);
-        origLevel = level;
+        repaint();
+        serviceRepaints();
         playerDir = Entity.DIR_DOWN;
+
+        Level lev = null;
+        try {
+            lev = new Level(new BitInputStream(
+                    new ByteArrayInputStream(level)));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        origLevel = lev;
 
         setCommandListener(this);
 
-        addCommand(RESTART_COMMAND);
-        addCommand(BACK_COMMAND);
+        initCommands();
 
         e = new DefaultEffects() {
             public void requestRedraw() {
@@ -88,27 +102,15 @@ public class EscapeCanvas extends Canvas implements CommandListener {
                 serviceRepaints();
             }
         };
-        
+
         initLevel();
     }
 
-    class Loader implements Runnable {
-        public void run() {
-            new Thread() {
-                public void run() {
-                    try {
-                        theLevel = new Level(new BitInputStream(
-                                new ByteArrayInputStream(origLevel)));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    updateScroll();
-                    done = false;
-                    repaint();
-                }
-            }.start();
-        }
+    private void initCommands() {
+        addCommand(RESTART_COMMAND);
+        addCommand(SCROLL_COMMAND);
+        addCommand(UNDO_COMMAND);
+        addCommand(BACK_COMMAND);
     }
 
     // clobbers clip
@@ -206,8 +208,10 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
         // allocate either the size of the level or enough for the
         // screen + more
-        bufW = Math.min(theLevel.getWidth(), tilesAcross + TILES_BUFFERED);
-        bufH = Math.min(theLevel.getHeight(), tilesDown + TILES_BUFFERED);
+        // bufW = Math.min(theLevel.getWidth(), tilesAcross + TILES_BUFFERED);
+        // bufH = Math.min(theLevel.getHeight(), tilesDown + TILES_BUFFERED);
+        bufW = theLevel.getWidth();
+        bufH = theLevel.getHeight();
         levelBuffer = Image.createImage(bufW * TILE_SIZE, bufH * TILE_SIZE);
 
         // clear
@@ -322,7 +326,6 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         }
     }
 
-    
     // TODO correct scrolling with potemkin thing
     void updateScroll() {
         int w = theLevel.getWidth();
@@ -331,47 +334,50 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         final int paintedTilesAcross = Math.min(getWidth() / TILE_SIZE, w);
         final int paintedTilesDown = Math.min(getHeight() / TILE_SIZE, h);
 
-        int playerBorderX = PLAYER_BORDER;
-        int playerBorderY = PLAYER_BORDER;
+        if (!inFreeScroll) {
+            int playerBorderX = PLAYER_BORDER;
+            int playerBorderY = PLAYER_BORDER;
 
-        if (paintedTilesAcross < playerBorderX * 2 - 1) {
-            playerBorderX = paintedTilesAcross / 2 + 1;
-            if (playerBorderX < 0) {
-                playerBorderX = 0;
+            if (paintedTilesAcross < playerBorderX * 2 - 1) {
+                playerBorderX = paintedTilesAcross / 2 + 1;
+                if (playerBorderX < 0) {
+                    playerBorderX = 0;
+                }
             }
-        }
 
-        if (paintedTilesDown < playerBorderY * 2 - 1) {
-            playerBorderY = paintedTilesDown / 2 + 1;
-            if (playerBorderY < 0) {
-                playerBorderY = 0;
+            if (paintedTilesDown < playerBorderY * 2 - 1) {
+                playerBorderY = paintedTilesDown / 2 + 1;
+                if (playerBorderY < 0) {
+                    playerBorderY = 0;
+                }
             }
-        }
 
-        // System.out.println("pbx: " + playerBorderX + ", pby: " +
-        // playerBorderY);
+            // System.out.println("pbx: " + playerBorderX + ", pby: " +
+            // playerBorderY);
 
-        final int playerX = theLevel.getPlayerX();
-        final int playerY = theLevel.getPlayerY();
-        final int playerScreenX = playerX - xScroll;
-        final int playerScreenY = playerY - yScroll;
+            final int playerX = theLevel.getPlayerX();
+            final int playerY = theLevel.getPlayerY();
+            final int playerScreenX = playerX - xScroll;
+            final int playerScreenY = playerY - yScroll;
 
-//        System.out.println("psx: " + playerScreenX + ", psy: " + playerScreenY);
+            // System.out.println("psx: " + playerScreenX + ", psy: " +
+            // playerScreenY);
 
-        if (playerScreenX < playerBorderX) {
-//            System.out.println("scroll left!");
-            xScroll = playerX - playerBorderX;
-        } else if (playerScreenX > (paintedTilesAcross - 1) - playerBorderX) {
-//            System.out.println("scroll right!");
-            xScroll = playerX - (paintedTilesAcross - 1) + playerBorderX;
-        }
+            if (playerScreenX < playerBorderX) {
+                // System.out.println("scroll left!");
+                xScroll = playerX - playerBorderX;
+            } else if (playerScreenX > (paintedTilesAcross - 1) - playerBorderX) {
+                // System.out.println("scroll right!");
+                xScroll = playerX - (paintedTilesAcross - 1) + playerBorderX;
+            }
 
-        if (playerScreenY < playerBorderY) {
-//            System.out.println("scroll up!");
-            yScroll = playerY - playerBorderY;
-        } else if (playerScreenY > (paintedTilesDown - 1) - playerBorderY) {
-//            System.out.println("scroll down!");
-            yScroll = playerY - (paintedTilesDown - 1) + playerBorderY;
+            if (playerScreenY < playerBorderY) {
+                // System.out.println("scroll up!");
+                yScroll = playerY - playerBorderY;
+            } else if (playerScreenY > (paintedTilesDown - 1) - playerBorderY) {
+                // System.out.println("scroll down!");
+                yScroll = playerY - (paintedTilesDown - 1) + playerBorderY;
+            }
         }
 
         // normalize
@@ -394,14 +400,28 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         // + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
     }
 
-    private void initLevel() {
-        theLevel = null;
-        display.callSerially(loader);
-        repaint();
-    }
-
     private void doMove(int dir) {
         if (theLevel == null || done) {
+            return;
+        }
+
+        if (inFreeScroll) {
+            switch (dir) {
+            case Entity.DIR_DOWN:
+                yScroll++;
+                break;
+            case Entity.DIR_UP:
+                yScroll--;
+                break;
+            case Entity.DIR_LEFT:
+                xScroll--;
+                break;
+            case Entity.DIR_RIGHT:
+                xScroll++;
+                break;
+            }
+            updateScroll();
+            repaint();
             return;
         }
 
@@ -412,20 +432,20 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
         if (theLevel.isDead()) {
             done = true;
-            display.callSerially(new Runnable() {
-                public void run() {
-                    AlertType.ERROR.playSound(display);
-                }
-            });
+            playBackgroundAlertSound(AlertType.ERROR);
         } else if (theLevel.isWon()) {
             done = true;
-            display.callSerially(new Runnable() {
-                public void run() {
-                    AlertType.INFO.playSound(display);
-                }
-            });
+            playBackgroundAlertSound(AlertType.INFO);
         }
         repaint();
+    }
+
+    private void playBackgroundAlertSound(final AlertType a) {
+        display.callSerially(new Runnable() {
+            public void run() {
+                a.playSound(display);
+            }
+        });
     }
 
     protected void keyRepeated(int keyCode) {
@@ -436,7 +456,34 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         if (c == RESTART_COMMAND) {
             initLevel();
         } else if (c == BACK_COMMAND) {
-            theWayOut.invoke();
+            if (inFreeScroll) {
+                initCommands();
+                inFreeScroll = false;
+                updateScroll();
+                repaint();
+            } else {
+                theWayOut.invoke();
+            }
+        } else if (c == SCROLL_COMMAND) {
+            beginFreeScroll();
         }
+    }
+
+    private void initLevel() {
+        theLevel = null;
+        repaint();
+        serviceRepaints();
+        theLevel = new Level(origLevel);
+        repaint();
+    }
+
+    private void beginFreeScroll() {
+        // change menu commands
+        removeCommand(SCROLL_COMMAND);
+        removeCommand(RESTART_COMMAND);
+        removeCommand(UNDO_COMMAND);
+
+        // scrolling!
+        inFreeScroll = true;
     }
 }
