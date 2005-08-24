@@ -1574,10 +1574,7 @@ public class Level {
 		dests = new int[l.dests.length];
 		flags = new int[l.flags.length];
 
-		System.arraycopy(l.tiles, 0, tiles, 0, tiles.length);
-		System.arraycopy(l.oTiles, 0, oTiles, 0, oTiles.length);
-		System.arraycopy(l.dests, 0, dests, 0, dests.length);
-		System.arraycopy(l.flags, 0, flags, 0, flags.length);
+		copyTilesInto(l);
 
 		bots = new Bot[l.bots.length];
 		for (int i = 0; i < l.bots.length; i++) {
@@ -1590,6 +1587,37 @@ public class Level {
 		isDead();
 	}
 
+    private void copyTilesInto(Level l) {
+        System.arraycopy(l.tiles, 0, tiles, 0, tiles.length);
+		System.arraycopy(l.oTiles, 0, oTiles, 0, oTiles.length);
+		System.arraycopy(l.dests, 0, dests, 0, dests.length);
+		System.arraycopy(l.flags, 0, flags, 0, flags.length);
+    }
+
+    public void replace(Level l) {
+        // player
+        Entity p = l.player;
+        p.setDir(player.getDir());
+        p.setX(player.getX());
+        p.setY(player.getY());
+        
+        // tiles
+        copyTilesInto(l);
+        
+        // bots
+        Bot lbots[] = l.bots;
+        for (int i = 0; i < lbots.length; i++) {
+            Bot lb = lbots[i];
+            Bot b = bots[i];
+            lb.setDir(b.getDir());
+            lb.setX(b.getX());
+            lb.setY(b.getY());
+            lb.setToType(b.type);
+        }
+        
+        // dirty
+//        l.dirty.setAllDirty();
+    }
 
     public Level(BitInputStream in) throws IOException {
 		MetaData m = getMetaData(in);

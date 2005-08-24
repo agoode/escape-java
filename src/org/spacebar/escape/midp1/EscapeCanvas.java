@@ -29,9 +29,11 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
     // private static final byte NUM_IMAGES = 4;
 
+    private static int yNudge = font.getBaselinePosition();
+
     boolean done;
 
-    final Level origLevel;
+    final BitInputStream levelStream;
 
     final Display display;
 
@@ -79,18 +81,18 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         theApp = m;
         theWayOut = c;
         display = Display.getDisplay(theApp);
-        repaint();
         serviceRepaints();
-        playerDir = Entity.DIR_DOWN;
 
-        Level lev = null;
         try {
-            lev = new Level(new BitInputStream(
-                    new ByteArrayInputStream(level)));
-        } catch (IOException e1) {
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        origLevel = lev;
+        
+        playerDir = Entity.DIR_DOWN;
+
+        levelStream = new BitInputStream(new ByteArrayInputStream(level));
 
         setCommandListener(this);
 
@@ -102,7 +104,6 @@ public class EscapeCanvas extends Canvas implements CommandListener {
                 serviceRepaints();
             }
         };
-
         initLevel();
     }
 
@@ -151,7 +152,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         }
 
         // nudge
-        g.translate(0, font.getBaselinePosition());
+        g.translate(0, yNudge);
 
         // level
         g.translate(-xScroll * TILE_SIZE, -yScroll * TILE_SIZE);
@@ -332,7 +333,8 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         int h = theLevel.getHeight();
 
         final int paintedTilesAcross = Math.min(getWidth() / TILE_SIZE, w);
-        final int paintedTilesDown = Math.min(getHeight() / TILE_SIZE, h);
+        final int paintedTilesDown = Math.min((getHeight() - yNudge)
+                / TILE_SIZE, h);
 
         if (!inFreeScroll) {
             int playerBorderX = PLAYER_BORDER;
@@ -470,10 +472,20 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     }
 
     private void initLevel() {
+        // loading screen
         theLevel = null;
         repaint();
         serviceRepaints();
-        theLevel = new Level(origLevel);
+        
+        // load
+        try {
+            theLevel = new Level(levelStream);
+            levelStream.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        updateScroll();
         repaint();
     }
 
