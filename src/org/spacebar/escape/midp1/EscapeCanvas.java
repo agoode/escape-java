@@ -4,7 +4,6 @@
 package org.spacebar.escape.midp1;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 import javax.microedition.lcdui.*;
 import javax.microedition.midlet.MIDlet;
@@ -81,15 +80,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         theApp = m;
         theWayOut = c;
         display = Display.getDisplay(theApp);
-        serviceRepaints();
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        
         playerDir = Entity.DIR_DOWN;
 
         levelStream = new BitInputStream(new ByteArrayInputStream(level));
@@ -104,6 +95,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
                 serviceRepaints();
             }
         };
+        
         initLevel();
     }
 
@@ -442,12 +434,9 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         repaint();
     }
 
+    
     private void playBackgroundAlertSound(final AlertType a) {
-        display.callSerially(new Runnable() {
-            public void run() {
-                a.playSound(display);
-            }
-        });
+        display.callSerially(Backgrounder.makeAlertPlayTask(display, a));
     }
 
     protected void keyRepeated(int keyCode) {
@@ -472,21 +461,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     }
 
     private void initLevel() {
-        // loading screen
-        theLevel = null;
-        repaint();
-        serviceRepaints();
-        
-        // load
-        try {
-            theLevel = new Level(levelStream);
-            levelStream.reset();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        updateScroll();
-        repaint();
+        display.callSerially(Backgrounder.makeLoadLevelTask(this));
     }
 
     private void beginFreeScroll() {
