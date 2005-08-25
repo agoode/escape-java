@@ -97,19 +97,23 @@ abstract public class Entity {
         switch (dir) {
         case DIR_UP:
             //                            s = "up";
-            s = "↑";
+//            s = "↑";
+            s = "u";
             break;
         case DIR_DOWN:
             //                            s = "down";
-            s = "↓";
+//            s = "↓";
+            s = "d";
             break;
         case DIR_LEFT:
             //                            s = "left";
-            s = "←";
+//            s = "←";
+            s = "l";
             break;
         case DIR_RIGHT:
             //                            s = "right";
-            s = "→";
+//            s = "→";
+            s = "r";
             break;
         default:
             s = "?";

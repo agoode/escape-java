@@ -1796,17 +1796,17 @@ public class Level {
 		p.println("tiles");
 		printM(p, tiles, width);
 
-		p.println();
-		p.println("oTiles");
-		printM(p, oTiles, width);
-
-		p.println();
-		p.println("dests");
-		printM(p, dests, width);
-
-		p.println();
-		p.println("flags");
-		printM(p, flags, width);
+//		p.println();
+//		p.println("oTiles");
+//		printM(p, oTiles, width);
+//
+//		p.println();
+//		p.println("dests");
+//		printM(p, dests, width);
+//
+//		p.println();
+//		p.println("flags");
+//		printM(p, flags, width);
 	}
 
 	static private void printM(PrintStream p, int[] m, int w) {
