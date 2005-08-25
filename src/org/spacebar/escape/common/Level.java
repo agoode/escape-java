@@ -480,6 +480,10 @@ public class Level {
 		}
 	}
 
+    public boolean move(int d) {
+        return move(d, DefaultEffects.getDefaultEffects());
+    }
+    
 	public boolean move(int d, Effects e) {
 		player.setDir(d); // always set dir
 		boolean result = realMove(player, d, e);

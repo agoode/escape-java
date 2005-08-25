@@ -2,6 +2,14 @@ package org.spacebar.escape.common;
 
 public class DefaultEffects implements Effects {
 
+    private final static DefaultEffects d = new DefaultEffects();
+    
+    protected DefaultEffects() {}
+    
+    public static Effects getDefaultEffects() {
+        return d;
+    }
+    
     public void doBroken() {
         
     }
