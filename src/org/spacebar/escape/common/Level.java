@@ -1598,31 +1598,6 @@ public class Level {
 		System.arraycopy(l.flags, 0, flags, 0, flags.length);
     }
 
-    public void replace(Level l) {
-        // player
-        Entity p = l.player;
-        p.setDir(player.getDir());
-        p.setX(player.getX());
-        p.setY(player.getY());
-        
-        // tiles
-        copyTilesInto(l);
-        
-        // bots
-        Bot lbots[] = l.bots;
-        for (int i = 0; i < lbots.length; i++) {
-            Bot lb = lbots[i];
-            Bot b = bots[i];
-            lb.setDir(b.getDir());
-            lb.setX(b.getX());
-            lb.setY(b.getY());
-            lb.setToType(b.type);
-        }
-        
-        // dirty
-//        l.dirty.setAllDirty();
-    }
-
     public Level(BitInputStream in) throws IOException {
 		MetaData m = getMetaData(in);
 
