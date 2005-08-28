@@ -1764,7 +1764,7 @@ public class Level {
 
 	public void print(PrintStream p) {
 		p.println(toString());
-		p.println("\"" + title + "\" by " + author + " (" + width + ","
+		p.println("\"" + title + "\" by " + author + " (" + width + "x"
 				+ height + ")" + " player: (" + this.player.getX() + ","
 				+ this.player.getY() + ")");
 		p.println();
