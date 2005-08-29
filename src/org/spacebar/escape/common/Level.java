@@ -300,7 +300,7 @@ public class Level {
 		setTile(y * width + x, t);
 	}
 
-	private int destAt(int x, int y) {
+	public int destAt(int x, int y) {
 		return dests[y * width + x];
 	}
 
