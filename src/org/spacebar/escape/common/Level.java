@@ -248,7 +248,7 @@ public class Level {
     protected final Bot bots[];
 
     // dirty
-    public final DirtyList dirty;
+    private DirtyList dirty;
 
     // cached laser
     private IntTriple laser;
@@ -300,7 +300,14 @@ public class Level {
     private void setTile(int i, int t) {
         checkTileCOW();
         tiles[i] = t;
-        dirty.setDirty(i);
+        getDirty().setDirty(i);
+    }
+
+    public DirtyList getDirty() {
+        if (dirty == null) {
+            dirty = new DirtyList();
+        }
+        return dirty;
     }
 
     private void checkTileCOW() {
@@ -1638,7 +1645,7 @@ public class Level {
             bots[i] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType());
         }
 
-        dirty = new DirtyList();
+//        dirty = new DirtyList();
 
         isDead();
     }
@@ -1682,7 +1689,7 @@ public class Level {
             this.bots[i] = new Bot(x, y, Entity.DIR_DOWN, botT[i]);
         }
 
-        dirty = new DirtyList();
+//        dirty = new DirtyList();
 
         isDead(); // calculate laser cache
     }
