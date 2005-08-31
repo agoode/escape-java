@@ -512,7 +512,7 @@ public class Level {
         }
     }
 
-    static private boolean isPanel(int t) {
+    static public boolean isPanel(int t) {
         return (t == T_PANEL || t == T_RPANEL || t == T_GPANEL || t == T_BPANEL);
     }
 
