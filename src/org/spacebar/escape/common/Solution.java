@@ -130,7 +130,7 @@ public class Solution {
     public int verify(Level l, long sleepTime, PrintStream p) {
         int moveNum = 0;
         for (int i = 0; i < size; i++) {
-            int d = solution[i];
+            byte d = solution[i];
 
             moveNum++;
 

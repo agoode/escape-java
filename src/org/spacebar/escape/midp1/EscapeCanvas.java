@@ -394,7 +394,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         // + paintedTilesDown + ", xs: " + xScroll + ", ys: " + yScroll);
     }
 
-    private void doMove(int dir) {
+    private void doMove(byte dir) {
         if (theLevel == null || done) {
             return;
         }

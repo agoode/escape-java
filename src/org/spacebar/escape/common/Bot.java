@@ -9,7 +9,7 @@ package org.spacebar.escape.common;
 public class Bot extends Entity {
     private final static IntPair noDirs = new IntPair(DIR_NONE, DIR_NONE);
 
-    public Bot(int x, int y, int d, int type) {
+    public Bot(int x, int y, byte d, byte type) {
         super(x, y, d);
 
         setToType(type);
@@ -19,7 +19,7 @@ public class Bot extends Entity {
         setToType(B_DELETED);
     }
     
-    public void setToType(int type) {
+    public void setToType(byte type) {
         this.type = type;
         clearCapabilities();
         
@@ -53,7 +53,7 @@ public class Bot extends Entity {
         iWalkIntoBots();
     }
 
-    public int getBotType() {
+    public byte getBotType() {
         return type;
     }
 

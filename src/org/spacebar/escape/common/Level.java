@@ -24,156 +24,156 @@ public class Level {
     }
 
     // panel colors
-    public final static int PANEL_REGULAR = 0;
+    public final static byte PANEL_REGULAR = 0;
 
-    public final static int PANEL_BLUE = 1;
+    public final static byte PANEL_BLUE = 1;
 
-    public final static int PANEL_GREEN = 2;
+    public final static byte PANEL_GREEN = 2;
 
-    public final static int PANEL_RED = 3;
+    public final static byte PANEL_RED = 3;
 
     // panels under tiles
-    public final static int TF_NONE = 0;
+    public final static byte TF_NONE = 0;
 
     /* panel under tile (ie, pushable block) */
     /*
      * if HASPANEL is set, then TF_RPANELH * 2 + TF_RPANELL says what kind (see
      * panel colors above)
      */
-    public final static int TF_HASPANEL = 1;
+    public final static byte TF_HASPANEL = 1;
 
-    public final static int TF_RPANELL = 4;
+    public final static byte TF_RPANELL = 4;
 
-    public final static int TF_RPANELH = 8;
+    public final static byte TF_RPANELH = 8;
 
     /* panel under tile in bizarro world */
     /* same refinement */
-    public final static int TF_OPANEL = 2;
+    public final static byte TF_OPANEL = 2;
 
-    public final static int TF_ROPANELL = 16;
+    public final static byte TF_ROPANELL = 16;
 
-    public final static int TF_ROPANELH = 32;
+    public final static byte TF_ROPANELH = 32;
 
-    public final static int TF_TEMP = 64; // used for swapping during play
+    public final static byte TF_TEMP = 64; // used for swapping during play
 
     // panels
-    public final static int T_FLOOR = 0;
+    public final static byte T_FLOOR = 0;
 
-    public final static int T_RED = 1;
+    public final static byte T_RED = 1;
 
-    public final static int T_BLUE = 2;
+    public final static byte T_BLUE = 2;
 
-    public final static int T_GREY = 3;
+    public final static byte T_GREY = 3;
 
-    public final static int T_GREEN = 4;
+    public final static byte T_GREEN = 4;
 
-    public final static int T_EXIT = 5;
+    public final static byte T_EXIT = 5;
 
-    public final static int T_HOLE = 6;
+    public final static byte T_HOLE = 6;
 
-    public final static int T_GOLD = 7;
+    public final static byte T_GOLD = 7;
 
-    public final static int T_LASER = 8;
+    public final static byte T_LASER = 8;
 
-    public final static int T_PANEL = 9;
+    public final static byte T_PANEL = 9;
 
-    public final static int T_STOP = 10;
+    public final static byte T_STOP = 10;
 
-    public final static int T_RIGHT = 11;
+    public final static byte T_RIGHT = 11;
 
-    public final static int T_LEFT = 12;
+    public final static byte T_LEFT = 12;
 
-    public final static int T_UP = 13;
+    public final static byte T_UP = 13;
 
-    public final static int T_DOWN = 14;
+    public final static byte T_DOWN = 14;
 
-    public final static int T_ROUGH = 15;
+    public final static byte T_ROUGH = 15;
 
-    public final static int T_ELECTRIC = 16;
+    public final static byte T_ELECTRIC = 16;
 
-    public final static int T_ON = 17;
+    public final static byte T_ON = 17;
 
-    public final static int T_OFF = 18;
+    public final static byte T_OFF = 18;
 
-    public final static int T_TRANSPORT = 19;
+    public final static byte T_TRANSPORT = 19;
 
-    public final static int T_BROKEN = 20;
+    public final static byte T_BROKEN = 20;
 
-    public final static int T_LR = 21;
+    public final static byte T_LR = 21;
 
-    public final static int T_UD = 22;
+    public final static byte T_UD = 22;
 
-    public final static int T_0 = 23;
+    public final static byte T_0 = 23;
 
-    public final static int T_1 = 24;
+    public final static byte T_1 = 24;
 
-    public final static int T_NS = 25;
+    public final static byte T_NS = 25;
 
-    public final static int T_NE = 26;
+    public final static byte T_NE = 26;
 
-    public final static int T_NW = 27;
+    public final static byte T_NW = 27;
 
-    public final static int T_SE = 28;
+    public final static byte T_SE = 28;
 
-    public final static int T_SW = 29;
+    public final static byte T_SW = 29;
 
-    public final static int T_WE = 30;
+    public final static byte T_WE = 30;
 
-    public final static int T_BUTTON = 31;
+    public final static byte T_BUTTON = 31;
 
-    public final static int T_BLIGHT = 32;
+    public final static byte T_BLIGHT = 32;
 
-    public final static int T_RLIGHT = 33;
+    public final static byte T_RLIGHT = 33;
 
-    public final static int T_GLIGHT = 34;
+    public final static byte T_GLIGHT = 34;
 
-    public final static int T_BLACK = 35;
+    public final static byte T_BLACK = 35;
 
-    public final static int T_BUP = 36;
+    public final static byte T_BUP = 36;
 
-    public final static int T_BDOWN = 37;
+    public final static byte T_BDOWN = 37;
 
-    public final static int T_RUP = 38;
+    public final static byte T_RUP = 38;
 
-    public final static int T_RDOWN = 39;
+    public final static byte T_RDOWN = 39;
 
-    public final static int T_GUP = 40;
+    public final static byte T_GUP = 40;
 
-    public final static int T_GDOWN = 41;
+    public final static byte T_GDOWN = 41;
 
-    public final static int T_BSPHERE = 42;
+    public final static byte T_BSPHERE = 42;
 
-    public final static int T_RSPHERE = 43;
+    public final static byte T_RSPHERE = 43;
 
-    public final static int T_GSPHERE = 44;
+    public final static byte T_GSPHERE = 44;
 
-    public final static int T_SPHERE = 45;
+    public final static byte T_SPHERE = 45;
 
-    public final static int T_TRAP2 = 46;
+    public final static byte T_TRAP2 = 46;
 
-    public final static int T_TRAP1 = 47;
+    public final static byte T_TRAP1 = 47;
 
-    public final static int T_BPANEL = 48;
+    public final static byte T_BPANEL = 48;
 
-    public final static int T_RPANEL = 49;
+    public final static byte T_RPANEL = 49;
 
-    public final static int T_GPANEL = 50;
+    public final static byte T_GPANEL = 50;
 
-    public final static int T_STEEL = 51;
+    public final static byte T_STEEL = 51;
 
-    public final static int T_BSTEEL = 52;
+    public final static byte T_BSTEEL = 52;
 
-    public final static int T_RSTEEL = 53;
+    public final static byte T_RSTEEL = 53;
 
-    public final static int T_GSTEEL = 54;
+    public final static byte T_GSTEEL = 54;
 
-    public final static int T_HEARTFRAMER = 55;
+    public final static byte T_HEARTFRAMER = 55;
 
-    public final static int T_SLEEPINGDOOR = 56;
+    public final static byte T_SLEEPINGDOOR = 56;
 
-    public final static int T_TRANSPONDER = 57;
+    public final static byte T_TRANSPONDER = 57;
 
-    public final static int T_NSWE = 58;
+    public final static byte T_NSWE = 58;
 
     /**
      * @return Returns the author.
@@ -234,16 +234,16 @@ public class Level {
     protected final Player player;
 
     // shown
-    protected int tiles[];
+    protected byte tiles[];
 
     // "other" (tiles swapped into bizarro world by panels)
-    protected int oTiles[];
+    protected byte oTiles[];
 
     // destinations for transporters and panels (as index into tiles)
-    protected final int dests[]; // not COW, never changes
+    protected final short dests[]; // not COW, never changes
 
     // has a panel (under a pushable block)? etc.
-    protected int flags[];
+    protected byte flags[];
 
     protected final Bot bots[];
 
@@ -289,7 +289,7 @@ public class Level {
         return tiles[i];
     }
 
-    public int tileAt(int x, int y) {
+    public byte tileAt(int x, int y) {
         return tiles[y * width + x];
     }
 
@@ -297,7 +297,7 @@ public class Level {
         return oTiles[y * width + x];
     }
 
-    private void setTile(int i, int t) {
+    private void setTile(int i, byte t) {
         checkTileCOW();
         tiles[i] = t;
         getDirty().setDirty(i);
@@ -315,13 +315,13 @@ public class Level {
             tileCOW = false;
 
             // copy
-            int tt[] = new int[tiles.length];
+            byte tt[] = new byte[tiles.length];
             System.arraycopy(tiles, 0, tt, 0, tt.length);
             tiles = tt;
         }
     }
 
-    private void setTile(int x, int y, int t) {
+    private void setTile(int x, int y, byte t) {
         setTile(y * width + x, t);
     }
 
@@ -329,11 +329,11 @@ public class Level {
         return dests[y * width + x];
     }
 
-    public int flagAt(int x, int y) {
+    public byte flagAt(int x, int y) {
         return flagAt(y * width + x);
     }
     
-    public int flagAt(int i) {
+    public byte flagAt(int i) {
         return flags[i];
     }
     
@@ -389,7 +389,7 @@ public class Level {
         }
 
         // otherwise, look for lasers from the current dude
-        for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
+        for (byte dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
             int lx = player.getX(), ly = player.getY();
 
             IntPair r = new IntPair();
@@ -400,7 +400,7 @@ public class Level {
                 if (tileAt(lx, ly) == T_LASER) {
                     int tileX = r.x;
                     int tileY = r.y;
-                    int d = Entity.dirReverse(dd);
+                    byte d = Entity.dirReverse(dd);
 
                     laser = new IntTriple(tileX, tileY, d);
                     return true;
@@ -422,7 +422,7 @@ public class Level {
     }
 
     private void swapO(int idx) {
-        int tmp = tiles[idx];
+        byte tmp = tiles[idx];
         setTile(idx, oTiles[idx]);
         checkOTileCOW();
         oTiles[idx] = tmp;
@@ -431,7 +431,7 @@ public class Level {
         /* swap haspanel/opanel and their refinements as well */
         flags[idx] =
 
-        /* panel bits */
+        (byte) (/* panel bits */
         ((flags[idx] & TF_HASPANEL) != 0 ? TF_OPANEL : TF_NONE)
                 | ((flags[idx] & TF_OPANEL) != 0 ? TF_HASPANEL : TF_NONE)
                 |
@@ -448,7 +448,7 @@ public class Level {
 
                 /* erase old */
                 (flags[idx] & ~(TF_HASPANEL | TF_OPANEL | TF_RPANELL
-                        | TF_RPANELH | TF_ROPANELL | TF_ROPANELH));
+                        | TF_RPANELH | TF_ROPANELL | TF_ROPANELH)));
     }
 
     private void checkFlagCOW() {
@@ -456,7 +456,7 @@ public class Level {
             flagCOW = false;
 
             // copy
-            int tt[] = new int[flags.length];
+            byte tt[] = new byte[flags.length];
             System.arraycopy(flags, 0, tt, 0, tt.length);
             flags = tt;
         }
@@ -467,7 +467,7 @@ public class Level {
             oTileCOW = false;
 
             // copy
-            int tt[] = new int[oTiles.length];
+            byte tt[] = new byte[oTiles.length];
             System.arraycopy(oTiles, 0, tt, 0, tt.length);
             oTiles = tt;
         }
@@ -498,7 +498,7 @@ public class Level {
         }
     }
 
-    public static int realPanel(int f) {
+    public static byte realPanel(int f) {
         if ((f & TF_RPANELH) != 0) {
             if ((f & TF_RPANELL) != 0)
                 return T_RPANEL;
@@ -524,7 +524,7 @@ public class Level {
         return (t == T_STEEL || t == T_RSTEEL || t == T_GSTEEL || t == T_BSTEEL);
     }
 
-    private void swapTiles(int t1, int t2) {
+    private void swapTiles(byte t1, byte t2) {
         for (int i = (width * height) - 1; i >= 0; i--) {
             if (tiles[i] == t1)
                 setTile(i, t2);
@@ -533,11 +533,11 @@ public class Level {
         }
     }
 
-    public boolean move(int d) {
+    public boolean move(byte d) {
         return move(d, DefaultEffects.getDefaultEffects());
     }
 
-    public boolean move(int d, Effects e) {
+    public boolean move(byte d, Effects e) {
         player.setDir(d); // always set dir
         boolean result = realMove(player, d, e);
 
@@ -554,12 +554,12 @@ public class Level {
                 IntPair dirs = b.getDirChoices(player);
 
                 if (dirs.x != Entity.DIR_NONE) {
-                    boolean bm = realMove(b, dirs.x, e);
+                    boolean bm = realMove(b, (byte) dirs.x, e);
 
                     boolean bm2 = false;
                     // no good? try 2nd move
                     if (!bm && dirs.y != Entity.DIR_NONE) {
-                        bm2 = realMove(b, dirs.y, e);
+                        bm2 = realMove(b, (byte) dirs.y, e);
                     }
 
                     if (bm || bm2) {
@@ -575,7 +575,7 @@ public class Level {
         return result;
     }
 
-    protected boolean realMove(Entity ent, int d, Effects e) {
+    protected boolean realMove(Entity ent, byte d, Effects e) {
         final IntPair newP = new IntPair();
         if (travel(ent.getX(), ent.getY(), d, newP)) {
             return maybeDoMove(ent, d, e, newP);
@@ -590,8 +590,8 @@ public class Level {
      * @param newP
      * @return true if move was made, false otherwise
      */
-    private boolean maybeDoMove(Entity ent, int d, Effects e, final IntPair newP) {
-        final int target;
+    private boolean maybeDoMove(Entity ent, byte d, Effects e, final IntPair newP) {
+        final byte target;
         switch (target = tileAt(newP.x, newP.y)) {
 
         /* these aren't pressed by the player so act like floor */
@@ -756,7 +756,7 @@ public class Level {
      * @param newP
      * @return
      */
-    private boolean doSphereGoldMove(int d, Effects e, int target, IntPair newP) {
+    private boolean doSphereGoldMove(int d, Effects e, byte target, IntPair newP) {
         /*
          * spheres allow pushing in a line: ->OOOO becomes OOO ---->O
          * 
@@ -779,7 +779,7 @@ public class Level {
         int goldX = newP.x, goldY = newP.y;
 
         /* remove gold block */
-        int replacement = ((flagAt(goldX, goldY) & TF_HASPANEL) != 0) ? realPanel(flagAt(
+        byte replacement = ((flagAt(goldX, goldY) & TF_HASPANEL) != 0) ? realPanel(flagAt(
                 goldX, goldY))
                 : T_FLOOR;
 
@@ -896,7 +896,7 @@ public class Level {
      * @param newP
      * @return
      */
-    private boolean doSimpleBlockMove(Entity ent, int d, Effects e, int target,
+    private boolean doSimpleBlockMove(Entity ent, int d, Effects e, byte target,
             IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
@@ -910,7 +910,7 @@ public class Level {
          * do need to put a panel there instead of floor.
          */
 
-        int replacement = ((flagAt(newP.x, newP.y) & TF_HASPANEL) == TF_HASPANEL) ? realPanel(flagAt(
+        byte replacement = ((flagAt(newP.x, newP.y) & TF_HASPANEL) == TF_HASPANEL) ? realPanel(flagAt(
                 newP.x, newP.y))
                 : T_FLOOR;
 
@@ -987,7 +987,7 @@ public class Level {
      * @param newP
      * @return
      */
-    private boolean doSteelMove(Entity ent, int d, IntPair newP) {
+    private boolean doSteelMove(Entity ent, byte d, IntPair newP) {
         /*
          * three phases. first, see if we can push this whole column one space.
          * 
@@ -1040,7 +1040,7 @@ public class Level {
          * 
          * d ---->
          */
-        int revD = Entity.dirReverse(d);
+        byte revD = Entity.dirReverse(d);
 
         /* move the steel blocks first. */
         {
@@ -1056,7 +1056,7 @@ public class Level {
 
         /* and one more, for the tile that we're stepping onto */
         {
-            int replacement = ((flagAt(newP.x, newP.y) & TF_HASPANEL) == TF_HASPANEL) ? realPanel(flagAt(
+            byte replacement = ((flagAt(newP.x, newP.y) & TF_HASPANEL) == TF_HASPANEL) ? realPanel(flagAt(
                     newP.x, newP.y))
                     : T_FLOOR;
             setTile(newP.x, newP.y, replacement);
@@ -1101,10 +1101,10 @@ public class Level {
                         && triggers(prevT, realPanel(flagAt(lookX, lookY)));
 
                 if (triggerStatusNow != triggerStatusOld) {
-                    setFlag(lookX, lookY, flagAt(lookX, lookY) | TF_TEMP);
+                    setFlag(lookX, lookY, (byte) (flagAt(lookX, lookY) | TF_TEMP));
                     // printf("Yes swap at %d/%d\n", lookx, looky);
                 } else
-                    setFlag(lookX, lookY, flagAt(lookX, lookY) & ~TF_TEMP);
+                    setFlag(lookX, lookY, (byte) (flagAt(lookX, lookY) & ~TF_TEMP));
 
                 prevT = hereT;
 
@@ -1149,7 +1149,7 @@ public class Level {
 
                 if ((flagAt(lookx, looky) & TF_TEMP) == TF_TEMP) {
                     swapO(destAt(lookx, looky));
-                    setFlag(lookx, looky, flagAt(lookx, looky) & ~TF_TEMP);
+                    setFlag(lookx, looky, (byte) (flagAt(lookx, looky) & ~TF_TEMP));
                 }
 
                 /* next */
@@ -1392,7 +1392,7 @@ public class Level {
             return false;
         }
 
-        int opp = (target == T_0 ? T_1 : T_0);
+        byte opp = (target == T_0 ? T_1 : T_0);
 
         swapTiles(T_UD, T_LR);
 
@@ -1572,7 +1572,7 @@ public class Level {
         }
     }
 
-    private void setFlag(int x, int y, int f) {
+    private void setFlag(int x, int y, byte f) {
         checkFlagCOW();
         flags[y * width + x] = f;
     }
@@ -1664,26 +1664,45 @@ public class Level {
 
         player = new Player(playerX, playerY, Entity.DIR_DOWN);
 
-        tiles = RunLengthEncoding.decode(in, width * height);
-        oTiles = RunLengthEncoding.decode(in, width * height);
-        dests = RunLengthEncoding.decode(in, width * height);
-        flags = RunLengthEncoding.decode(in, width * height);
+        int len = width * height;
+
+        int tmp1[] = RunLengthEncoding.decode(in, len);
+        int tmp2[] = RunLengthEncoding.decode(in, len);
+        int tmp3[] = RunLengthEncoding.decode(in, len);
+        int tmp4[] = RunLengthEncoding.decode(in, len);
+
+        tiles = new byte[len];
+        oTiles = new byte[len];
+        dests = new short[len];
+        flags = new byte[len];
+
+        for (int i = 0; i < len; i++) {
+            tiles[i] = (byte) tmp1[i];
+            oTiles[i] = (byte) tmp2[i];
+            dests[i] = (short) tmp3[i];
+            flags[i] = (byte) tmp4[i];
+        }
+        
 
         // load bots if in file
         int bots;
         int botI[] = null;
-        int botT[] = null;
+        byte botT[] = null;
         try {
             bots = in.readInt();
             botI = RunLengthEncoding.decode(in, bots);
-            botT = RunLengthEncoding.decode(in, bots);
+            botT = new byte[len];
+            int tmp[] = RunLengthEncoding.decode(in, bots);
+            for (int i = 0; i < bots; i++) {
+                botT[i] = (byte) tmp[i];
+            }
         } catch (EOFException e) {
             bots = 0;
         }
 
         this.bots = new Bot[bots];
 
-        for (int i = 0; i < this.bots.length; i++) {
+        for (byte i = 0; i < this.bots.length; i++) {
             int x = botI[i] % width;
             int y = botI[i] / width;
             this.bots[i] = new Bot(x, y, Entity.DIR_DOWN, botT[i]);
@@ -1836,7 +1855,7 @@ public class Level {
         // printM(p, flags, width);
     }
 
-    static private void printM(PrintStream p, int[] m, int w) {
+    static private void printM(PrintStream p, byte[] m, int w) {
         int l = 0;
         for (int i = 0; i < m.length; i++) {
             p.print((char) (m[i] + 32));

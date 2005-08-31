@@ -9,23 +9,23 @@ import java.io.PrintStream;
  * @author adam
  */
 abstract public class Entity {
-    static private final int CAP_IS_PLAYER = 0;
+    static private final byte CAP_IS_PLAYER = 0;
 
-    static private final int CAP_CAN_TELEPORT = 1;
+    static private final byte CAP_CAN_TELEPORT = 1;
 
-    static private final int CAP_CRUSH_PLAYER = 2;
+    static private final byte CAP_CRUSH_PLAYER = 2;
 
-    static private final int CAP_WALK_INTO_BOTS = 3;
+    static private final byte CAP_WALK_INTO_BOTS = 3;
 
-    static private final int CAP_PUSH_PLAYER = 4;
+    static private final byte CAP_PUSH_PLAYER = 4;
 
-    static private final int CAP_ZAP_SELF = 5;
+    static private final byte CAP_ZAP_SELF = 5;
 
-    static private final int CAP_PUSH_BOTS = 6;
+    static private final byte CAP_PUSH_BOTS = 6;
     
-    static private final int CAP_HEARTFRAMERS = 7;
+    static private final byte CAP_HEARTFRAMERS = 7;
 
-    static private final int NUM_CAPS = 8;
+    static private final byte NUM_CAPS = 8;
 
     protected final void iCanTeleport() {
         capabilities[CAP_CAN_TELEPORT] = true;
@@ -70,28 +70,28 @@ abstract public class Entity {
 
     final private boolean capabilities[] = new boolean[NUM_CAPS];
 
-    private int d;
+    private byte d;
 
     private int x;
 
     private int y;
 
     // directions
-    public final static int DIR_NONE = 0;
+    public final static byte DIR_NONE = 0;
 
-    public final static int FIRST_DIR = 1;
+    public final static byte FIRST_DIR = 1;
 
-    public final static int DIR_UP = 1;
+    public final static byte DIR_UP = 1;
 
-    public final static int DIR_DOWN = 2;
+    public final static byte DIR_DOWN = 2;
 
-    public final static int DIR_LEFT = 3;
+    public final static byte DIR_LEFT = 3;
 
-    public final static int DIR_RIGHT = 4;
+    public final static byte DIR_RIGHT = 4;
 
-    public final static int LAST_DIR = 4;
+    public final static byte LAST_DIR = 4;
 
-    static public String directionToString(int dir) {
+    static public String directionToString(byte dir) {
         String s;
         
         switch (dir) {
@@ -121,7 +121,7 @@ abstract public class Entity {
         return s;
     }
 
-    public Entity(int x, int y, int d) {
+    public Entity(int x, int y, byte d) {
         this.x = x;
         this.y = y;
         this.d = d;
@@ -138,7 +138,7 @@ abstract public class Entity {
     /**
      * @return Returns the d.
      */
-    final public int getDir() {
+    final public byte getDir() {
         return d;
     }
 
@@ -172,7 +172,7 @@ abstract public class Entity {
      * @param d
      *           The d to set.
      */
-    final public void setDir(int d) {
+    final public void setDir(byte d) {
         this.d = d;
     }
 
@@ -269,7 +269,7 @@ abstract public class Entity {
         return new IntPair(dx, dy);
     }
 
-    static String dirString(int d) {
+    static String dirString(byte d) {
         switch (d) {
         case DIR_UP:
             return "up";
@@ -286,7 +286,7 @@ abstract public class Entity {
         }
     }
 
-    static int dirReverse(int d) {
+    static byte dirReverse(byte d) {
         switch (d) {
         case DIR_UP:
             return DIR_DOWN;
@@ -303,7 +303,7 @@ abstract public class Entity {
     }
 
     // static functions
-    static int turnLeft(int d) {
+    static byte turnLeft(byte d) {
         switch (d) {
         case DIR_UP:
             return DIR_LEFT;
@@ -319,7 +319,7 @@ abstract public class Entity {
         }
     }
 
-    static int turnRight(int d) {
+    static byte turnRight(byte d) {
         switch (d) {
         case DIR_UP:
             return DIR_RIGHT;
@@ -335,19 +335,19 @@ abstract public class Entity {
         }
     }
 
-    public static final int B_DELETED = -2;
+    public static final byte B_DELETED = -2;
 
-    public static final int B_PLAYER = -1;
+    public static final byte B_PLAYER = -1;
 
-    public static final int B_BROKEN = 0;
+    public static final byte B_BROKEN = 0;
 
-    public static final int B_DALEK = 1;
+    public static final byte B_DALEK = 1;
 
-    public static final int B_HUGBOT = 2;
+    public static final byte B_HUGBOT = 2;
     
-    public static final int B_DALEK_ASLEEP = 3;
+    public static final byte B_DALEK_ASLEEP = 3;
     
-    public static final int B_HUGBOT_ASLEEP = 4;
+    public static final byte B_HUGBOT_ASLEEP = 4;
 
-    protected int type;
+    protected byte type;
 }
