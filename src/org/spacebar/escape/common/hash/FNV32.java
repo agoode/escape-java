@@ -74,15 +74,15 @@ public class FNV32 {
         hval ^= octet & 0xFF; // stupid sign extension
     }
 
-    public void fnv32(int dword) {
-        fnv32((byte) (dword & 0xFF));
-        dword >>= 8;
-        fnv32((byte) (dword & 0xFF));
-        dword >>= 8;
-        fnv32((byte) (dword & 0xFF));
-        dword >>= 8;
-        fnv32((byte) (dword & 0xFF));
-    }
+//    public void fnv32(int dword) {
+//        fnv32((byte) (dword & 0xFF));
+//        dword >>= 8;
+//        fnv32((byte) (dword & 0xFF));
+//        dword >>= 8;
+//        fnv32((byte) (dword & 0xFF));
+//        dword >>= 8;
+//        fnv32((byte) (dword & 0xFF));
+//    }
 
     public int hashCode() {
         return hval;
