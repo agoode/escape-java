@@ -9,26 +9,24 @@ import java.io.PrintStream;
  * @author adam
  */
 abstract public class Entity {
-    static private final byte CAP_IS_PLAYER = 0;
+    static private final int CAP_IS_PLAYER = 1;
 
-    static private final byte CAP_CAN_TELEPORT = 1;
+    static private final int CAP_CAN_TELEPORT = 2;
 
-    static private final byte CAP_CRUSH_PLAYER = 2;
+    static private final int CAP_CRUSH_PLAYER = 4;
 
-    static private final byte CAP_WALK_INTO_BOTS = 3;
+    static private final int CAP_WALK_INTO_BOTS = 8;
 
-    static private final byte CAP_PUSH_PLAYER = 4;
+    static private final int CAP_PUSH_PLAYER = 16;
 
-    static private final byte CAP_ZAP_SELF = 5;
+    static private final int CAP_ZAP_SELF = 32;
 
-    static private final byte CAP_PUSH_BOTS = 6;
-    
-    static private final byte CAP_HEARTFRAMERS = 7;
+    static private final int CAP_PUSH_BOTS = 64;
 
-    static private final byte NUM_CAPS = 8;
+    static private final int CAP_HEARTFRAMERS = 128;
 
     protected final void iCanTeleport() {
-        capabilities[CAP_CAN_TELEPORT] = true;
+        capabilities |= CAP_CAN_TELEPORT;
     }
 
     protected final void iCrushPlayer() {
@@ -36,7 +34,7 @@ abstract public class Entity {
     }
 
     protected final void iAmPlayer() {
-        capabilities[CAP_IS_PLAYER] = true;
+        capabilities |= CAP_IS_PLAYER;
     }
 
     protected final void iPushBots() {
@@ -44,31 +42,29 @@ abstract public class Entity {
     }
 
     protected final void iPushPlayer() {
-        capabilities[CAP_PUSH_BOTS] = true;
-        capabilities[CAP_PUSH_PLAYER] = true;
+        capabilities |= CAP_PUSH_BOTS;
+        capabilities |= CAP_PUSH_PLAYER;
     }
 
     protected final void iWalkIntoBots() {
-        capabilities[CAP_CRUSH_PLAYER] = true;
-        capabilities[CAP_WALK_INTO_BOTS] = true;
-        capabilities[CAP_ZAP_SELF] = true;
+        capabilities |= CAP_CRUSH_PLAYER;
+        capabilities |= CAP_WALK_INTO_BOTS;
+        capabilities |= CAP_ZAP_SELF;
     }
 
     protected final void iZapSelf() {
         iWalkIntoBots();
     }
-    
+
     protected final void iGetHeartFramers() {
-    	capabilities[CAP_HEARTFRAMERS] = true;
+        capabilities |= CAP_HEARTFRAMERS;
     }
 
     protected final void clearCapabilities() {
-        for (int i = 0; i < capabilities.length; i++) {
-            capabilities[i] = false;
-        }
+        capabilities = 0;
     }
 
-    final private boolean capabilities[] = new boolean[NUM_CAPS];
+    private int capabilities;
 
     private byte d;
 
@@ -93,26 +89,26 @@ abstract public class Entity {
 
     static public String directionToString(byte dir) {
         String s;
-        
+
         switch (dir) {
         case DIR_UP:
-            //                            s = "up";
-//            s = "↑";
+            // s = "up";
+            // s = "↑";
             s = "u";
             break;
         case DIR_DOWN:
-            //                            s = "down";
-//            s = "↓";
+            // s = "down";
+            // s = "↓";
             s = "d";
             break;
         case DIR_LEFT:
-            //                            s = "left";
-//            s = "←";
+            // s = "left";
+            // s = "←";
             s = "l";
             break;
         case DIR_RIGHT:
-            //                            s = "right";
-//            s = "→";
+            // s = "right";
+            // s = "→";
             s = "r";
             break;
         default:
@@ -128,11 +124,11 @@ abstract public class Entity {
     }
 
     final public boolean canTeleport() {
-        return capabilities[CAP_CAN_TELEPORT];
+        return (capabilities & CAP_CAN_TELEPORT) == CAP_CAN_TELEPORT;
     }
 
     final public boolean crushesPlayer() {
-        return capabilities[CAP_CRUSH_PLAYER];
+        return (capabilities & CAP_CRUSH_PLAYER) == CAP_CRUSH_PLAYER;
     }
 
     /**
@@ -157,20 +153,20 @@ abstract public class Entity {
     }
 
     final public boolean isPlayer() {
-        return capabilities[CAP_IS_PLAYER];
+        return (capabilities & CAP_IS_PLAYER) == CAP_IS_PLAYER;
     }
 
     final public boolean canPushBots() {
-        return capabilities[CAP_PUSH_BOTS];
+        return (capabilities & CAP_PUSH_BOTS) == CAP_PUSH_BOTS;
     }
 
     final public boolean canPushPlayer() {
-        return capabilities[CAP_PUSH_PLAYER];
+        return (capabilities & CAP_PUSH_PLAYER) == CAP_PUSH_PLAYER;
     }
 
     /**
      * @param d
-     *           The d to set.
+     *            The d to set.
      */
     final public void setDir(byte d) {
         this.d = d;
@@ -178,7 +174,7 @@ abstract public class Entity {
 
     /**
      * @param x
-     *           The x to set.
+     *            The x to set.
      */
     final public void setX(int x) {
         this.x = x;
@@ -186,7 +182,7 @@ abstract public class Entity {
 
     /**
      * @param y
-     *           The y to set.
+     *            The y to set.
      */
     final public void setY(int y) {
         this.y = y;
@@ -197,11 +193,11 @@ abstract public class Entity {
     }
 
     final public boolean walksIntoBots() {
-        return capabilities[CAP_WALK_INTO_BOTS];
+        return (capabilities & CAP_WALK_INTO_BOTS) == CAP_WALK_INTO_BOTS;
     }
 
     final public boolean zapsSelf() {
-        return capabilities[CAP_ZAP_SELF];
+        return (capabilities & CAP_ZAP_SELF) == CAP_ZAP_SELF;
     }
 
     public void print(PrintStream p) {
@@ -221,16 +217,16 @@ abstract public class Entity {
         if (canPushBots())
             p.print(" pushesBots");
         if (canGetHeartframers()) {
-        	p.print(" heartframers");
+            p.print(" heartframers");
         }
         p.print(" ]");
     }
 
     public boolean canGetHeartframers() {
-    	return capabilities[CAP_HEARTFRAMERS];
-	}
+        return (capabilities & CAP_HEARTFRAMERS) == CAP_HEARTFRAMERS;
+    }
 
-	public boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -344,9 +340,9 @@ abstract public class Entity {
     public static final byte B_DALEK = 1;
 
     public static final byte B_HUGBOT = 2;
-    
+
     public static final byte B_DALEK_ASLEEP = 3;
-    
+
     public static final byte B_HUGBOT_ASLEEP = 4;
 
     protected byte type;

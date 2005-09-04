@@ -248,7 +248,7 @@ public class Level {
     protected final Bot bots[];
 
     // dirty
-    private DirtyList dirty;
+    public DirtyList dirty;
 
     // cached laser
     private IntTriple laser;
@@ -274,6 +274,16 @@ public class Level {
         }
     }
 
+    public void trackDirty(boolean track) {
+        if (track) {
+            if (dirty == null) {
+                dirty = new DirtyList();
+            }
+        } else {
+            dirty = null;
+        }
+    }
+    
     private IntPair where(int idx) {
         int x = idx % width;
         int y = idx / width;
@@ -300,14 +310,9 @@ public class Level {
     private void setTile(int i, byte t) {
         checkTileCOW();
         tiles[i] = t;
-        getDirty().setDirty(i);
-    }
-
-    public DirtyList getDirty() {
-        if (dirty == null) {
-            dirty = new DirtyList();
+        if (dirty != null) {
+            dirty.setDirty(i);
         }
-        return dirty;
     }
 
     private void checkTileCOW() {

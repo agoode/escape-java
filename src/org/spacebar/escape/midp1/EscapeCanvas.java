@@ -139,7 +139,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
         g.setColor(0, 0, 0);
         g.fillRect(0, 0, w, h);
 
-        if (theLevel.getDirty().isAnyDirty()) {
+        if (theLevel.dirty.isAnyDirty()) {
             drawLevel();
         }
 
@@ -225,7 +225,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
 
         int n = lh * lw;
 
-        Level.DirtyList dirty = theLevel.getDirty();
+        Level.DirtyList dirty = theLevel.dirty;
         Graphics g = levelBuffer.getGraphics();
 
         int w = lw * TILE_SIZE;
@@ -245,7 +245,7 @@ public class EscapeCanvas extends Canvas implements CommandListener {
                 drawTile(g, t);
             }
         }
-        theLevel.getDirty().clearDirty();
+        theLevel.dirty.clearDirty();
     }
 
     // assume translation is at 0,0 of level

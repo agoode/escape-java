@@ -52,6 +52,7 @@ public class Backgrounder implements Runnable {
             
             try {
                 canvas.theLevel = new Level(canvas.levelStream);
+                canvas.theLevel.trackDirty(true);
                 canvas.levelStream.reset();
             } catch (IOException e) {
                 e.printStackTrace();
