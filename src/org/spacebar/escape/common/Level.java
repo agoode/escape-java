@@ -2034,11 +2034,13 @@ public class Level {
                 int t = l.tileAt(x, y);
                 int o = l.oTileAt(x, y);
                 if (!transportDests[x][y] && isImmovableTile(t)
-                        && (isImmovableTile(o) || !panelDests[x][y])) {
+                        && (isImmovableTile(o) || !panelDests[x][y])
+                        && !player.isAt(x, y)) {
                     boundaries[x][y] = true;
                 }
                 if (!transportDests[x][y] && isUselessTile(t)
-                        && (isUselessTile(o) || !panelDests[x][y])) {
+                        && (isUselessTile(o) || !panelDests[x][y])
+                        && !player.isAt(x, y) && !isBotAt(x, y)) {
                     useless[x][y] = true;
                 }
             }
