@@ -132,6 +132,8 @@ public class LevelManip {
 
     public void optimize() {
         // find and remove redundant rows and columns
+        Level oldLevel = new Level(this);
+        
     }
     
     private void slideEntLeft(Entity e, int col) {
