@@ -259,6 +259,8 @@ public class Level {
 
     private boolean flagCOW;
 
+    final private boolean hasLasers;
+
     // the meat
     private void warp(Entity ent, int targX, int targY) {
         checkStepOff(ent.getX(), ent.getY());
@@ -391,6 +393,10 @@ public class Level {
         if (isBotAt(player.getX(), player.getY())) {
             laser = null;
             return true;
+        }
+        
+        if (!hasLasers) {
+            return false;
         }
 
         // otherwise, look for lasers from the current dude
@@ -1632,6 +1638,8 @@ public class Level {
         author = l.author;
         title = l.title;
 
+        hasLasers = l.hasLasers;
+        
         player = new Player(l.player.getX(), l.player.getY(), l.player.getDir());
 
         // COW!
@@ -1681,13 +1689,19 @@ public class Level {
         dests = new short[len];
         flags = new byte[len];
 
+        boolean hasLasers = false;
         for (int i = 0; i < len; i++) {
-            tiles[i] = (byte) tmp1[i];
+            byte tile = (byte) tmp1[i];
+            if (tile == T_LASER) {
+                hasLasers = true;
+            }
+            tiles[i] = tile;
             oTiles[i] = (byte) tmp2[i];
             dests[i] = (short) tmp3[i];
             flags[i] = (byte) tmp4[i];
         }
         
+        this.hasLasers = hasLasers;
 
         // load bots if in file
         int bots;
