@@ -1754,21 +1754,17 @@ public class Level {
 
         int i = 0;
         boolean hasLasers = false;
-        for (int x = 0; x < width; x++) {
-            int tileCol[] = m.tiles[x];
-            int oTileCol[] = m.oTiles[x];
-            int destCol[] = m.dests[x];
-            int flagCol[] = m.flags[x];
-            for (int y = 0; y < height; y++) {
-                byte tile = (byte) tileCol[y];
-                byte oTile = (byte) oTileCol[y];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                byte tile = (byte) m.tiles[x][y];
+                byte oTile = (byte) m.oTiles[x][y];
                 if (tile == T_LASER || oTile == T_LASER) {
                     hasLasers = true;
                 }
                 this.tiles[i] = tile;
                 this.oTiles[i] = oTile;
-                this.dests[i] = (short) destCol[y];
-                this.flags[i] = (byte) flagCol[y];
+                this.dests[i] = (short) m.dests[x][y];
+                this.flags[i] = (byte) m.flags[x][y];
 
                 i++;
             }

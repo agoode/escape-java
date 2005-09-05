@@ -28,6 +28,11 @@ public class LevelManip {
         w = l.width;
         h = l.height;
 
+        tiles = new int[w][];
+        oTiles = new int[w][];
+        flags = new int[w][];
+        dests = new int[w][];
+        
         for (int x = 0; x < w; x++) {
             int tileCol[] = new int[h];
             int oTileCol[] = new int[h];
