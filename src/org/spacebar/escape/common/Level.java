@@ -1955,8 +1955,12 @@ public class Level {
 
         public final boolean boundaries[][];
 
-        public HeuristicData(int[][] map, boolean[][] boundaries) {
+        public final boolean useless[][];
+
+        public HeuristicData(int[][] map, boolean[][] boundaries,
+                boolean[][] useless) {
             this.boundaries = boundaries;
+            this.useless = useless;
             this.map = map;
         }
 
@@ -1995,6 +1999,7 @@ public class Level {
 
         int hmap[][] = new int[l.getWidth()][l.getHeight()];
         boolean boundaries[][] = new boolean[l.getWidth()][l.getHeight()];
+        boolean useless[][] = new boolean[l.getWidth()][l.getHeight()];
 
         int w = l.getWidth();
         int h = l.getHeight();
@@ -2032,6 +2037,10 @@ public class Level {
                         && (isImmovableTile(o) || !panelDests[x][y])) {
                     boundaries[x][y] = true;
                 }
+                if (!transportDests[x][y] && isUselessTile(t)
+                        && (isUselessTile(o) || !panelDests[x][y])) {
+                    useless[x][y] = true;
+                }
             }
         }
 
@@ -2058,7 +2067,12 @@ public class Level {
                 }
             }
         }
-        return new HeuristicData(hmap, boundaries);
+        return new HeuristicData(hmap, boundaries, useless);
+    }
+
+    static private boolean isUselessTile(int t) {
+        return t == T_BLUE || t == T_STOP || t == T_RIGHT || t == T_LEFT
+                || t == T_UP || t == T_DOWN || t == T_OFF || t == T_BLACK;
     }
 
     static private boolean isPossibleTransport(Level l, int x, int y,

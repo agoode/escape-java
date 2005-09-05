@@ -140,7 +140,7 @@ public class LevelManip {
             oldLevel = new EquateableLevel(this);
             // oldLevel.print(System.out);
             HeuristicData hd = oldLevel.computeHeuristicMap();
-            boolean boundaries[][] = hd.boundaries;
+            boolean boundaries[][] = hd.useless;
             // HeuristicData.printHmap(hd.map);
 
             // columns
