@@ -1,5 +1,7 @@
 package org.spacebar.escape.common;
 
+import org.spacebar.escape.common.Level.HeuristicData;
+
 public class LevelManip {
     String title;
 
@@ -32,7 +34,7 @@ public class LevelManip {
         oTiles = new int[w][];
         flags = new int[w][];
         dests = new int[w][];
-        
+
         for (int x = 0; x < w; x++) {
             int tileCol[] = new int[h];
             int oTileCol[] = new int[h];
@@ -102,7 +104,7 @@ public class LevelManip {
     public void deleteCol(final int col) {
         // col is x
         w--;
-        
+
         // delete col
         tiles = deleteFrom(tiles, col);
         oTiles = deleteFrom(oTiles, col);
@@ -119,23 +121,83 @@ public class LevelManip {
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
                 int dest = dests[x][y];
-                int tx = dest % w;
-                int ty = dest / w;
+                int tx = dest % (w + 1);
+                int ty = dest / (w + 1);
 
                 if (tx > col) {
                     tx--;
-                    dests[x][y] = ty * w + tx;
                 }
+                dests[x][y] = ty * w + tx;
             }
         }
     }
 
     public void optimize() {
         // find and remove redundant rows and columns
-        Level oldLevel = new Level(this);
-        
+        EquateableLevel oldLevel;
+
+        LEVEL: do {
+            oldLevel = new EquateableLevel(this);
+            // oldLevel.print(System.out);
+            HeuristicData hd = oldLevel.computeHeuristicMap();
+            boolean boundaries[][] = hd.boundaries;
+            // HeuristicData.printHmap(hd.map);
+
+            // columns
+            boolean bCols[] = new boolean[w];
+            for (int i = 0; i < bCols.length; i++) {
+                boolean col[] = boundaries[i];
+                bCols[i] = true;
+                for (int j = 0; j < col.length; j++) {
+                    bCols[i] &= col[j];
+                }
+            }
+
+            for (int i = 0; i < bCols.length; i++) {
+                if (!bCols[i]) {
+                    continue;
+                }
+                boolean leftBound = (i == 0) || bCols[i - 1];
+                boolean rightBound = (i == bCols.length - 1) || bCols[i + 1];
+                if (leftBound || rightBound) {
+                    // delete this
+                    deleteCol(i);
+                    // System.out.println("deleted col " + i);
+                    continue LEVEL;
+                }
+            }
+
+            // rows
+            boolean bRows[] = new boolean[h];
+            for (int i = 0; i < bRows.length; i++) {
+                boolean row[] = new boolean[w];
+                for (int j = 0; j < w; j++) {
+                    row[j] = boundaries[j][i];
+                }
+                bRows[i] = true;
+                for (int j = 0; j < row.length; j++) {
+                    bRows[i] &= row[j];
+                }
+            }
+
+            for (int i = 0; i < bRows.length; i++) {
+                if (!bRows[i]) {
+                    continue;
+                }
+                boolean upBound = (i == 0) || bRows[i - 1];
+                boolean downBound = (i == bRows.length - 1) || bRows[i + 1];
+                if (upBound || downBound) {
+                    // delete this
+                    deleteRow(i);
+                    // System.out.println("deleted row " + i);
+                    continue LEVEL;
+                }
+            }
+
+        } while (oldLevel.width != w || oldLevel.height != h
+                || !oldLevel.equals(new EquateableLevel(this)));
     }
-    
+
     private void slideEntLeft(Entity e, int col) {
         int ex = e.getX();
         if (ex > col) {
@@ -157,7 +219,7 @@ public class LevelManip {
         }
         return newData;
     }
-    
+
     private static int[] deleteFrom(int[] data, int idx) {
         int newData[] = new int[data.length - 1];
         int j = 0;

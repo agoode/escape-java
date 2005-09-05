@@ -1959,6 +1959,26 @@ public class Level {
             this.boundaries = boundaries;
             this.map = map;
         }
+
+        public static void printHmap(int hmap[][]) {
+            // print
+            for (int x = 0; x < hmap[0].length; x++) {
+                for (int y = 0; y < hmap.length; y++) {
+                    int val = hmap[y][x];
+                    String s;
+                    if (val < Integer.MAX_VALUE / 2) {
+                        s = Integer.toString(val);
+                    } else {
+                        s = "*";
+                    }
+                    System.out.print(s + " ");
+                    if (s.length() == 1) {
+                        System.out.print(" ");
+                    }
+                }
+                System.out.println();
+            }
+        }
     }
 
     public HeuristicData computeHeuristicMap() {
