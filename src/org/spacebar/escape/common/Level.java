@@ -285,7 +285,7 @@ public class Level {
             dirty = null;
         }
     }
-    
+
     private IntPair where(int idx) {
         int x = idx % width;
         int y = idx / width;
@@ -339,11 +339,11 @@ public class Level {
     public byte flagAt(int x, int y) {
         return flagAt(y * width + x);
     }
-    
+
     public byte flagAt(int i) {
         return flags[i];
     }
-    
+
     public boolean isWon() {
         return tileAt(player.getX(), player.getY()) == T_EXIT;
     }
@@ -394,7 +394,7 @@ public class Level {
             laser = null;
             return true;
         }
-        
+
         if (!hasLasers) {
             return false;
         }
@@ -444,22 +444,19 @@ public class Level {
 
         (byte) (/* panel bits */
         ((flags[idx] & TF_HASPANEL) != 0 ? TF_OPANEL : TF_NONE)
-                | ((flags[idx] & TF_OPANEL) != 0 ? TF_HASPANEL : TF_NONE)
-                |
+                | ((flags[idx] & TF_OPANEL) != 0 ? TF_HASPANEL : TF_NONE) |
 
                 /* refinement */
                 ((flags[idx] & TF_RPANELL) != 0 ? TF_ROPANELL : TF_NONE)
-                | ((flags[idx] & TF_RPANELH) != 0 ? TF_ROPANELH : TF_NONE)
-                |
+                | ((flags[idx] & TF_RPANELH) != 0 ? TF_ROPANELH : TF_NONE) |
 
                 /* orefinement */
                 ((flags[idx] & TF_ROPANELL) != 0 ? TF_RPANELL : TF_NONE)
-                | ((flags[idx] & TF_ROPANELH) != 0 ? TF_RPANELH : TF_NONE)
-                |
+                | ((flags[idx] & TF_ROPANELH) != 0 ? TF_RPANELH : TF_NONE) |
 
-                /* erase old */
-                (flags[idx] & ~(TF_HASPANEL | TF_OPANEL | TF_RPANELL
-                        | TF_RPANELH | TF_ROPANELL | TF_ROPANELH)));
+        /* erase old */
+        (flags[idx] & ~(TF_HASPANEL | TF_OPANEL | TF_RPANELL | TF_RPANELH
+                | TF_ROPANELL | TF_ROPANELH)));
     }
 
     private void checkFlagCOW() {
@@ -601,7 +598,8 @@ public class Level {
      * @param newP
      * @return true if move was made, false otherwise
      */
-    private boolean maybeDoMove(Entity ent, byte d, Effects e, final IntPair newP) {
+    private boolean maybeDoMove(Entity ent, byte d, Effects e,
+            final IntPair newP) {
         final byte target;
         switch (target = tileAt(newP.x, newP.y)) {
 
@@ -907,8 +905,8 @@ public class Level {
      * @param newP
      * @return
      */
-    private boolean doSimpleBlockMove(Entity ent, int d, Effects e, byte target,
-            IntPair newP) {
+    private boolean doSimpleBlockMove(Entity ent, int d, Effects e,
+            byte target, IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
         }
@@ -1112,10 +1110,12 @@ public class Level {
                         && triggers(prevT, realPanel(flagAt(lookX, lookY)));
 
                 if (triggerStatusNow != triggerStatusOld) {
-                    setFlag(lookX, lookY, (byte) (flagAt(lookX, lookY) | TF_TEMP));
+                    setFlag(lookX, lookY,
+                            (byte) (flagAt(lookX, lookY) | TF_TEMP));
                     // printf("Yes swap at %d/%d\n", lookx, looky);
                 } else
-                    setFlag(lookX, lookY, (byte) (flagAt(lookX, lookY) & ~TF_TEMP));
+                    setFlag(lookX, lookY,
+                            (byte) (flagAt(lookX, lookY) & ~TF_TEMP));
 
                 prevT = hereT;
 
@@ -1160,7 +1160,8 @@ public class Level {
 
                 if ((flagAt(lookx, looky) & TF_TEMP) == TF_TEMP) {
                     swapO(destAt(lookx, looky));
-                    setFlag(lookx, looky, (byte) (flagAt(lookx, looky) & ~TF_TEMP));
+                    setFlag(lookx, looky,
+                            (byte) (flagAt(lookx, looky) & ~TF_TEMP));
                 }
 
                 /* next */
@@ -1639,15 +1640,15 @@ public class Level {
         title = l.title;
 
         hasLasers = l.hasLasers;
-        
+
         player = new Player(l.player.getX(), l.player.getY(), l.player.getDir());
 
         // COW!
         tiles = l.tiles;
         oTiles = l.oTiles;
-        dests = l.dests;   // not cow
+        dests = l.dests; // not cow
         flags = l.flags;
-        
+
         tileCOW = true;
         oTileCOW = true;
         flagCOW = true;
@@ -1658,7 +1659,7 @@ public class Level {
             bots[i] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType());
         }
 
-//        dirty = new DirtyList();
+        // dirty = new DirtyList();
 
         isDead();
     }
@@ -1689,20 +1690,7 @@ public class Level {
         dests = new short[len];
         flags = new byte[len];
 
-        boolean hasLasers = false;
-        for (int i = 0; i < len; i++) {
-            byte tile = (byte) tmp1[i];
-            byte oTile = (byte) tmp2[i];
-            if (tile == T_LASER || oTile == T_LASER) {
-                hasLasers = true;
-            }
-            tiles[i] = tile;
-            oTiles[i] = oTile;
-            dests[i] = (short) tmp3[i];
-            flags[i] = (byte) tmp4[i];
-        }
-        
-        this.hasLasers = hasLasers;
+        hasLasers = setTilesFromIntArrays(len, tmp1, tmp2, tmp3, tmp4);
 
         // load bots if in file
         int bots;
@@ -1728,9 +1716,72 @@ public class Level {
             this.bots[i] = new Bot(x, y, Entity.DIR_DOWN, botT[i]);
         }
 
-//        dirty = new DirtyList();
+        // dirty = new DirtyList();
 
         isDead(); // calculate laser cache
+    }
+
+    private boolean setTilesFromIntArrays(int len, int[] tiles, int[] oTiles,
+            int[] dests, int[] flags) {
+        boolean hasLasers = false;
+        for (int i = 0; i < len; i++) {
+            byte tile = (byte) tiles[i];
+            byte oTile = (byte) oTiles[i];
+            if (tile == T_LASER || oTile == T_LASER) {
+                hasLasers = true;
+            }
+            this.tiles[i] = tile;
+            this.oTiles[i] = oTile;
+            this.dests[i] = (short) dests[i];
+            this.flags[i] = (byte) flags[i];
+        }
+        return hasLasers;
+    }
+
+    public Level(LevelManip m) {
+        width = m.w;
+        height = m.h;
+
+        author = m.author;
+        title = m.title;
+
+        int len = width * height;
+
+        tiles = new byte[len];
+        oTiles = new byte[len];
+        dests = new short[len];
+        flags = new byte[len];
+
+        int i = 0;
+        boolean hasLasers = false;
+        for (int x = 0; x < width; x++) {
+            int tileCol[] = m.tiles[x];
+            int oTileCol[] = m.oTiles[x];
+            int destCol[] = m.dests[x];
+            int flagCol[] = m.flags[x];
+            for (int y = 0; y < height; y++) {
+                byte tile = (byte) tileCol[y];
+                byte oTile = (byte) oTileCol[y];
+                if (tile == T_LASER || oTile == T_LASER) {
+                    hasLasers = true;
+                }
+                this.tiles[i] = tile;
+                this.oTiles[i] = oTile;
+                this.dests[i] = (short) destCol[y];
+                this.flags[i] = (byte) flagCol[y];
+
+                i++;
+            }
+        }
+        this.hasLasers = hasLasers;
+
+        player = new Player(m.player.getX(), m.player.getY(), m.player.getDir());
+        bots = new Bot[m.bots.length];
+        for (int b = 0; b < m.bots.length; b++) {
+            Bot bb = m.bots[b];
+            bots[b] = new Bot(bb.getX(), bb.getY(), bb.getDir(), bb
+                    .getBotType());
+        }
     }
 
     public static MetaData getMetaData(BitInputStream in) throws IOException {
