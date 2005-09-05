@@ -130,6 +130,10 @@ public class LevelManip {
         }
     }
 
+    public void optimize() {
+        // find and remove redundant rows and columns
+    }
+    
     private void slideEntLeft(Entity e, int col) {
         int ex = e.getX();
         if (ex > col) {

@@ -1949,4 +1949,157 @@ public class Level {
     public IntTriple getLaser() {
         return laser;
     }
+
+    public int[][] computeHeuristicMap() {
+        Level l = this;
+        
+        // get number of hugbots, they can push us closer
+        int hugbots = 0;
+        for (int i = 0; i < l.getBotCount(); i++) {
+            int bot = l.getBotType(i);
+            if (bot == Entity.B_HUGBOT || bot == Entity.B_HUGBOT_ASLEEP) {
+                hugbots++;
+            }
+        }
+    
+        int hmap[][] = new int[l.getWidth()][l.getHeight()];
+        int w = l.getWidth();
+        int h = l.getHeight();
+        boolean panelDests[][] = new boolean[w][h];
+        boolean transportDests[][] = new boolean[w][h];
+    
+        // initialize
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                hmap[x][y] = Integer.MAX_VALUE / 2; // avoid overflow!!
+                int dest = l.destAt(x, y);
+                int tx = dest % w;
+                int ty = dest / w;
+                int t = l.tileAt(x, y);
+                int o = l.oTileAt(x, y);
+                if (t == T_TRANSPORT || o == T_TRANSPORT) {
+                    // XXX see if transport is in bizarro world
+                    // but is never a dest itself
+                    // System.out.println(x + "," + y + " -> " + tx + "," + ty);
+                    transportDests[tx][ty] = true;
+                }
+                if (isPanel(t) || isPanel(o)) {
+                    // XXX see if panel is in bizarro world
+                    // but is never a dest itself
+                    panelDests[tx][ty] = true;
+                }
+            }
+        }
+    
+        // find each exit item
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (isPossibleExit(l, x, y, panelDests[x][y])) {
+                    hmap[x][y] = 0;
+                    doBrushFire(hmap, l, x, y, 1, hugbots + 1, panelDests,
+                            transportDests);
+                }
+            }
+        }
+    
+        // account for transporters
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (isPossibleTransport(l, x, y, panelDests[x][y])) {
+                    int dest = l.destAt(x, y);
+                    int xd = dest % l.getWidth();
+                    int yd = dest / l.getWidth();
+    
+                    hmap[x][y] = hmap[xd][yd];
+                    doBrushFire(hmap, l, x, y, 1, hugbots + 1, panelDests,
+                            transportDests);
+                }
+            }
+        }
+        return hmap;
+    }
+
+    static private boolean isPossibleTransport(Level l, int x, int y,
+            boolean isPanelTarget) {
+        int t = l.tileAt(x, y);
+        int o = l.oTileAt(x, y);
+        return t == T_TRANSPORT
+                || (o == T_TRANSPORT && isPanelTarget);
+    }
+
+    // !
+    static private void doBrushFire(int maze[][], Level l, int x, int y,
+            int depth, int divisor, boolean panelDests[][],
+            boolean transportDests[][]) {
+        int val = depth / divisor;
+        doBrushFire2(maze, l, x, y + 1, depth, divisor, panelDests,
+                transportDests, val);
+        doBrushFire2(maze, l, x, y - 1, depth, divisor, panelDests,
+                transportDests, val);
+        doBrushFire2(maze, l, x + 1, y, depth, divisor, panelDests,
+                transportDests, val);
+        doBrushFire2(maze, l, x - 1, y, depth, divisor, panelDests,
+                transportDests, val);
+    }
+
+    /**
+     * @param maze
+     * @param l
+     * @param x
+     * @param y
+     * @param depth
+     * @param divisor
+     * @param panelDests
+     * @param val
+     */
+    private static void doBrushFire2(int[][] maze, Level l, int x, int y,
+            int depth, int divisor, boolean[][] panelDests,
+            boolean[][] transportDests, int val) {
+        if (!isBoundary(l, x, y, panelDests, transportDests)
+                && val < maze[x][y]) {
+            maze[x][y] = val;
+            // System.out.println("(" + x + "," + y + "): " + val);
+            doBrushFire(maze, l, x, y, depth + 1, divisor, panelDests,
+                    transportDests);
+        }
+    }
+
+    static private boolean isBoundary(Level l, int x, int y,
+            boolean panelDests[][], boolean transportDests[][]) {
+        int w = l.getWidth();
+        int h = l.getHeight();
+    
+        // bounds
+        if (x < 0 || x >= w || y < 0 || y >= h) {
+            return true;
+        }
+    
+        int t = l.tileAt(x, y);
+        int o = l.oTileAt(x, y);
+        return !transportDests[x][y] && isImmovableTile(t)
+                && (isImmovableTile(o) || !panelDests[x][y]);
+    }
+
+    /**
+     * @param t
+     * @return
+     */
+    private static boolean isImmovableTile(int t) {
+        return t == T_BLUE || t == T_LASER || t == T_STOP
+                || t == T_RIGHT || t == T_LEFT || t == T_UP
+                || t == T_DOWN || t == T_ON || t == T_OFF
+                || t == T_0 || t == T_1 || t == T_BUTTON
+                || t == T_BLIGHT || t == T_RLIGHT
+                || t == T_GLIGHT || t == T_BLACK;
+    }
+
+    static private boolean isPossibleExit(Level l, int x, int y,
+            boolean isPanelTarget) {
+        int t = l.tileAt(x, y);
+        int o = l.oTileAt(x, y);
+        // XXX check to see if heartframers are accessible ?
+        return t == T_EXIT
+                || t == T_SLEEPINGDOOR
+                || (isPanelTarget && (o == T_EXIT || o == T_SLEEPINGDOOR));
+    }
 }
