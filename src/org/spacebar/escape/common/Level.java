@@ -1692,11 +1692,12 @@ public class Level {
         boolean hasLasers = false;
         for (int i = 0; i < len; i++) {
             byte tile = (byte) tmp1[i];
-            if (tile == T_LASER) {
+            byte oTile = (byte) tmp2[i];
+            if (tile == T_LASER || oTile == T_LASER) {
                 hasLasers = true;
             }
             tiles[i] = tile;
-            oTiles[i] = (byte) tmp2[i];
+            oTiles[i] = oTile;
             dests[i] = (short) tmp3[i];
             flags[i] = (byte) tmp4[i];
         }
