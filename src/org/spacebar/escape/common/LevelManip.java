@@ -194,8 +194,7 @@ public class LevelManip {
                 }
             }
 
-        } while (oldLevel.width != w || oldLevel.height != h
-                || !oldLevel.equals(new EquateableLevel(this)));
+        } while (!oldLevel.equals(new EquateableLevel(this)));
     }
 
     private void slideEntLeft(Entity e, int col) {

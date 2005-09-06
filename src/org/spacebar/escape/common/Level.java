@@ -1997,7 +1997,7 @@ public class Level {
             }
         }
 
-        int hmap[][] = new int[l.getWidth()][l.getHeight()];
+        double hmap[][] = new double[l.getWidth()][l.getHeight()];
         boolean boundaries[][] = new boolean[l.getWidth()][l.getHeight()];
         boolean useless[][] = new boolean[l.getWidth()][l.getHeight()];
 
@@ -2050,8 +2050,7 @@ public class Level {
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 if (isPossibleExit(l, x, y, panelDests[x][y])) {
-                    hmap[x][y] = 0;
-                    doBrushFire(hmap, l, x, y, 1, hugbots + 1, boundaries);
+                    sprinkle(l, hugbots, hmap, 0, boundaries, x, y);
                 }
             }
         }
@@ -2064,12 +2063,43 @@ public class Level {
                     int xd = dest % l.getWidth();
                     int yd = dest / l.getWidth();
 
-                    hmap[x][y] = hmap[xd][yd];
-                    doBrushFire(hmap, l, x, y, 1, hugbots + 1, boundaries);
+                    sprinkle(l, hugbots, hmap, hmap[xd][yd], boundaries, x, y);
                 }
             }
         }
-        return new HeuristicData(hmap, boundaries, useless);
+
+        int hmap2[][] = new int[w][h];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                hmap2[i][j] = (int) hmap[i][j];
+            }
+        }
+        return new HeuristicData(hmap2, boundaries, useless);
+    }
+
+    private void sprinkle(Level l, int hugbots, double[][] hmap, double init,
+            boolean[][] boundaries, int x, int y) {
+        int w = l.width;
+        int h = l.height;
+
+        hmap[x][y] = init;
+        init++;
+        if (x != 0) {
+            hmap[x - 1][y] = init;
+            doBrushFire(hmap, l, x - 1, y, init, hugbots + 1, boundaries);
+        }
+        if (x != w) {
+            hmap[x + 1][y] = init;
+            doBrushFire(hmap, l, x + 1, y, init, hugbots + 1, boundaries);
+        }
+        if (y != 0) {
+            hmap[x][y - 1] = init;
+            doBrushFire(hmap, l, x, y - 1, init, hugbots + 1, boundaries);
+        }
+        if (y != h) {
+            hmap[x][y + 1] = init;
+            doBrushFire(hmap, l, x, y + 1, init, hugbots + 1, boundaries);
+        }
     }
 
     static private boolean isUselessTile(int t) {
@@ -2085,13 +2115,12 @@ public class Level {
     }
 
     // !
-    static private void doBrushFire(int maze[][], Level l, int x, int y,
-            int depth, int divisor, boolean boundaries[][]) {
-        int val = depth / divisor;
-        doBrushFire2(maze, l, x, y + 1, depth, divisor, boundaries, val);
-        doBrushFire2(maze, l, x, y - 1, depth, divisor, boundaries, val);
-        doBrushFire2(maze, l, x + 1, y, depth, divisor, boundaries, val);
-        doBrushFire2(maze, l, x - 1, y, depth, divisor, boundaries, val);
+    static private void doBrushFire(double maze[][], Level l, int x, int y,
+            double val, int divisor, boolean boundaries[][]) {
+        doBrushFire2(maze, l, x, y + 1, divisor, boundaries, val);
+        doBrushFire2(maze, l, x, y - 1, divisor, boundaries, val);
+        doBrushFire2(maze, l, x + 1, y, divisor, boundaries, val);
+        doBrushFire2(maze, l, x - 1, y, divisor, boundaries, val);
     }
 
     /**
@@ -2104,13 +2133,14 @@ public class Level {
      * @param panelDests
      * @param val
      */
-    private static void doBrushFire2(int[][] maze, Level l, int x, int y,
-            int depth, int divisor, boolean[][] boundaries, int val) {
+    private static void doBrushFire2(double[][] maze, Level l, int x, int y,
+            int divisor, boolean[][] boundaries, double val) {
         if (x >= 0 && y >= 0 && x < l.getWidth() && y < l.getHeight()
                 && !boundaries[x][y] && val < maze[x][y]) {
             maze[x][y] = val;
             // System.out.println("(" + x + "," + y + "): " + val);
-            doBrushFire(maze, l, x, y, depth + 1, divisor, boundaries);
+            doBrushFire(maze, l, x, y, val + (1.0 / divisor), divisor,
+                    boundaries);
         }
     }
 

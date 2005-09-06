@@ -75,10 +75,13 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
 
             /*
              * // metadata if (!author.equals(l.author)) { return false; } if
-             * (!title.equals(l.title)) { return false; } if (width != l.width) {
-             * return false; } if (height != l.height) { return false; }
+             * (!title.equals(l.title)) { return false; }
              */
 
+            if (width != l.width || height != l.height) {
+                return false;
+            }
+            
             // tiles
             boolean tilesEq = tiles == l.tiles;
             boolean oTilesEq = oTiles == l.oTiles;
