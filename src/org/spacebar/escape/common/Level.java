@@ -2055,7 +2055,7 @@ public class Level {
             }
         }
 
-        // account for transporters
+        // account for transporters XXX lev177
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 if (isPossibleTransport(l, x, y, panelDests[x][y])) {
