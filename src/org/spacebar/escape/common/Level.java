@@ -2088,7 +2088,7 @@ public class Level {
             hmap[x - 1][y] = init;
             doBrushFire(hmap, l, x - 1, y, init, hugbots + 1, boundaries);
         }
-        if (x != w) {
+        if (x != w - 1) {
             hmap[x + 1][y] = init;
             doBrushFire(hmap, l, x + 1, y, init, hugbots + 1, boundaries);
         }
@@ -2096,7 +2096,7 @@ public class Level {
             hmap[x][y - 1] = init;
             doBrushFire(hmap, l, x, y - 1, init, hugbots + 1, boundaries);
         }
-        if (y != h) {
+        if (y != h - 1) {
             hmap[x][y + 1] = init;
             doBrushFire(hmap, l, x, y + 1, init, hugbots + 1, boundaries);
         }
