@@ -2083,22 +2083,23 @@ public class Level {
         int h = l.height;
 
         hmap[x][y] = init;
-        init++;
+        init += 1;
+        double seed = init + (1.0 / (hugbots + 1));
         if (x != 0) {
             hmap[x - 1][y] = init;
-            doBrushFire(hmap, l, x - 1, y, init, hugbots + 1, boundaries);
+            doBrushFire(hmap, l, x - 1, y, seed, hugbots + 1, boundaries);
         }
         if (x != w - 1) {
             hmap[x + 1][y] = init;
-            doBrushFire(hmap, l, x + 1, y, init, hugbots + 1, boundaries);
+            doBrushFire(hmap, l, x + 1, y, seed, hugbots + 1, boundaries);
         }
         if (y != 0) {
             hmap[x][y - 1] = init;
-            doBrushFire(hmap, l, x, y - 1, init, hugbots + 1, boundaries);
+            doBrushFire(hmap, l, x, y - 1, seed, hugbots + 1, boundaries);
         }
         if (y != h - 1) {
             hmap[x][y + 1] = init;
-            doBrushFire(hmap, l, x, y + 1, init, hugbots + 1, boundaries);
+            doBrushFire(hmap, l, x, y + 1, seed, hugbots + 1, boundaries);
         }
     }
 
