@@ -19,6 +19,10 @@ public class Bot extends Entity {
         setToType(B_DELETED);
     }
     
+    public void explode() {
+        setToType(B_BOMB_X);
+    }
+    
     public void setToType(byte type) {
         this.type = type;
         clearCapabilities();
@@ -28,6 +32,7 @@ public class Bot extends Entity {
         case B_BROKEN:
         case B_DALEK_ASLEEP:
         case B_HUGBOT_ASLEEP:
+        case B_BOMB_X:
             break;
 
         case B_DALEK:
@@ -38,7 +43,12 @@ public class Bot extends Entity {
             break;
                 
         default:
-            throw new IllegalArgumentException("Invalid bot type");
+            // bomb?
+            if (isBomb()) {
+                // bomb
+            } else {
+                throw new IllegalArgumentException("Invalid bot type");
+            }
         }
     }
 
@@ -59,14 +69,16 @@ public class Bot extends Entity {
 
     public IntPair getDirChoices(Entity e) {
         switch (type) {
+        case B_DALEK:
+        case B_HUGBOT:
+            return getMoveToDirChoices(e);
+
         case B_BROKEN:
         case B_DALEK_ASLEEP:
         case B_HUGBOT_ASLEEP:
-            return noDirs;
-        case B_DALEK:
-        case B_HUGBOT:
         default:
-            return getMoveToDirChoices(e);
+            // includes bombs
+            return noDirs;
         }
     }
 

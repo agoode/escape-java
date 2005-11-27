@@ -163,7 +163,7 @@ abstract public class Entity {
     final public boolean canPushPlayer() {
         return (capabilities & CAP_PUSH_PLAYER) == CAP_PUSH_PLAYER;
     }
-
+    
     /**
      * @param d
      *            The d to set.
@@ -237,6 +237,30 @@ abstract public class Entity {
             return x == e.x && y == e.y && type == e.type;
         }
         return false;
+    }
+
+    public boolean isBomb() {
+        return type >= B_BOMB_0 && type <= B_BOMB_MAX;
+    }
+
+    public void armFuseIfBomb() {
+        if (isBomb()) {
+            bombTimer = (byte) (type - B_BOMB_0);
+        }
+    }
+    
+    public void expireTimer() {
+        bombTimer = 0;
+    }
+
+    public byte getBombTimer() {
+        return bombTimer;
+    }
+
+    public void burnLitFuse() {
+        if (bombTimer != -1) {
+            bombTimer--;
+        }
     }
 
     static IntPair dirChange(int d) {
@@ -331,6 +355,12 @@ abstract public class Entity {
         }
     }
 
+    
+    public static final byte BOMB_MAX_TIMER = 10;
+    
+    // exploded bomb, becomes deleted next turn
+    public static final byte B_BOMB_X = -3;
+    
     public static final byte B_DELETED = -2;
 
     public static final byte B_PLAYER = -1;
@@ -344,6 +374,12 @@ abstract public class Entity {
     public static final byte B_DALEK_ASLEEP = 3;
 
     public static final byte B_HUGBOT_ASLEEP = 4;
+    
+    public static final byte B_BOMB_0 = 5;
 
+    protected byte bombTimer = -1;
+
+    public static final byte B_BOMB_MAX = B_BOMB_0 + BOMB_MAX_TIMER;
+    
     protected byte type;
 }

@@ -387,12 +387,37 @@ public class Level {
         }
     }
 
-    // Return true if a laser can 'see' the player.
+    // Return true if a laser can 'see' the player, or other things kill him or
+    // her.
     public boolean isDead() {
+        int px = player.getX();
+        int py = player.getY();
+
         // bots kill, without laser
-        if (isBotAt(player.getX(), player.getY())) {
+        if (isBotAt(px, py)) {
             laser = null;
             return true;
+        }
+
+        // is there an exploded bomb adjacent to us, or on us?
+        // then die.
+        for (byte db = Entity.FIRST_DIR; db <= Entity.LAST_DIR; db++) {
+            IntPair xy = new IntPair();
+            if (travel(px, py, db, xy)) {
+                int xx = xy.x;
+                int yy = xy.y;
+
+                /*
+                 * nb, botat might not be correct, since it returns the lowest
+                 * bot; so just loop manually:
+                 */
+                for (int m = 0; m < bots.length; m++) {
+                    Bot b = bots[m];
+                    if (b.isAt(xx, yy) && b.getBotType() == Entity.B_BOMB_X) {
+                        return true;
+                    }
+                }
+            }
         }
 
         if (!hasLasers) {
@@ -556,6 +581,9 @@ public class Level {
             // move bots
             for (int i = 0; i < bots.length; i++) {
                 Bot b = bots[i];
+                if (b.getBotType() == Entity.B_BOMB_X) {
+                    b.delete();
+                }
                 if (b.getBotType() == Entity.B_DELETED) {
                     continue;
                 }
@@ -573,6 +601,12 @@ public class Level {
                     if (bm || bm2) {
                         e.requestRedraw();
                     }
+                }
+                if (b.getBombTimer() == 0) {
+                    // time's up: explodes
+                    bombsplode(i, i);
+                } else {
+                    b.burnLitFuse(); // for bombs only
                 }
             }
         } else {
@@ -759,6 +793,110 @@ public class Level {
         return false;
     }
 
+    static private boolean isBombable(int t) {
+        switch (t) {
+        /* some level of danger */
+        case T_EXIT:
+        case T_SLEEPINGDOOR:
+        /* useful */
+        case T_LASER:
+
+        /* obvious */
+        case T_BROKEN:
+        case T_GREY:
+        case T_RED:
+        case T_GREEN:
+
+        /* a soft metal. ;) */
+        case T_GOLD:
+
+        case T_NS:
+        case T_WE:
+        case T_NW:
+        case T_NE:
+        case T_SW:
+        case T_SE:
+        case T_NSWE:
+        case T_TRANSPONDER:
+        case T_BUTTON:
+        case T_BLIGHT:
+        case T_GLIGHT:
+        case T_RLIGHT:
+
+        /* ?? sure? */
+        case T_BLUE:
+        /* don't want walls made of this ugly thing */
+        case T_STOP:
+
+        /* but doesn't count as picking it up */
+        case T_HEARTFRAMER:
+
+        /* ?? easier */
+        case T_PANEL:
+        case T_RPANEL:
+        case T_GPANEL:
+        case T_BPANEL:
+
+            return true;
+
+        case T_FLOOR:
+
+        /* obvious */
+        case T_HOLE:
+        case T_ELECTRIC:
+        case T_BLACK:
+        case T_ROUGH:
+
+        /*
+         * for symmetry with holes. maybe could become holes, but that is just
+         * more complicated
+         */
+        case T_TRAP1:
+        case T_TRAP2:
+
+        /* useful for level designers */
+        case T_LEFT:
+        case T_RIGHT:
+        case T_UP:
+        case T_DOWN:
+
+        /* Seems sturdy */
+        case T_TRANSPORT:
+        case T_ON:
+        case T_OFF:
+        case T_1:
+        case T_0:
+
+        /* made of metal */
+        case T_STEEL:
+        case T_BSTEEL:
+        case T_RSTEEL:
+        case T_GSTEEL:
+
+        case T_LR:
+        case T_UD:
+
+        case T_SPHERE:
+        case T_BSPHERE:
+        case T_RSPHERE:
+        case T_GSPHERE:
+
+        /*
+         * shouldn't bomb the floorlike things, so also their 'up' counterparts
+         */
+        case T_BUP:
+        case T_BDOWN:
+        case T_GUP:
+        case T_GDOWN:
+        case T_RUP:
+        case T_RDOWN:
+            return false;
+        }
+
+        /* illegal tile */
+        return false;
+    }
+
     /**
      * @param d
      * @param e
@@ -895,6 +1033,54 @@ public class Level {
             return true;
         } else
             return false;
+    }
+
+    private void bombsplode(int currentTimeslot, int bot) {
+        Bot b = bots[bot];
+        b.explode();
+
+        int x = b.getX();
+        int y = b.getY();
+
+        IntPair bxy = new IntPair();
+        for (byte d = Entity.FIRST_DIR; d <= Entity.LAST_DIR; d++) {
+            if (travel(x, y, d, bxy)) {
+                int bx = bxy.x;
+                int by = bxy.y;
+                if (isBombable(tileAt(bx, by))) {
+                    setTile(bx, by, T_FLOOR);
+                    setFlag(bx, by, (byte) (flagAt(bx, by) & ~(TF_HASPANEL
+                            | TF_RPANELL | TF_RPANELH)));
+                }
+
+                for (int bDie = 0; bDie < bots.length; bDie++) {
+                    Bot bd = bots[bDie];
+                    if (bd.isAt(bx, by)) {
+                        byte type = bd.getBotType();
+                        if (type == Entity.B_DELETED || type == Entity.B_BOMB_X) {
+                            continue;
+                        }
+
+                        if (bd.isBomb()) {
+                            // chain reaction
+                            if (bDie < currentTimeslot) {
+                                bombsplode(currentTimeslot, bDie);
+                                break;
+                            } else {
+                                // will explode this turn (unless a bot pushes
+                                // it??)
+                                bd.expireTimer();
+                                break;
+                            }
+                        } else {
+                            // non-bomb, so just kill it
+                            bd.delete();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -1520,6 +1706,9 @@ public class Level {
                     return false;
                 }
 
+                // if bomb, reset fuse
+                pushee.armFuseIfBomb();
+
                 // push
                 pushee.setX(far.x);
                 pushee.setY(far.y);
@@ -1610,8 +1799,10 @@ public class Level {
         if (ent != player) {
             for (int b = 0; b < bots.length; b++) {
                 Bot bb = bots[b];
-                if (ent != bb && bb.getBotType() != Entity.B_DELETED
-                        && x == bb.getX() && y == bb.getY()) {
+                byte type = bb.getBotType();
+                if (ent != bb && type != Entity.B_DELETED
+                        && type != Entity.B_BOMB_X && x == bb.getX()
+                        && y == bb.getY()) {
                     bots[b].delete();
                     ((Bot) ent).setToType(Entity.B_BROKEN);
                 }
@@ -1625,7 +1816,9 @@ public class Level {
 
     private Bot getBotAt(int x, int y) {
         for (int i = 0; i < bots.length; i++) {
-            if (bots[i].getBotType() != Entity.B_DELETED && bots[i].isAt(x, y)) {
+            byte type = bots[i].getBotType();
+            if (type != Entity.B_DELETED && type != Entity.B_BOMB_X
+                    && bots[i].isAt(x, y)) {
                 return bots[i];
             }
         }
@@ -1943,7 +2136,16 @@ public class Level {
     }
 
     public boolean isBotDeleted(int botIndex) {
-        return bots[botIndex].getBotType() == Entity.B_DELETED;
+        byte type = bots[botIndex].getBotType();
+        return type == Entity.B_DELETED || type == Entity.B_BOMB_X;
+    }
+
+    public boolean isBotBomb(int botIndex) {
+        return bots[botIndex].isBomb();
+    }
+
+    public byte getBombTimer(int botIndex) {
+        return bots[botIndex].getBombTimer();
     }
 
     public IntTriple getLaser() {
