@@ -1,6 +1,7 @@
 package org.spacebar.escape.common;
 
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
@@ -16,12 +17,14 @@ public class Solution {
 
     Date date;
 
+    boolean bookmark;
+
     public int length() {
         return size;
     }
 
     public Solution(String b64, boolean named) throws IOException {
-        //            System.out.println("decoding " + b64);
+        // System.out.println("decoding " + b64);
         byte[] b = Base64.decode(b64);
 
         for (int i = 0; i < b.length; i++) {
@@ -29,9 +32,9 @@ public class Solution {
             if (v < 0) {
                 v += 256;
             }
-            //                System.out.print(Integer.toHexString(v) + " ");
+            // System.out.print(Integer.toHexString(v) + " ");
         }
-        //            System.out.println();
+        // System.out.println();
 
         BitInputStream in = new BitInputStream(new ByteArrayInputStream(b));
 
@@ -55,6 +58,15 @@ public class Solution {
             len = in.readInt();
         }
         decodeSolution(in);
+
+        // bookmark?
+        if (named) {
+            try {
+                int bl = in.readInt();
+                bookmark = bl != 0;
+            } catch (EOFException e) {
+            }
+        }
     }
 
     public Solution(BitInputStream in) throws IOException {
@@ -63,7 +75,7 @@ public class Solution {
 
     private void decodeSolution(BitInputStream in) throws IOException {
         size = in.readInt();
-        //            System.out.println("size: " + size);
+        // System.out.println("size: " + size);
 
         int sol[] = RunLengthEncoding.decode(in, size);
         solution = new byte[sol.length];
@@ -144,7 +156,7 @@ public class Solution {
                     p.print(" warn: bad move ");
                     p.flush();
                 }
-                //                return -moveNum;
+                // return -moveNum;
             }
 
             // death is bad
@@ -167,7 +179,7 @@ public class Solution {
                 }
                 return moveNum;
             }
-            //                System.out.println(d);
+            // System.out.println(d);
             if (sleepTime > 0) {
                 try {
                     Thread.sleep(sleepTime);
@@ -205,5 +217,13 @@ public class Solution {
 
     public byte[] getSolution() {
         return solution;
+    }
+
+    public boolean isBookmark() {
+        return bookmark;
+    }
+
+    public void setBookmark(boolean bookmark) {
+        this.bookmark = bookmark;
     }
 }
