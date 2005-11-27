@@ -3,6 +3,7 @@ package org.spacebar.escape.common;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Vector;
 
 public class Level {
 
@@ -2208,6 +2209,13 @@ public class Level {
         boolean panelDests[][] = new boolean[w][h];
         boolean transportDests[][] = new boolean[w][h];
 
+        Vector reverseTransDests[][] = new Vector[w][h];
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                reverseTransDests[x][y] = new Vector();
+            }
+        }
+
         // initialize
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
@@ -2222,6 +2230,11 @@ public class Level {
                     // but is never a dest itself
                     // System.out.println(x + "," + y + " -> " + tx + "," + ty);
                     transportDests[tx][ty] = true;
+                    reverseTransDests[tx][ty]
+                            .addElement(new Integer(y * w + x));
+                    System.out.println("revDests: (" + tx + "," + ty + ") <- ("
+                            + x + "," + y + ")");
+
                 }
                 if (isPanel(t) || isPanel(o)) {
                     // XXX see if panel is in bizarro world
@@ -2252,23 +2265,26 @@ public class Level {
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 if (isPossibleExit(l, x, y, panelDests[x][y])) {
-                    sprinkle(l, hugbots, hmap, 0, boundaries, x, y);
+                    sprinkle(l, hugbots, hmap, 0, boundaries,
+                            reverseTransDests, x, y);
                 }
             }
         }
 
         // account for transporters XXX lev177
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
-                if (isPossibleTransport(l, x, y, panelDests[x][y])) {
-                    int dest = l.destAt(x, y);
-                    int xd = dest % l.getWidth();
-                    int yd = dest / l.getWidth();
-
-                    sprinkle(l, hugbots, hmap, hmap[xd][yd], boundaries, x, y);
-                }
-            }
-        }
+        // need to build reverse dest map and work that way
+        // for (int y = 0; y < h; y++) {
+        // for (int x = 0; x < w; x++) {
+        // Vector revDests = reverseTransDests[x][y];
+        // for (int i = 0; i < revDests.size(); i++) {
+        // int src = ((Integer) revDests.elementAt(i)).intValue();
+        // int xs = src % w;
+        // int ys = src / w;
+        //
+        // sprinkle(l, hugbots, hmap, hmap[x][y], boundaries, xs, ys);
+        // }
+        // }
+        // }
 
         int hmap2[][] = new int[w][h];
         for (int i = 0; i < w; i++) {
@@ -2280,50 +2296,65 @@ public class Level {
     }
 
     private void sprinkle(Level l, int hugbots, double[][] hmap, double init,
-            boolean[][] boundaries, int x, int y) {
+            boolean[][] boundaries, Vector[][] reverseTransDests, int x, int y) {
         int w = l.width;
         int h = l.height;
 
         hmap[x][y] = init;
         init += 1;
         double seed = init + (1.0 / (hugbots + 1));
+
         if (x != 0) {
             hmap[x - 1][y] = init;
-            doBrushFire(hmap, l, x - 1, y, seed, hugbots + 1, boundaries);
+            doBrushFire(hmap, l, x - 1, y, seed, hugbots + 1,
+                    reverseTransDests, boundaries);
         }
         if (x != w - 1) {
             hmap[x + 1][y] = init;
-            doBrushFire(hmap, l, x + 1, y, seed, hugbots + 1, boundaries);
+            doBrushFire(hmap, l, x + 1, y, seed, hugbots + 1,
+                    reverseTransDests, boundaries);
         }
         if (y != 0) {
             hmap[x][y - 1] = init;
-            doBrushFire(hmap, l, x, y - 1, seed, hugbots + 1, boundaries);
+            doBrushFire(hmap, l, x, y - 1, seed, hugbots + 1,
+                    reverseTransDests, boundaries);
         }
         if (y != h - 1) {
             hmap[x][y + 1] = init;
-            doBrushFire(hmap, l, x, y + 1, seed, hugbots + 1, boundaries);
+            doBrushFire(hmap, l, x, y + 1, seed, hugbots + 1,
+                    reverseTransDests, boundaries);
         }
     }
 
     static private boolean isUselessTile(int t) {
-        return t == T_BLUE || t == T_STOP || t == T_RIGHT || t == T_LEFT
-                || t == T_UP || t == T_DOWN || t == T_OFF || t == T_BLACK;
-    }
-
-    static private boolean isPossibleTransport(Level l, int x, int y,
-            boolean isPanelTarget) {
-        int t = l.tileAt(x, y);
-        int o = l.oTileAt(x, y);
-        return t == T_TRANSPORT || (o == T_TRANSPORT && isPanelTarget);
+        return (t == T_BLUE || t == T_STOP || t == T_RIGHT || t == T_LEFT
+                || t == T_UP || t == T_DOWN || t == T_OFF || t == T_BLACK)
+                && !isBombable(t);
     }
 
     // !
     static private void doBrushFire(double maze[][], Level l, int x, int y,
-            double val, int divisor, boolean boundaries[][]) {
-        doBrushFire2(maze, l, x, y + 1, divisor, boundaries, val);
-        doBrushFire2(maze, l, x, y - 1, divisor, boundaries, val);
-        doBrushFire2(maze, l, x + 1, y, divisor, boundaries, val);
-        doBrushFire2(maze, l, x - 1, y, divisor, boundaries, val);
+            double val, int divisor, Vector[][] reverseTransDests,
+            boolean boundaries[][]) {
+        Vector revDests = reverseTransDests[x][y];
+        int w = l.width;
+        for (int i = 0; i < revDests.size(); i++) {
+            int src = ((Integer) revDests.elementAt(i)).intValue();
+            int xs = src % w;
+            int ys = src / w;
+            System.out.println("revDests: (" + x + "," + y + ") <- (" + xs
+                    + "," + ys + ")");
+            doBrushFire2(maze, l, xs, ys, divisor, reverseTransDests,
+                    boundaries, val);
+        }
+        doBrushFire2(maze, l, x, y + 1, divisor, reverseTransDests, boundaries,
+                val);
+        doBrushFire2(maze, l, x, y - 1, divisor, reverseTransDests, boundaries,
+                val);
+        doBrushFire2(maze, l, x + 1, y, divisor, reverseTransDests, boundaries,
+                val);
+        doBrushFire2(maze, l, x - 1, y, divisor, reverseTransDests, boundaries,
+                val);
     }
 
     /**
@@ -2337,13 +2368,14 @@ public class Level {
      * @param val
      */
     private static void doBrushFire2(double[][] maze, Level l, int x, int y,
-            int divisor, boolean[][] boundaries, double val) {
+            int divisor, Vector[][] reverseTransDests, boolean[][] boundaries,
+            double val) {
         if (x >= 0 && y >= 0 && x < l.getWidth() && y < l.getHeight()
                 && !boundaries[x][y] && val < maze[x][y]) {
             maze[x][y] = val;
             // System.out.println("(" + x + "," + y + "): " + val);
             doBrushFire(maze, l, x, y, val + (1.0 / divisor), divisor,
-                    boundaries);
+                    reverseTransDests, boundaries);
         }
     }
 
