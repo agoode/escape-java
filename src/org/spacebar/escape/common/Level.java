@@ -1851,6 +1851,7 @@ public class Level {
         for (int i = 0; i < l.bots.length; i++) {
             Bot b = l.bots[i];
             bots[i] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType());
+            bots[i].bombTimer = b.getBombTimer();
         }
 
         // dirty = new DirtyList();
@@ -1971,6 +1972,7 @@ public class Level {
             Bot bb = m.bots[b];
             bots[b] = new Bot(bb.getX(), bb.getY(), bb.getDir(), bb
                     .getBotType());
+            bots[b].bombTimer = bb.getBombTimer();
         }
     }
 
@@ -2384,11 +2386,11 @@ public class Level {
      * @return
      */
     private static boolean isImmovableTile(int t) {
-        return t == T_BLUE || t == T_LASER || t == T_STOP || t == T_RIGHT
+        return (t == T_BLUE || t == T_LASER || t == T_STOP || t == T_RIGHT
                 || t == T_LEFT || t == T_UP || t == T_DOWN || t == T_ON
                 || t == T_OFF || t == T_0 || t == T_1 || t == T_BUTTON
                 || t == T_BLIGHT || t == T_RLIGHT || t == T_GLIGHT
-                || t == T_BLACK;
+                || t == T_BLACK) && !isBombable(t);
     }
 
     static private boolean isPossibleExit(Level l, int x, int y,

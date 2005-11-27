@@ -57,6 +57,7 @@ public class LevelManip {
         for (int i = 0; i < bots.length; i++) {
             Bot b = l.bots[i];
             bots[i] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType());
+            bots[i].bombTimer = b.getBombTimer();
         }
     }
 

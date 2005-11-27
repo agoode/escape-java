@@ -47,6 +47,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         for (int i = 0; i < bots.length; i++) {
             Bot b = bots[i];
             hash.fnv32(b.getBotType());
+            hash.fnv32(b.getBombTimer());
             hash.fnv32((byte) b.getX());
             hash.fnv32((byte) b.getY());
         }
