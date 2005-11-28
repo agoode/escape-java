@@ -2356,7 +2356,7 @@ public class Level {
             int xs = src % w;
             int ys = src / w;
             doBrushFire2(maze, l, xs, ys, divisor, reverseTransDests,
-                    boundaries, val - 1.0); // subtract because of transporter
+                    boundaries, val - (1.0 / divisor)); // subtract because of transporter
         }
         doBrushFire2(maze, l, x, y + 1, divisor, reverseTransDests, boundaries,
                 val);
@@ -2384,7 +2384,7 @@ public class Level {
         if (x >= 0 && y >= 0 && x < l.getWidth() && y < l.getHeight()
                 && !boundaries[x][y] && val < maze[x][y]) {
             maze[x][y] = val;
-            // System.out.println("(" + x + "," + y + "): " + val);
+//            System.out.println("(" + x + "," + y + "): " + val);
             doBrushFire(maze, l, x, y, val + (1.0 / divisor), divisor,
                     reverseTransDests, boundaries);
         }
