@@ -794,6 +794,15 @@ public class Level {
         return false;
     }
 
+    private boolean hasBombs() {
+        for (int i = 0; i < bots.length; i++) {
+            if (bots[i].isBomb()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static private boolean isBombable(int t) {
         switch (t) {
         /* some level of danger */
@@ -2192,6 +2201,7 @@ public class Level {
 
     public HeuristicData computeHeuristicMap() {
         Level l = this;
+        boolean hasBombs = hasBombs();
 
         // get number of hugbots, they can push us closer
         int hugbots = 0;
@@ -2250,13 +2260,13 @@ public class Level {
             for (int x = 0; x < w; x++) {
                 int t = l.tileAt(x, y);
                 int o = l.oTileAt(x, y);
-                if (!transportDests[x][y] && isImmovableTile(t)
-                        && (isImmovableTile(o) || !panelDests[x][y])
+                if (!transportDests[x][y] && isImmovableTile(t, hasBombs)
+                        && (isImmovableTile(o, hasBombs) || !panelDests[x][y])
                         && !player.isAt(x, y)) {
                     boundaries[x][y] = true;
                 }
-                if (!transportDests[x][y] && isUselessTile(t)
-                        && (isUselessTile(o) || !panelDests[x][y])
+                if (!transportDests[x][y] && isUselessTile(t, hasBombs)
+                        && (isUselessTile(o, hasBombs) || !panelDests[x][y])
                         && !player.isAt(x, y) && !isBotAt(x, y)) {
                     useless[x][y] = true;
                 }
@@ -2328,10 +2338,11 @@ public class Level {
         }
     }
 
-    static private boolean isUselessTile(int t) {
+    static private boolean isUselessTile(int t, boolean hasBombs) {
+        boolean bombable = hasBombs && isBombable(t);
         return (t == T_BLUE || t == T_STOP || t == T_RIGHT || t == T_LEFT
                 || t == T_UP || t == T_DOWN || t == T_OFF || t == T_BLACK)
-                && !isBombable(t);
+                && !bombable;
     }
 
     // !
@@ -2344,10 +2355,8 @@ public class Level {
             int src = ((Integer) revDests.elementAt(i)).intValue();
             int xs = src % w;
             int ys = src / w;
-            System.out.println("revDests: (" + x + "," + y + ") <- (" + xs
-                    + "," + ys + ")");
             doBrushFire2(maze, l, xs, ys, divisor, reverseTransDests,
-                    boundaries, val);
+                    boundaries, val - 1.0); // subtract because of transporter
         }
         doBrushFire2(maze, l, x, y + 1, divisor, reverseTransDests, boundaries,
                 val);
@@ -2385,12 +2394,13 @@ public class Level {
      * @param t
      * @return
      */
-    private static boolean isImmovableTile(int t) {
+    private static boolean isImmovableTile(int t, boolean hasBombs) {
+        boolean bombable = hasBombs && isBombable(t);
         return (t == T_BLUE || t == T_LASER || t == T_STOP || t == T_RIGHT
                 || t == T_LEFT || t == T_UP || t == T_DOWN || t == T_ON
                 || t == T_OFF || t == T_0 || t == T_1 || t == T_BUTTON
                 || t == T_BLIGHT || t == T_RLIGHT || t == T_GLIGHT
-                || t == T_BLACK) && !isBombable(t);
+                || t == T_BLACK) && !bombable;
     }
 
     static private boolean isPossibleExit(Level l, int x, int y,
