@@ -14,7 +14,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
     public EquateableLevel(BitInputStream in) throws IOException {
         super(in);
     }
-    
+
     public EquateableLevel(LevelManip manip) {
         super(manip);
     }
@@ -35,6 +35,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         // tiles, oTiles
         // hash.fnv32(width);
         // hash.fnv32(height);
+
         for (int i = 0; i < tiles.length; i++) {
             hash.fnv32(tiles[i]);
             hash.fnv32(oTiles[i]);
@@ -47,7 +48,9 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         for (int i = 0; i < bots.length; i++) {
             Bot b = bots[i];
             hash.fnv32(b.getBotType());
-            hash.fnv32(b.getBombTimer());
+            if (b.isBomb()) {
+                hash.fnv32(b.getBombTimer());
+            }
             hash.fnv32((byte) b.getX());
             hash.fnv32((byte) b.getY());
         }
@@ -82,7 +85,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
             if (width != l.width || height != l.height) {
                 return false;
             }
-            
+
             // tiles
             boolean tilesEq = tiles == l.tiles;
             boolean oTilesEq = oTiles == l.oTiles;

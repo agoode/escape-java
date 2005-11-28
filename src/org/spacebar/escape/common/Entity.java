@@ -235,7 +235,7 @@ abstract public class Entity {
             Entity e = (Entity) obj;
 
             return x == e.x && y == e.y && type == e.type
-                    && bombTimer == e.bombTimer;
+                    && (!isBomb() || bombTimer == e.bombTimer);
         }
         return false;
     }
