@@ -2315,6 +2315,16 @@ public class Level {
         hmap[x][y] = init;
         init += 1;
         double seed = init + (1.0 / (hugbots + 1));
+        
+        Vector revDests = reverseTransDests[x][y];
+        for (int i = 0; i < revDests.size(); i++) {
+            int src = ((Integer) revDests.elementAt(i)).intValue();
+            int xs = src % w;
+            int ys = src / w;
+            hmap[xs][ys] = init - 1;
+            doBrushFire(hmap, l, xs, ys, seed, hugbots + 1,
+                    reverseTransDests, boundaries);
+        }
 
         if (x != 0) {
             hmap[x - 1][y] = init;
