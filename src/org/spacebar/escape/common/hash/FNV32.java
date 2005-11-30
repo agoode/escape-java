@@ -66,7 +66,7 @@ public class FNV32 {
 
     public int hval = FNV1_32_INIT;
 
-    public void fnv32(byte octet) {
+    final public void fnv32(byte octet) {
         /* multiply by the 32 bit FNV magic prime mod 2^32 */
         hval *= FNV_32_PRIME;
 
@@ -84,6 +84,10 @@ public class FNV32 {
 //        fnv32((byte) (dword & 0xFF));
 //    }
 
+    final public void reset() {
+        hval = FNV1_32_INIT;
+    }
+    
     public int hashCode() {
         return hval;
     }

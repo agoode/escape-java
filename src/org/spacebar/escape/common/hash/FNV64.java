@@ -64,7 +64,7 @@ public class FNV64 {
 
     public long hval = FNV1_64_INIT;
 
-    public void fnv64(byte octet) {
+    final public void fnv64(byte octet) {
         /* multiply by the 64 bit FNV magic prime mod 2^64 */
         hval *= FNV_64_PRIME;
 
@@ -72,7 +72,7 @@ public class FNV64 {
         hval ^= octet & 0xFF; // stupid sign extension
     }
 
-    public void fnv64(int dword) {
+    final public void fnv64(int dword) {
         fnv64((byte) (dword & 0xFF));
         dword >>= 8;
         fnv64((byte) (dword & 0xFF));
@@ -82,6 +82,10 @@ public class FNV64 {
         fnv64((byte) (dword & 0xFF));
     }
 
+    final public void reset() {
+        hval = FNV1_64_INIT;
+    }
+    
     public int hashCode() {
         return (int) (hval & 0xFFFFFFFF);
     }
