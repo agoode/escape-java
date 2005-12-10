@@ -80,7 +80,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
              * (!title.equals(l.title)) { return false; }
              */
 
-            if (width != l.width || height != l.height) {
+            if (width != l.width || tiles.length != l.tiles.length) {
                 return false;
             }
 
@@ -125,6 +125,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
     }
 
     public String toString() {
+        int height = getHeight();
         return "[\"" + title + "\" by " + author + " (" + width + "x" + height
                 + ")" + " player: (" + this.player.getX() + ","
                 + this.player.getY() + ")]";

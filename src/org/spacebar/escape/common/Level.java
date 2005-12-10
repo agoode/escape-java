@@ -211,7 +211,7 @@ public class Level {
     }
 
     public int getHeight() {
-        return height;
+        return tiles.length / width;
     }
 
     public int getWidth() {
@@ -229,8 +229,6 @@ public class Level {
 
     // width, height
     protected final int width;
-
-    protected final int height;
 
     protected final Player player;
 
@@ -350,6 +348,7 @@ public class Level {
     }
 
     private boolean travel(int x, int y, int d, IntPair result) {
+        int height = getHeight();
         switch (d) {
         case Entity.DIR_UP:
             if (y == 0) {
@@ -559,7 +558,7 @@ public class Level {
     }
 
     private void swapTiles(byte t1, byte t2) {
-        for (int i = (width * height) - 1; i >= 0; i--) {
+        for (int i = (tiles.length) - 1; i >= 0; i--) {
             if (tiles[i] == t1)
                 setTile(i, t2);
             else if (tiles[i] == t2)
@@ -750,6 +749,7 @@ public class Level {
             /* any heart framers left? */
 
             if (!hasFramers()) {
+                int height = getHeight();
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         int t = tileAt(x, y);
@@ -1621,7 +1621,7 @@ public class Level {
         }
 
         e.doElectricOff();
-        for (int i = (width * height) - 1; i >= 0; i--) {
+        for (int i = (tiles.length) - 1; i >= 0; i--) {
             if (tiles[i] == T_ELECTRIC)
                 setTile(i, T_FLOOR);
         }
@@ -1837,7 +1837,6 @@ public class Level {
 
     public Level(Level l) {
         width = l.width;
-        height = l.height;
 
         author = l.author;
         title = l.title;
@@ -1872,7 +1871,7 @@ public class Level {
         MetaData m = getMetaData(in);
 
         width = m.width;
-        height = m.height;
+        int height = m.height;
 
         author = m.author;
         title = m.title;
@@ -1944,13 +1943,13 @@ public class Level {
 
     public Level(LevelManip m) {
         width = m.w;
-        height = m.h;
-
+        int height = m.h;
+        
         author = m.author;
         title = m.title;
 
         int len = width * height;
-
+        
         tiles = new byte[len];
         oTiles = new byte[len];
         dests = new short[len];
@@ -2037,7 +2036,7 @@ public class Level {
         }
 
         DirtyList() {
-            int n = width * height;
+            int n = tiles.length;
             dirty = new boolean[n];
             dirtyList = new int[n];
 
@@ -2106,6 +2105,7 @@ public class Level {
     }
 
     public void print(PrintStream p) {
+        int height = getHeight();
         p.println(toString());
         p.println("\"" + title + "\" by " + author + " (" + width + "x"
                 + height + ")" + " player: (" + this.player.getX() + ","
@@ -2310,7 +2310,7 @@ public class Level {
     private void sprinkle(Level l, int hugbots, double[][] hmap, double init,
             boolean[][] boundaries, Vector[][] reverseTransDests, int x, int y) {
         int w = l.width;
-        int h = l.height;
+        int h = l.getHeight();
 
         hmap[x][y] = init;
         init += 1;

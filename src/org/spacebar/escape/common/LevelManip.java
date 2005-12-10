@@ -28,7 +28,7 @@ public class LevelManip {
         author = l.getAuthor();
 
         w = l.width;
-        h = l.height;
+        h = l.getHeight();
 
         tiles = new int[w][];
         oTiles = new int[w][];
