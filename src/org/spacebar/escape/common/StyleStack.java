@@ -25,9 +25,9 @@ public class StyleStack {
 
     public static final int ALPHA_25 = 2;
 
-    private int alpha;
+    protected int alpha;
 
-    private int color;
+    protected int color;
 
     private FontAttribute top;
 
