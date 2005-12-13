@@ -84,6 +84,32 @@ public class StyleStack {
         return color;
     }
 
+    public static String removeStyle(String text) {
+        StyleStack s = new StyleStack();
+        StringBuffer str = new StringBuffer();
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (ch == '^') {
+                i++;
+                ch = text.charAt(i);
+                switch (ch) {
+                case '^':
+                    str.append(ch);
+                    break;
+                case '<':
+                    s.pop();
+                    break;
+                default:
+                    s.push(ch);
+                    break;
+                }
+            } else {
+                str.append(ch);
+            }
+        }
+        return str.toString();
+    }
+    
     private static class FontAttribute {
         public static final int TYPE_COLOR = 0;
 
