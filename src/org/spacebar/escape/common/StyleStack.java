@@ -45,7 +45,7 @@ public class StyleStack {
 
     public void pop() {
         if (top == null) {
-            System.out.println("Popping empty StyleStack!");
+//            System.out.println("Popping empty StyleStack!");
             return;
         }
 
