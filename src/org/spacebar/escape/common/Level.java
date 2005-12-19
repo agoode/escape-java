@@ -2139,6 +2139,15 @@ public class Level {
         }
     }
 
+    public boolean hasTile(byte t) {
+        for (int i = 0; i < tiles.length; i++) {
+            if (tileAt(i) == t) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public int getBotDir(int botIndex) {
         return bots[botIndex].getDir();
     }
