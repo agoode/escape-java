@@ -86,6 +86,10 @@ abstract public class Entity {
     public final static byte DIR_RIGHT = 4;
 
     public final static byte LAST_DIR = 4;
+    
+    public final static byte DIR_LEFT_RIGHT = 5;
+    
+    public final static byte DIR_UP_DOWN = 6;
 
     static public String directionToString(byte dir) {
         String s;
