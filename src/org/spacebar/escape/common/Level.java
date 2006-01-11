@@ -1820,10 +1820,18 @@ public class Level {
         }
     }
 
-    private boolean isBotAt(int x, int y) {
+    public boolean isBotAt(int x, int y) {
         return getBotAt(x, y) != null;
     }
+    
+    public boolean isPlayerAt(int x, int y) {
+        return x == getPlayerX() && y == getPlayerY();
+    }
 
+    public boolean isEntityAt(int x, int y) {
+        return isBotAt(x, y) || isPlayerAt(x, y);
+    }
+    
     private Bot getBotAt(int x, int y) {
         for (int i = 0; i < bots.length; i++) {
             byte type = bots[i].getBotType();
