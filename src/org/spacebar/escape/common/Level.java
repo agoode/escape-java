@@ -2438,4 +2438,12 @@ public class Level {
         return t == T_EXIT || t == T_SLEEPINGDOOR
                 || (isPanelTarget && (o == T_EXIT || o == T_SLEEPINGDOOR));
     }
+
+    public Bot getBot(int i) {
+        return bots[i];
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
 }
