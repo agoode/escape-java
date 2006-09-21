@@ -907,12 +907,6 @@ public class Level {
         return false;
     }
 
-    /**
-     * @param d
-     * @param e
-     * @param newP
-     * @return
-     */
     private boolean doSphereGoldMove(int d, Effects e, byte target, IntPair newP) {
         /*
          * spheres allow pushing in a line: ->OOOO becomes OOO ---->O
@@ -1016,11 +1010,6 @@ public class Level {
         }
     }
 
-    /**
-     * @param ent
-     * @param newP
-     * @return
-     */
     private boolean doZapMove(Entity ent, IntPair newP) {
         // some bots are stupid enough to zap themselves
         if (isBotAt(newP.x, newP.y) || player.isAt(newP.x, newP.y)) {
@@ -1093,14 +1082,6 @@ public class Level {
         }
     }
 
-    /**
-     * @param ent
-     * @param d
-     * @param e
-     * @param target
-     * @param newP
-     * @return
-     */
     private boolean doSimpleBlockMove(Entity ent, int d, Effects e,
             byte target, IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
@@ -1186,12 +1167,6 @@ public class Level {
             return false;
     }
 
-    /**
-     * @param ent
-     * @param d
-     * @param newP
-     * @return
-     */
     private boolean doSteelMove(Entity ent, byte d, IntPair newP) {
         /*
          * three phases. first, see if we can push this whole column one space.
@@ -1374,12 +1349,6 @@ public class Level {
         return true;
     }
 
-    /**
-     * @param ent
-     * @param d
-     * @param newP
-     * @return
-     */
     private boolean doGreenBlockMove(Entity ent, int d, IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
@@ -1403,11 +1372,6 @@ public class Level {
             return false;
     }
 
-    /**
-     * @param e
-     * @param newP
-     * @return
-     */
     private boolean doBrokenMove(Effects e, IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
@@ -1417,11 +1381,6 @@ public class Level {
         return true;
     }
 
-    /**
-     * @param e
-     * @param newP
-     * @return
-     */
     private boolean doButtonMove(Effects e, IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
@@ -1562,12 +1521,6 @@ public class Level {
                 || tt == T_BLACK || tt == T_HOLE);
     }
 
-    /**
-     * @param ent
-     * @param e
-     * @param newP
-     * @return
-     */
     private boolean doTransportMove(Entity ent, Effects e, IntPair newP) {
         // not if there's an entity there
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
@@ -1589,12 +1542,6 @@ public class Level {
         }
     }
 
-    /**
-     * @param e
-     * @param target
-     * @param newP
-     * @return
-     */
     private boolean doToggleMove(Effects e, int target, IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
@@ -1610,11 +1557,6 @@ public class Level {
         return true;
     }
 
-    /**
-     * @param e
-     * @param newP
-     * @return
-     */
     private boolean doElectricOffMove(Effects e, IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
@@ -1629,11 +1571,6 @@ public class Level {
         return true;
     }
 
-    /**
-     * @param ent
-     * @param newP
-     * @return
-     */
     private boolean doExitMove(Entity ent, IntPair newP) {
         // bots don't exit
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
@@ -1646,13 +1583,6 @@ public class Level {
         return true;
     }
 
-    /**
-     * @param ent
-     * @param d
-     * @param target
-     * @param newP
-     * @return
-     */
     private boolean doFloorMove(Entity ent, int d, int target, IntPair newP) {
         // sometimes we will push
         Entity pushee = null;
@@ -2395,16 +2325,6 @@ public class Level {
                 val);
     }
 
-    /**
-     * @param maze
-     * @param l
-     * @param x
-     * @param y
-     * @param depth
-     * @param divisor
-     * @param panelDests
-     * @param val
-     */
     private static void doBrushFire2(double[][] maze, Level l, int x, int y,
             int divisor, Vector[][] reverseTransDests, boolean[][] boundaries,
             double val) {
@@ -2417,10 +2337,6 @@ public class Level {
         }
     }
 
-    /**
-     * @param t
-     * @return
-     */
     private static boolean isImmovableTile(int t, boolean hasBombs) {
         boolean bombable = hasBombs && isBombable(t);
         return (t == T_BLUE || t == T_LASER || t == T_STOP || t == T_RIGHT
