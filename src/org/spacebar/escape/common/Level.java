@@ -176,6 +176,8 @@ public class Level {
 
     public final static byte T_NSWE = 58;
 
+    public final static byte T_REMOTE = 59;
+
     /**
      * @return Returns the author.
      */
@@ -642,7 +644,7 @@ public class Level {
         case T_GPANEL:
         case T_RPANEL:
 
-        /* these are only affected when we step *off* */
+            /* these are only affected when we step *off* */
         case T_TRAP2:
         case T_TRAP1:
 
@@ -683,14 +685,14 @@ public class Level {
         case T_GREEN:
             return doGreenBlockMove(ent, d, newP);
 
-        // steel
+            // steel
         case T_STEEL:
         case T_RSTEEL:
         case T_GSTEEL:
         case T_BSTEEL:
             return doSteelMove(ent, d, newP);
 
-        // simple pushable blocks use this case
+            // simple pushable blocks use this case
         case T_RED:
         case T_NS:
         case T_NE:
@@ -808,16 +810,16 @@ public class Level {
         /* some level of danger */
         case T_EXIT:
         case T_SLEEPINGDOOR:
-        /* useful */
+            /* useful */
         case T_LASER:
 
-        /* obvious */
+            /* obvious */
         case T_BROKEN:
         case T_GREY:
         case T_RED:
         case T_GREEN:
 
-        /* a soft metal. ;) */
+            /* a soft metal. ;) */
         case T_GOLD:
 
         case T_NS:
@@ -832,16 +834,17 @@ public class Level {
         case T_BLIGHT:
         case T_GLIGHT:
         case T_RLIGHT:
+        case T_REMOTE:
 
-        /* ?? sure? */
+            /* ?? sure? */
         case T_BLUE:
-        /* don't want walls made of this ugly thing */
+            /* don't want walls made of this ugly thing */
         case T_STOP:
 
-        /* but doesn't count as picking it up */
+            /* but doesn't count as picking it up */
         case T_HEARTFRAMER:
 
-        /* ?? easier */
+            /* ?? easier */
         case T_PANEL:
         case T_RPANEL:
         case T_GPANEL:
@@ -851,33 +854,33 @@ public class Level {
 
         case T_FLOOR:
 
-        /* obvious */
+            /* obvious */
         case T_HOLE:
         case T_ELECTRIC:
         case T_BLACK:
         case T_ROUGH:
 
-        /*
-         * for symmetry with holes. maybe could become holes, but that is just
-         * more complicated
-         */
+            /*
+             * for symmetry with holes. maybe could become holes, but that is
+             * just more complicated
+             */
         case T_TRAP1:
         case T_TRAP2:
 
-        /* useful for level designers */
+            /* useful for level designers */
         case T_LEFT:
         case T_RIGHT:
         case T_UP:
         case T_DOWN:
 
-        /* Seems sturdy */
+            /* Seems sturdy */
         case T_TRANSPORT:
         case T_ON:
         case T_OFF:
         case T_1:
         case T_0:
 
-        /* made of metal */
+            /* made of metal */
         case T_STEEL:
         case T_BSTEEL:
         case T_RSTEEL:
@@ -891,9 +894,10 @@ public class Level {
         case T_RSPHERE:
         case T_GSPHERE:
 
-        /*
-         * shouldn't bomb the floorlike things, so also their 'up' counterparts
-         */
+            /*
+             * shouldn't bomb the floorlike things, so also their 'up'
+             * counterparts
+             */
         case T_BUP:
         case T_BDOWN:
         case T_GUP:
@@ -1391,6 +1395,9 @@ public class Level {
         int rSwaps = 0;
         int gSwaps = 0;
 
+        // panel swaps (from T_REMOTE) delayed until after regular swaps
+        Vector panelSwaps = new Vector();
+
         for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
             /* send a pulse in that direction. */
             IntPair pulse = new IntPair(newP);
@@ -1398,6 +1405,10 @@ public class Level {
 
             while (pd != Entity.DIR_NONE && travel(pulse.x, pulse.y, pd, pulse)) {
                 switch (tileAt(pulse.x, pulse.y)) {
+                case T_REMOTE:
+                    panelSwaps
+                            .addElement(new Integer(destAt(pulse.x, pulse.y)));
+                    break;
                 case T_BLIGHT:
                     pd = Entity.DIR_NONE;
                     bSwaps++;
@@ -1509,6 +1520,10 @@ public class Level {
             swapTiles(T_GUP, T_GDOWN);
         }
 
+        for (int i = 0; i < panelSwaps.size(); i++) {
+            swapO(((Integer)panelSwaps.elementAt(i)).intValue());
+        }
+        
         e.doPulse();
         return true;
     }
@@ -1753,7 +1768,7 @@ public class Level {
     public boolean isBotAt(int x, int y) {
         return getBotAt(x, y) != null;
     }
-    
+
     public boolean isPlayerAt(int x, int y) {
         return x == getPlayerX() && y == getPlayerY();
     }
@@ -1761,7 +1776,7 @@ public class Level {
     public boolean isEntityAt(int x, int y) {
         return isBotAt(x, y) || isPlayerAt(x, y);
     }
-    
+
     private Bot getBotAt(int x, int y) {
         for (int i = 0; i < bots.length; i++) {
             byte type = bots[i].getBotType();
@@ -1882,12 +1897,12 @@ public class Level {
     public Level(LevelManip m) {
         width = m.w;
         int height = m.h;
-        
+
         author = m.author;
         title = m.title;
 
         int len = width * height;
-        
+
         tiles = new byte[len];
         oTiles = new byte[len];
         dests = new short[len];
@@ -2085,7 +2100,7 @@ public class Level {
         }
         return false;
     }
-    
+
     public int getBotDir(int botIndex) {
         return bots[botIndex].getDir();
     }
@@ -2262,15 +2277,15 @@ public class Level {
         hmap[x][y] = init;
         init += 1;
         double seed = init + (1.0 / (hugbots + 1));
-        
+
         Vector revDests = reverseTransDests[x][y];
         for (int i = 0; i < revDests.size(); i++) {
             int src = ((Integer) revDests.elementAt(i)).intValue();
             int xs = src % w;
             int ys = src / w;
             hmap[xs][ys] = init - 1;
-            doBrushFire(hmap, l, xs, ys, seed, hugbots + 1,
-                    reverseTransDests, boundaries);
+            doBrushFire(hmap, l, xs, ys, seed, hugbots + 1, reverseTransDests,
+                    boundaries);
         }
 
         if (x != 0) {
@@ -2313,7 +2328,8 @@ public class Level {
             int xs = src % w;
             int ys = src / w;
             doBrushFire2(maze, l, xs, ys, divisor, reverseTransDests,
-                    boundaries, val - (1.0 / divisor)); // subtract because of transporter
+                    boundaries, val - (1.0 / divisor)); // subtract because of
+            // transporter
         }
         doBrushFire2(maze, l, x, y + 1, divisor, reverseTransDests, boundaries,
                 val);
@@ -2331,7 +2347,7 @@ public class Level {
         if (x >= 0 && y >= 0 && x < l.getWidth() && y < l.getHeight()
                 && !boundaries[x][y] && val < maze[x][y]) {
             maze[x][y] = val;
-//            System.out.println("(" + x + "," + y + "): " + val);
+            // System.out.println("(" + x + "," + y + "): " + val);
             doBrushFire(maze, l, x, y, val + (1.0 / divisor), divisor,
                     reverseTransDests, boundaries);
         }
@@ -2342,8 +2358,8 @@ public class Level {
         return (t == T_BLUE || t == T_LASER || t == T_STOP || t == T_RIGHT
                 || t == T_LEFT || t == T_UP || t == T_DOWN || t == T_ON
                 || t == T_OFF || t == T_0 || t == T_1 || t == T_BUTTON
-                || t == T_BLIGHT || t == T_RLIGHT || t == T_GLIGHT
-                || t == T_BLACK) && !bombable;
+                || t == T_BLIGHT || t == T_RLIGHT || t == T_GLIGHT || t == T_BLACK)
+                && !bombable;
     }
 
     static private boolean isPossibleExit(Level l, int x, int y,
