@@ -10,7 +10,14 @@ import java.io.IOException;
  */
 public class RunLengthEncoding {
     public static int[] decode(BitInputStream in, int len) throws IOException {
-        int result[] = new int[len];
+        int result[];
+        try {
+            result = new int[len];
+        } catch (OutOfMemoryError e) {
+            throw new IOException("Result too long to read into memory: " + len);
+        } catch (NegativeArraySizeException e) {
+            throw new IOException("Cannot read negative length: " + len);
+        }
 
         // number of bytes to represent one integer
         final int bytecount = in.readUnsignedByte();
@@ -44,7 +51,7 @@ public class RunLengthEncoding {
                 // anti-run
                 run = in.readBits(framebits);
                 if (run == 0) {
-                    throw new IOException("Corrupt length in anti-run");
+                    throw new IOException("Invalid length in anti-run: " + run);
                 }
                 // System.out.println();
                 // System.out.print("skipping " + run + ": ");

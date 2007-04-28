@@ -1521,9 +1521,9 @@ public class Level {
         }
 
         for (int i = 0; i < panelSwaps.size(); i++) {
-            swapO(((Integer)panelSwaps.elementAt(i)).intValue());
+            swapO(((Integer) panelSwaps.elementAt(i)).intValue());
         }
-        
+
         e.doPulse();
         return true;
     }
@@ -1834,8 +1834,14 @@ public class Level {
 
         player = new Player(playerX, playerY, Entity.DIR_DOWN);
 
+        if (playerX >= width || playerY >= height || playerX < 0 || playerY < 0) {
+            throw new IOException("Player outside level: (" + playerX + ","
+                    + playerY + ")");
+        }
+
         int len = width * height;
 
+        // RunLengthEncoding.decode will check sanity of len
         int tmp1[] = RunLengthEncoding.decode(in, len);
         int tmp2[] = RunLengthEncoding.decode(in, len);
         int tmp3[] = RunLengthEncoding.decode(in, len);
@@ -1853,8 +1859,8 @@ public class Level {
         int botI[] = null;
         byte botT[] = null;
         try {
-            bots = in.readInt();
-            botI = RunLengthEncoding.decode(in, bots);
+            bots = in.readInt(); // may be insane
+            botI = RunLengthEncoding.decode(in, bots); // bots is sane now
             botT = new byte[len];
             int tmp[] = RunLengthEncoding.decode(in, bots);
             for (int i = 0; i < bots; i++) {
@@ -1866,10 +1872,20 @@ public class Level {
 
         this.bots = new Bot[bots];
 
-        for (byte i = 0; i < this.bots.length; i++) {
-            int x = botI[i] % width;
-            int y = botI[i] / width;
-            this.bots[i] = new Bot(x, y, Entity.DIR_DOWN, botT[i]);
+        try {
+            for (byte i = 0; i < this.bots.length; i++) {
+                int pos = botI[i];
+                if (pos < 0 || pos >= width * height) {
+                    throw new IOException("Bot " + i + " outside of level: "
+                            + pos);
+                }
+
+                int x = pos % width;
+                int y = pos / width;
+                this.bots[i] = new Bot(x, y, Entity.DIR_DOWN, botT[i]);
+            }
+        } catch (UnknownBotException e) {
+            throw new IOException("Unknown bot type: " + e.getType());
         }
 
         // dirty = new DirtyList();
@@ -1945,9 +1961,16 @@ public class Level {
 
         // System.out.println("going to read width...");
         int width = in.readInt();
+        if (width <= 0) {
+            throw new IOException("Invalid width: " + width);
+        }
+        
         // System.out.println("going to read height...");
         int height = in.readInt();
-
+        if (height <= 0) {
+            throw new IOException("Invalid height: " + height);
+        }
+        
         // System.out.println("width: " + width + ", height: " + height);
 
         int size;
@@ -2206,8 +2229,9 @@ public class Level {
                     transportDests[tx][ty] = true;
                     reverseTransDests[tx][ty]
                             .addElement(new Integer(y * w + x));
-                    System.out.println("revDests: (" + tx + "," + ty + ") <- ("
-                            + x + "," + y + ")");
+                    // System.out.println("revDests: (" + tx + "," + ty + ") <-
+                    // ("
+                    // + x + "," + y + ")");
 
                 }
                 if (isPanel(t) || isPanel(o)) {

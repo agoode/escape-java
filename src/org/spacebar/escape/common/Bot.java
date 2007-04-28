@@ -47,7 +47,7 @@ public class Bot extends Entity {
             if (isBomb()) {
                 // bomb
             } else {
-                throw new IllegalArgumentException("Invalid bot type");
+                throw new UnknownBotException(type);
             }
         }
     }
