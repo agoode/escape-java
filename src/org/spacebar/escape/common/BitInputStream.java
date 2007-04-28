@@ -4,8 +4,9 @@ import java.io.*;
 
 public class BitInputStream extends DataInputStream {
     private int bitsLeftInByte;
+
     private byte nextByte;
-    
+
     public BitInputStream(InputStream in) {
         super(in);
     }
@@ -17,20 +18,16 @@ public class BitInputStream extends DataInputStream {
 
     public int readBits(int bits) throws IOException {
         int result = 0;
-//        System.out.print("readBits: bits " + bits);
-        
-        while(bits > 0) {
+        // System.out.print("readBits: bits " + bits);
+
+        while (bits > 0) {
             result <<= 1;
-            try {
-                if (readBit()) {
-                    result++;
-                }
-            } catch (EOFException e) {
-                return -1;
+            if (readBit()) {
+                result++;
             }
             bits--;
         }
-//        System.out.println(": " + Integer.toHexString(result));
+        // System.out.println(": " + Integer.toHexString(result));
         return result;
     }
 
@@ -39,14 +36,14 @@ public class BitInputStream extends DataInputStream {
             nextByte = readByte();
             bitsLeftInByte = 8;
         }
-        
+
         boolean result = ((nextByte & 128) == 128);
         nextByte <<= 1;
         bitsLeftInByte--;
-        
+
         return result;
     }
-    
+
     public void discardRestOfByte() {
         bitsLeftInByte = 0;
     }

@@ -18,9 +18,9 @@ public class RunLengthEncoding {
         int bits;
         int framebits = 8;
         if ((bytecount & 128) == 128) {
-//            System.out.println("bytecount has bit 8 set");
+            // System.out.println("bytecount has bit 8 set");
             if ((bytecount & 64) == 64) {
-//                System.out.println("bytecount has bit 7 set");
+                // System.out.println("bytecount has bit 7 set");
                 framebits = in.readBits(5);
             }
             bits = bytecount & 63;
@@ -31,8 +31,8 @@ public class RunLengthEncoding {
             bits = bytecount * 8;
         }
 
-//        System.out.println("bits:" + bits + ", bytecount: " + bytecount
-//                + ", framebits: " + framebits);
+        // System.out.println("bits:" + bits + ", bytecount: " + bytecount
+        // + ", framebits: " + framebits);
 
         int run;
         int ri = 0;
@@ -43,25 +43,36 @@ public class RunLengthEncoding {
             if (run == 0) {
                 // anti-run
                 run = in.readBits(framebits);
-//                System.out.println();
-//                System.out.print("skipping " + run + ": ");
-//                System.out.flush();
+                if (run == 0) {
+                    throw new IOException("Corrupt length in anti-run");
+                }
+                // System.out.println();
+                // System.out.print("skipping " + run + ": ");
+                // System.out.flush();
                 for (int i = 0; i < run; i++) {
                     ch = in.readBits(bits);
-//                    System.out.print(ch + " ");
-//                    System.out.flush();
-                    result[ri++] = ch;
+                    // System.out.print(ch + " ");
+                    // System.out.flush();
+                    try {
+                        result[ri++] = ch;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        throw new IOException("Corrupt RLE data");
+                    }
                 }
             } else {
                 // run
                 ch = in.readBits(bits);
-//                System.out.println();
-//                System.out.print(run + " " + ch + "\'s: ");
-//                System.out.flush();
+                // System.out.println();
+                // System.out.print(run + " " + ch + "\'s: ");
+                // System.out.flush();
                 for (int i = 0; i < run; i++) {
-//                    System.out.print(ch + " ");
-//                    System.out.flush();
-                    result[ri++] = ch;
+                    // System.out.print(ch + " ");
+                    // System.out.flush();
+                    try {
+                        result[ri++] = ch;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        throw new IOException("Corrupt RLE data");
+                    }
                 }
             }
         }
