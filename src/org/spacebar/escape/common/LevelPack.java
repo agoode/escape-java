@@ -11,7 +11,7 @@ public class LevelPack {
      * 
      * Bytes 0--3: Unsigned int representing number of files packed in
      *            and number of shorts in header
-     * Bytes 4--(2*n): Header (described below)
+     * Bytes 4--(4*(n+1)): Header (described below)
      * After header: Standard .esx files, represented directly. There are n
      *               levels here.
      *               
