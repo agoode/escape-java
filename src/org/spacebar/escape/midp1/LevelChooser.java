@@ -20,7 +20,7 @@ import org.spacebar.escape.common.LevelPack;
  * @author adam
  */
 public class LevelChooser extends List implements Continuation, CommandListener {
-    public final static String levelPacks[] = { "/big.epl" };
+    public final static String levelPacks[] = { "/t.epl" };
 
     final MIDlet theApp;
 
