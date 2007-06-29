@@ -2,7 +2,7 @@ package org.spacebar.escape.common;
 
 import java.io.*;
 
-public class LevelPack {
+final public class LevelPack {
     /* Defines a format for packing levels into a single seekable file.
      * 
      * Integer format: MSB first
