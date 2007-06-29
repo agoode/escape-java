@@ -193,11 +193,11 @@ public class EscapeCanvas extends Canvas implements CommandListener {
     }
 
     private void initLevelBuffer() {
-        int w = getWidth();
-        int h = getHeight();
+        // int w = getWidth();
+        // int h = getHeight();
 
-        int tilesAcross = w / TILE_SIZE;
-        int tilesDown = h / TILE_SIZE;
+        // int tilesAcross = w / TILE_SIZE;
+        // int tilesDown = h / TILE_SIZE;
 
         // allocate either the size of the level or enough for the
         // screen + more
