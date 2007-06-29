@@ -244,6 +244,11 @@ abstract public class Entity {
         return false;
     }
 
+    public int hashCode() {
+        // give 4 bits to type, 8 to timer, and 10 to x and y
+        return type << 28 + bombTimer << 20 + x << 10 + y;
+    }
+
     public boolean isBomb() {
         return type >= B_BOMB_0 && type <= B_BOMB_MAX;
     }
