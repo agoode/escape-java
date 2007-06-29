@@ -2158,9 +2158,31 @@ public class Level {
 
         public HeuristicData(int[][] map, boolean[][] boundaries,
                 boolean[][] useless) {
-            this.boundaries = boundaries;
-            this.useless = useless;
-            this.map = map;
+            this.boundaries = copy2D(boundaries);
+            this.useless = copy2D(useless);
+            this.map = copy2D(map);
+        }
+
+        private static boolean[][] copy2D(boolean in[][]) {
+            boolean r[][] = new boolean[in.length][];
+            for (int i = 0; i < r.length; i++) {
+                boolean in2[] = in[i];
+                boolean r2[] = new boolean[in2.length];
+                System.arraycopy(in2, 0, r2, 0, r2.length);
+                r[i] = r2;
+            }
+            return r;
+        }
+
+        private static int[][] copy2D(int in[][]) {
+            int r[][] = new int[in.length][];
+            for (int i = 0; i < r.length; i++) {
+                int in2[] = in[i];
+                int r2[] = new int[in2.length];
+                System.arraycopy(in2, 0, r2, 0, r2.length);
+                r[i] = r2;
+            }
+            return r;
         }
 
         public static void printHmap(int hmap[][]) {

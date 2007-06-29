@@ -15,9 +15,9 @@ public class Solution {
 
     String author;
 
-    Date date;
-
     boolean bookmark;
+
+    private long time;
 
     public int length() {
         return size;
@@ -43,8 +43,7 @@ public class Solution {
             int len;
 
             // date
-            int date = in.readInt();
-            this.date = new Date(date * 1000L);
+            time = in.readInt() * 1000L;
 
             // name
             len = in.readInt();
@@ -97,6 +96,8 @@ public class Solution {
         if (author != null) {
             sb.append("by " + author + " ");
         }
+
+        Date date = getDate();
         if (date != null) {
             sb.append("at " + date + " ");
         }
@@ -200,11 +201,11 @@ public class Solution {
     }
 
     public Date getDate() {
-        return date;
+        return new Date(time);
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.time = date.getTime();
     }
 
     public String getName() {
@@ -216,7 +217,9 @@ public class Solution {
     }
 
     public byte[] getSolution() {
-        return solution;
+        byte r[] = new byte[solution.length];
+        System.arraycopy(solution, 0, r, 0, r.length);
+        return r;
     }
 
     public boolean isBookmark() {

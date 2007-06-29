@@ -25,8 +25,6 @@ public class LevelPack {
     private DataInputStream in;
     private int levelsRead;
     private final int sizes[];
-    private byte currentData[];
-    
     
     public LevelPack(String resource) throws IOException {
         this.resource = resource;
@@ -65,9 +63,7 @@ public class LevelPack {
             return null;
         }
 
-        loadData();
-        
-        return new Level(new BitInputStream(new ByteArrayInputStream(currentData)));
+        return new Level(new BitInputStream(new ByteArrayInputStream(loadData())));
     }
 
     public byte[] getNextLevelData() throws IOException {
@@ -75,15 +71,14 @@ public class LevelPack {
             return null;
         }
 
-        loadData();
-
-        return currentData;
+        return loadData();
     }
     
-    private void loadData() throws IOException {
-        currentData = new byte[sizes[levelsRead]];
+    private byte[] loadData() throws IOException {
+        byte[] currentData = new byte[sizes[levelsRead]];
         levelsRead++;
         in.readFully(currentData);
+        return currentData;
     }
     
     public Level.MetaData getNextLevelMetaData() throws IOException {
@@ -91,9 +86,7 @@ public class LevelPack {
             return null;
         }
 
-        loadData();
-        
-        return Level.getMetaData(new BitInputStream(new ByteArrayInputStream(currentData)));
+        return Level.getMetaData(new BitInputStream(new ByteArrayInputStream(loadData())));
     }
     
     public void skipLevels(int num) throws IOException {
