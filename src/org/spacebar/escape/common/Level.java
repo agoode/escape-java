@@ -1510,13 +1510,13 @@ public class Level {
         }
 
         // do the swaps
-        if (bSwaps % 2 == 1) {
+        if ((bSwaps & 1) == 1) {
             swapTiles(T_BUP, T_BDOWN);
         }
-        if (rSwaps % 2 == 1) {
+        if ((rSwaps & 1) == 1) {
             swapTiles(T_RUP, T_RDOWN);
         }
-        if (gSwaps % 2 == 1) {
+        if ((gSwaps & 1) == 1) {
             swapTiles(T_GUP, T_GDOWN);
         }
 
