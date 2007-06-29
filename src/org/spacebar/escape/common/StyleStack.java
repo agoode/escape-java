@@ -70,10 +70,13 @@ public class StyleStack {
         switch (alpha) {
         case ALPHA_100:
             result = 255;
+            break;
         case ALPHA_50:
             result = (int) (0.5 * 255);
+            break;
         case ALPHA_25:
             result = (int) (0.25 * 255);
+            break;
         default:
             result = 255;
         }
