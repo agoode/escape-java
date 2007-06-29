@@ -1964,13 +1964,13 @@ public class Level {
         if (width <= 0) {
             throw new IOException("Invalid width: " + width);
         }
-        
+
         // System.out.println("going to read height...");
         int height = in.readInt();
         if (height <= 0) {
             throw new IOException("Invalid height: " + height);
         }
-        
+
         // System.out.println("width: " + width + ", height: " + height);
 
         int size;
