@@ -1,6 +1,7 @@
 package org.spacebar.escape.common;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.spacebar.escape.common.hash.FNV32;
 
@@ -17,6 +18,10 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         super(manip);
     }
 
+    public EquateableLevel(InputStream in, int width, int height) throws IOException {
+        super(in, width, height);
+    }
+    
     public int hashCode() {
         // Like Tom,
         /*

@@ -15,6 +15,13 @@ public class Bot extends Entity {
         setToType(type);
     }
 
+    public Bot(int x, int y, byte d, byte type, byte bombTimer) {
+        super(x, y, d);
+        
+        setToType(type);
+        this.bombTimer = bombTimer;
+    }
+
     public void delete() {
         setToType(B_DELETED);
     }

@@ -1,8 +1,6 @@
 package org.spacebar.escape.common;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Vector;
 
 public class Level {
@@ -1953,6 +1951,38 @@ public class Level {
         }
     }
 
+    public Level(InputStream in, int width, int height) throws IOException {
+        this.width = width;
+        title = null;
+        author = null;
+
+        DataInputStream dd = new DataInputStream(in);
+
+        // read player
+        player = new Player(dd.readInt(), dd.readInt(), Entity.DIR_DOWN);
+
+        // read bots
+        bots = new Bot[dd.readInt()];
+        for (int i = 0; i < bots.length; i++) {
+            bots[i] = new Bot(dd.readInt(), dd.readInt(), Entity.DIR_DOWN, dd
+                    .readByte(), dd.readByte());
+        }
+
+        // read level
+        hasLasers = dd.readBoolean();
+
+        tiles = new byte[width * height];
+        oTiles = new byte[width * height];
+        dests = new short[width * height];
+        flags = new byte[width * height];
+        for (int i = 0; i < tiles.length; i++) {
+            tiles[i] = dd.readByte();
+            oTiles[i] = dd.readByte();
+            dests[i] = dd.readShort();
+            flags[i] = dd.readByte();
+        }
+    }
+
     public static MetaData getMetaData(BitInputStream in) throws IOException {
         String magic = Misc.getStringFromData(in, 4);
         if (!magic.equals("ESXL")) {
@@ -2415,6 +2445,46 @@ public class Level {
         // XXX check to see if heartframers are accessible ?
         return t == T_EXIT || t == T_SLEEPINGDOOR
                 || (isPanelTarget && (o == T_EXIT || o == T_SLEEPINGDOOR));
+    }
+
+    public void serializeLossily(OutputStream out) throws IOException {
+        DataOutputStream dd = new DataOutputStream(out);
+
+        // write player
+        dd.writeInt(getPlayerX());
+        dd.writeInt(getPlayerY());
+
+        // write bots
+        int extantBots = 0;
+        Bot theBots[] = new Bot[bots.length];
+        for (int i = 0; i < bots.length; i++) {
+            if (!isBotDeleted(i)) {
+                theBots[extantBots++] = bots[i];
+            }
+        }
+
+        dd.writeInt(extantBots);
+        for (int i = 0; i < extantBots; i++) {
+            Bot b = theBots[i];
+            dd.writeInt(b.getX());
+            dd.writeInt(b.getY());
+
+            dd.writeByte(b.getBotType());
+            dd.writeByte(b.getBombTimer());
+        }
+
+        // write level
+        dd.writeBoolean(hasLasers);
+        for (int i = 0; i < tiles.length; i++) {
+            dd.writeByte(tiles[i]);
+            dd.writeByte(oTiles[i]);
+            dd.writeShort(dests[i]);
+            dd.writeByte(flags[i]);
+        }
+        /*
+         * for (int i = 0; i < tiles.length; i++) { } for (int i = 0; i <
+         * tiles.length; i++) { } for (int i = 0; i < tiles.length; i++) { }
+         */
     }
 
     public Bot getBot(int i) {
