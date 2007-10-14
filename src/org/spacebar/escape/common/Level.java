@@ -2118,7 +2118,8 @@ public class Level {
         // printM(p, flags, width);
     }
 
-    static private void printM(PrintStream p, int[] m, int w, int mask, int shift) {
+    static private void printM(PrintStream p, int[] m, int w, int mask,
+            int shift) {
         int l = 0;
         for (int i = 0; i < m.length; i++) {
             p.print((char) (((m[i] & mask) >> shift) + 32));
