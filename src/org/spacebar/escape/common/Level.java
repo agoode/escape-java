@@ -249,7 +249,7 @@ public class Level {
     // the level
     protected int playboard[];
 
-    protected final Bot bots[];
+    protected Bot bots[];
 
     // dirty
     public DirtyList dirty;
@@ -614,8 +614,31 @@ public class Level {
             e.doNoStep();
         }
 
+        cleanBotsArray();
         isDead(); // update laser cache
         return result;
+    }
+
+    private void cleanBotsArray() {
+        int extantBots = 0;
+        for (int i = 0; i < bots.length; i++) {
+            if (!bots[i].isDeleted()) {
+                extantBots++;
+            }
+        }
+
+        if (extantBots < bots.length) {
+            // copy collection
+            Bot newBots[] = new Bot[extantBots];
+
+            int j = 0;
+            for (int i = 0; i < bots.length; i++) {
+                if (!bots[i].isDeleted()) {
+                    newBots[j++] = bots[i];
+                }
+            }
+            bots = newBots;
+        }
     }
 
     protected boolean realMove(Entity ent, byte d, Effects e) {
@@ -1882,6 +1905,7 @@ public class Level {
 
         // dirty = new DirtyList();
 
+        cleanBotsArray();
         isDead(); // calculate laser cache
     }
 
@@ -1943,6 +1967,7 @@ public class Level {
                     .getBotType());
             bots[b].bombTimer = bb.getBombTimer();
         }
+        cleanBotsArray();
     }
 
     static private void checkMaxSize(int width, int height) {
