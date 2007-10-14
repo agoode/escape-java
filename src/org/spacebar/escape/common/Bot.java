@@ -120,4 +120,8 @@ public class Bot extends Entity {
         }
         return new IntPair(bd, bd2);
     }
+
+    public boolean isDeleted() {
+        return type == B_DELETED || type == B_BOMB_X;
+    }
 }
