@@ -41,10 +41,11 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         // hash.fnv32(height);
 
         for (int i = 0; i < playboard.length; i++) {
-            hash.fnv32(tileAt(i));
-            hash.fnv32(oTileAt(i));
-            // hash.fnv32(flags[i]);
-            // hash.fnv32(dests[i]);
+            hash.fnv32((byte) playboard[i]);
+            //            hash.fnv32(tileAt(i));
+//            hash.fnv32(oTileAt(i));
+//            // hash.fnv32(flags[i]);
+//            // hash.fnv32(dests[i]);
         }
 
         // bots
