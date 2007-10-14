@@ -108,7 +108,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
                 return false;
             }
         }
-        
+
         return true;
     }
 

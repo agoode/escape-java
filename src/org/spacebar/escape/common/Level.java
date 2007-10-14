@@ -1960,7 +1960,7 @@ public class Level {
         author = null;
 
         checkMaxSize(width, height);
-        
+
         DataInputStream dd = new DataInputStream(in);
 
         // read player

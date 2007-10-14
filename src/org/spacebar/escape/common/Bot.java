@@ -17,7 +17,7 @@ public class Bot extends Entity {
 
     public Bot(int x, int y, byte d, byte type, byte bombTimer) {
         super(x, y, d);
-        
+
         setToType(type);
         this.bombTimer = bombTimer;
     }
@@ -25,15 +25,15 @@ public class Bot extends Entity {
     public void delete() {
         setToType(B_DELETED);
     }
-    
+
     public void explode() {
         setToType(B_BOMB_X);
     }
-    
+
     public void setToType(byte type) {
         this.type = type;
         clearCapabilities();
-        
+
         switch (type) {
         case B_DELETED:
         case B_BROKEN:
@@ -48,7 +48,7 @@ public class Bot extends Entity {
         case B_HUGBOT:
             setToHugbot();
             break;
-                
+
         default:
             // bomb?
             if (isBomb()) {
@@ -92,8 +92,8 @@ public class Bot extends Entity {
     // some bots always move toward player,
     // preferring left/right to up/down
     protected IntPair getMoveToDirChoices(Entity e) {
-//        System.out.println(e);
-        
+        // System.out.println(e);
+
         int bd = DIR_NONE;
         int bd2 = DIR_NONE;
 
