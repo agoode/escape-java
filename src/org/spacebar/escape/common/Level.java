@@ -173,6 +173,23 @@ public class Level {
 
     public final static byte T_REMOTE = 59;
 
+    // shifts and masks
+    private static final int TILES_SHIFT = 0;
+
+    private static final int O_TILES_SHIFT = 6;
+
+    private static final int DESTS_SHIFT = 12;
+
+    private static final int FLAGS_SHIFT = 25;
+
+    private static final int TILES_MASK = 0x3F << TILES_SHIFT;
+
+    private static final int O_TILES_MASK = 0x3F << O_TILES_SHIFT;
+
+    private static final int DESTS_MASK = 0x1FFF << DESTS_SHIFT;
+
+    private static final int FLAGS_MASK = 0x7F << FLAGS_SHIFT;
+
     /**
      * @return Returns the author.
      */
@@ -208,7 +225,7 @@ public class Level {
     }
 
     public int getHeight() {
-        return tiles.length / width;
+        return playboard.length / width;
     }
 
     public int getWidth() {
@@ -229,17 +246,8 @@ public class Level {
 
     protected final Player player;
 
-    // shown
-    protected byte tiles[];
-
-    // "other" (tiles swapped into bizarro world by panels)
-    protected byte oTiles[];
-
-    // destinations for transporters and panels (as index into tiles)
-    protected final short dests[]; // not COW, never changes
-
-    // has a panel (under a pushable block)? etc.
-    protected byte flags[];
+    // the level
+    protected int playboard[];
 
     protected final Bot bots[];
 
@@ -249,11 +257,7 @@ public class Level {
     // cached laser
     private IntTriple laser;
 
-    private boolean tileCOW;
-
-    private boolean oTileCOW;
-
-    private boolean flagCOW;
+    private boolean playboardCOW;
 
     final private boolean hasLasers;
 
@@ -289,55 +293,68 @@ public class Level {
         return new IntPair(x, y);
     }
 
-    int index(int x, int y) {
-        return (y * width) + x;
-    }
-
-    public int tileAt(int i) {
-        return tiles[i];
+    public byte tileAt(int i) {
+        return (byte) ((playboard[i] & TILES_MASK) >> TILES_SHIFT);
     }
 
     public byte tileAt(int x, int y) {
-        return tiles[y * width + x];
+        return tileAt(index(x, y));
     }
 
-    public int oTileAt(int x, int y) {
-        return oTiles[y * width + x];
+    private int index(int x, int y) {
+        return y * width + x;
+    }
+
+    public byte oTileAt(int i) {
+        return (byte) ((playboard[i] & O_TILES_MASK) >> O_TILES_SHIFT);
+    }
+
+    public byte oTileAt(int x, int y) {
+        return oTileAt(index(x, y));
+    }
+
+    private void setPlayboardEntry(int i, int mask, int shift, int value) {
+        checkPlayboardCOW();
+        int tmp = playboard[i] & ~mask;
+        playboard[i] = tmp | (value << shift);
     }
 
     private void setTile(int i, byte t) {
-        checkTileCOW();
-        tiles[i] = t;
+        setPlayboardEntry(i, TILES_MASK, TILES_SHIFT, t);
         if (dirty != null) {
             dirty.setDirty(i);
         }
     }
 
-    private void checkTileCOW() {
-        if (tileCOW) {
-            tileCOW = false;
+    private void checkPlayboardCOW() {
+        if (playboardCOW) {
+            playboardCOW = false;
 
             // copy
-            byte tt[] = new byte[tiles.length];
-            System.arraycopy(tiles, 0, tt, 0, tt.length);
-            tiles = tt;
+            int tt[] = new int[playboard.length];
+            System.arraycopy(playboard, 0, tt, 0, tt.length);
+            playboard = tt;
         }
     }
 
     private void setTile(int x, int y, byte t) {
-        setTile(y * width + x, t);
+        setTile(index(x, y), t);
+    }
+
+    public int destAt(int i) {
+        return (playboard[i] & DESTS_MASK) >> DESTS_SHIFT;
     }
 
     public int destAt(int x, int y) {
-        return dests[y * width + x];
+        return destAt(index(x, y));
     }
 
     public byte flagAt(int x, int y) {
-        return flagAt(y * width + x);
+        return flagAt(index(x, y));
     }
 
     public byte flagAt(int i) {
-        return flags[i];
+        return (byte) ((playboard[i] & FLAGS_MASK) >> FLAGS_SHIFT);
     }
 
     public boolean isWon() {
@@ -455,52 +472,39 @@ public class Level {
     }
 
     private void swapO(int idx) {
-        byte tmp = tiles[idx];
-        setTile(idx, oTiles[idx]);
-        checkOTileCOW();
-        oTiles[idx] = tmp;
+        byte tmp = tileAt(idx);
+        setTile(idx, oTileAt(idx));
+        setOTile(idx, tmp);
 
-        checkFlagCOW();
         /* swap haspanel/opanel and their refinements as well */
-        flags[idx] =
+        byte oldFlag = flagAt(idx);
+        tmp =
 
         (byte) (/* panel bits */
-        ((flags[idx] & TF_HASPANEL) != 0 ? TF_OPANEL : TF_NONE)
-                | ((flags[idx] & TF_OPANEL) != 0 ? TF_HASPANEL : TF_NONE) |
+        ((oldFlag & TF_HASPANEL) != 0 ? TF_OPANEL : 0)
+                | ((oldFlag & TF_OPANEL) != 0 ? TF_HASPANEL : 0) |
 
                 /* refinement */
-                ((flags[idx] & TF_RPANELL) != 0 ? TF_ROPANELL : TF_NONE)
-                | ((flags[idx] & TF_RPANELH) != 0 ? TF_ROPANELH : TF_NONE) |
+                ((oldFlag & TF_RPANELL) != 0 ? TF_ROPANELL : 0)
+                | ((oldFlag & TF_RPANELH) != 0 ? TF_ROPANELH : 0) |
 
                 /* orefinement */
-                ((flags[idx] & TF_ROPANELL) != 0 ? TF_RPANELL : TF_NONE)
-                | ((flags[idx] & TF_ROPANELH) != 0 ? TF_RPANELH : TF_NONE) |
+                ((oldFlag & TF_ROPANELL) != 0 ? TF_RPANELL : 0)
+                | ((oldFlag & TF_ROPANELH) != 0 ? TF_RPANELH : 0) |
 
         /* erase old */
-        (flags[idx] & ~(TF_HASPANEL | TF_OPANEL | TF_RPANELL | TF_RPANELH
+        (oldFlag & ~(TF_HASPANEL | TF_OPANEL | TF_RPANELL | TF_RPANELH
                 | TF_ROPANELL | TF_ROPANELH)));
+
+        setFlag(idx, tmp);
     }
 
-    private void checkFlagCOW() {
-        if (flagCOW) {
-            flagCOW = false;
-
-            // copy
-            byte tt[] = new byte[flags.length];
-            System.arraycopy(flags, 0, tt, 0, tt.length);
-            flags = tt;
-        }
+    private void setFlag(int idx, byte flag) {
+        setPlayboardEntry(idx, FLAGS_MASK, FLAGS_SHIFT, flag);
     }
 
-    private void checkOTileCOW() {
-        if (oTileCOW) {
-            oTileCOW = false;
-
-            // copy
-            byte tt[] = new byte[oTiles.length];
-            System.arraycopy(oTiles, 0, tt, 0, tt.length);
-            oTiles = tt;
-        }
+    private void setOTile(int idx, byte t) {
+        setPlayboardEntry(idx, O_TILES_MASK, O_TILES_SHIFT, t);
     }
 
     /*
@@ -555,10 +559,10 @@ public class Level {
     }
 
     private void swapTiles(byte t1, byte t2) {
-        for (int i = (tiles.length) - 1; i >= 0; i--) {
-            if (tiles[i] == t1)
+        for (int i = (playboard.length) - 1; i >= 0; i--) {
+            if (tileAt(i) == t1)
                 setTile(i, t2);
-            else if (tiles[i] == t2)
+            else if (tileAt(i) == t2)
                 setTile(i, t1);
         }
     }
@@ -783,8 +787,8 @@ public class Level {
     }
 
     private boolean hasFramers() {
-        for (int i = 0; i < tiles.length; i++) {
-            if (tiles[i] == T_HEARTFRAMER) {
+        for (int i = 0; i < playboard.length; i++) {
+            if (tileAt(i) == T_HEARTFRAMER) {
                 return true;
             }
         }
@@ -1539,7 +1543,7 @@ public class Level {
 
         if (ent.canTeleport() || ent.isPlayer()) {
             IntPair targ;
-            targ = where(dests[width * newP.y + newP.x]);
+            targ = where(destAt(newP.x, newP.y));
 
             e.doTransport();
             warp(ent, targ.x, targ.y);
@@ -1573,8 +1577,8 @@ public class Level {
         }
 
         e.doElectricOff();
-        for (int i = (tiles.length) - 1; i >= 0; i--) {
-            if (tiles[i] == T_ELECTRIC)
+        for (int i = (playboard.length) - 1; i >= 0; i--) {
+            if (tileAt(i) == T_ELECTRIC)
                 setTile(i, T_FLOOR);
         }
         setTile(newP.x, newP.y, T_OFF);
@@ -1724,8 +1728,7 @@ public class Level {
     }
 
     private void setFlag(int x, int y, byte f) {
-        checkFlagCOW();
-        flags[y * width + x] = f;
+        setFlag(index(x, y), f);
     }
 
     static private boolean triggers(int tile, int panel) {
@@ -1794,14 +1797,9 @@ public class Level {
         player = new Player(l.player.getX(), l.player.getY(), l.player.getDir());
 
         // COW!
-        tiles = l.tiles;
-        oTiles = l.oTiles;
-        dests = l.dests; // not cow
-        flags = l.flags;
+        playboard = l.playboard;
 
-        tileCOW = true;
-        oTileCOW = true;
-        flagCOW = true;
+        playboardCOW = true;
 
         bots = new Bot[l.bots.length];
         for (int i = 0; i < l.bots.length; i++) {
@@ -1842,10 +1840,7 @@ public class Level {
         int tmp3[] = RunLengthEncoding.decode(in, len);
         int tmp4[] = RunLengthEncoding.decode(in, len);
 
-        tiles = new byte[len];
-        oTiles = new byte[len];
-        dests = new short[len];
-        flags = new byte[len];
+        playboard = new int[len];
 
         hasLasers = setTilesFromIntArrays(len, tmp1, tmp2, tmp3, tmp4);
 
@@ -1888,6 +1883,11 @@ public class Level {
         isDead(); // calculate laser cache
     }
 
+    private int composePlayboardEntry(int tile, int oTile, int dest, int flag) {
+        return (tile << TILES_SHIFT) | (oTile << O_TILES_SHIFT)
+                | (dest << DESTS_SHIFT) | (flag << FLAGS_SHIFT);
+    }
+
     private boolean setTilesFromIntArrays(int len, int[] tiles, int[] oTiles,
             int[] dests, int[] flags) {
         boolean hasLasers = false;
@@ -1897,10 +1897,9 @@ public class Level {
             if (tile == T_LASER || oTile == T_LASER) {
                 hasLasers = true;
             }
-            this.tiles[i] = tile;
-            this.oTiles[i] = oTile;
-            this.dests[i] = (short) dests[i];
-            this.flags[i] = (byte) flags[i];
+
+            this.playboard[i] = composePlayboardEntry(tile, oTile, dests[i],
+                    flags[i]);
         }
         return hasLasers;
     }
@@ -1914,10 +1913,7 @@ public class Level {
 
         int len = width * height;
 
-        tiles = new byte[len];
-        oTiles = new byte[len];
-        dests = new short[len];
-        flags = new byte[len];
+        playboard = new int[len];
 
         int i = 0;
         boolean hasLasers = false;
@@ -1928,12 +1924,9 @@ public class Level {
                 if (tile == T_LASER || oTile == T_LASER) {
                     hasLasers = true;
                 }
-                this.tiles[i] = tile;
-                this.oTiles[i] = oTile;
-                this.dests[i] = (short) m.dests[x][y];
-                this.flags[i] = (byte) m.flags[x][y];
 
-                i++;
+                this.playboard[i++] = composePlayboardEntry(tile, oTile,
+                        m.dests[x][y], m.flags[x][y]);
             }
         }
         this.hasLasers = hasLasers;
@@ -1968,15 +1961,10 @@ public class Level {
         // read level
         hasLasers = dd.readBoolean();
 
-        tiles = new byte[width * height];
-        oTiles = new byte[width * height];
-        dests = new short[width * height];
-        flags = new byte[width * height];
-        for (int i = 0; i < tiles.length; i++) {
-            tiles[i] = dd.readByte();
-            oTiles[i] = dd.readByte();
-            dests[i] = dd.readShort();
-            flags[i] = dd.readByte();
+        playboard = new int[width * height];
+        for (int i = 0; i < playboard.length; i++) {
+            playboard[i] = composePlayboardEntry(dd.readByte(), dd.readByte(),
+                    dd.readShort(), dd.readByte());
         }
     }
 
@@ -2039,7 +2027,7 @@ public class Level {
         }
 
         DirtyList() {
-            int n = tiles.length;
+            int n = playboard.length;
             dirty = new boolean[n];
             dirtyList = new int[n];
 
@@ -2115,7 +2103,7 @@ public class Level {
                 + this.player.getY() + ")");
         p.println();
         p.println("tiles");
-        printM(p, tiles, width);
+        printM(p, playboard, width, TILES_MASK, TILES_SHIFT);
 
         // p.println();
         // p.println("oTiles");
@@ -2130,10 +2118,10 @@ public class Level {
         // printM(p, flags, width);
     }
 
-    static private void printM(PrintStream p, byte[] m, int w) {
+    static private void printM(PrintStream p, int[] m, int w, int mask, int shift) {
         int l = 0;
         for (int i = 0; i < m.length; i++) {
-            p.print((char) (m[i] + 32));
+            p.print((char) (((m[i] & mask) >> shift) + 32));
             l++;
             if (l == w) {
                 p.println();
@@ -2143,7 +2131,7 @@ public class Level {
     }
 
     public boolean hasTile(byte t) {
-        for (int i = 0; i < tiles.length; i++) {
+        for (int i = 0; i < playboard.length; i++) {
             if (tileAt(i) == t) {
                 return true;
             }
@@ -2472,11 +2460,11 @@ public class Level {
 
         // write level
         dd.writeBoolean(hasLasers);
-        for (int i = 0; i < tiles.length; i++) {
-            dd.writeByte(tiles[i]);
-            dd.writeByte(oTiles[i]);
-            dd.writeShort(dests[i]);
-            dd.writeByte(flags[i]);
+        for (int i = 0; i < playboard.length; i++) {
+            dd.writeByte(tileAt(i));
+            dd.writeByte(oTileAt(i));
+            dd.writeShort(destAt(i));
+            dd.writeByte(flagAt(i));
         }
         /*
          * for (int i = 0; i < tiles.length; i++) { } for (int i = 0; i <

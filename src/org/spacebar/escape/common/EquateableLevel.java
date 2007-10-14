@@ -18,10 +18,11 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         super(manip);
     }
 
-    public EquateableLevel(InputStream in, int width, int height) throws IOException {
+    public EquateableLevel(InputStream in, int width, int height)
+            throws IOException {
         super(in, width, height);
     }
-    
+
     public int hashCode() {
         // Like Tom,
         /*
@@ -39,9 +40,9 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         // hash.fnv32(width);
         // hash.fnv32(height);
 
-        for (int i = 0; i < tiles.length; i++) {
-            hash.fnv32(tiles[i]);
-            hash.fnv32(oTiles[i]);
+        for (int i = 0; i < playboard.length; i++) {
+            hash.fnv32(tileAt(i));
+            hash.fnv32(oTileAt(i));
             // hash.fnv32(flags[i]);
             // hash.fnv32(dests[i]);
         }
@@ -66,66 +67,48 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
             return true;
         }
 
-        if (obj instanceof EquateableLevel) {
-            EquateableLevel l = (EquateableLevel) obj;
+        if (obj == null) {
+            return false;
+        }
 
-            // entities
-            if (!player.equals(l.player)) {
+        if (!(obj instanceof EquateableLevel)) {
+            return false;
+        }
+
+        EquateableLevel l = (EquateableLevel) obj;
+
+        // entities
+        if (!player.equals(l.player)) {
+            return false;
+        }
+
+        // XXX skip deleted
+        for (int i = 0; i < bots.length; i++) {
+            if (!bots[i].equals(l.bots[i])) {
                 return false;
-            }
-
-            for (int i = 0; i < bots.length; i++) {
-                if (!bots[i].equals(l.bots[i])) {
-                    return false;
-                }
-            }
-
-            /*
-             * // metadata if (!author.equals(l.author)) { return false; } if
-             * (!title.equals(l.title)) { return false; }
-             */
-
-            if (width != l.width || tiles.length != l.tiles.length) {
-                return false;
-            }
-
-            // tiles
-            boolean tilesEq = tiles == l.tiles;
-            boolean oTilesEq = oTiles == l.oTiles;
-            boolean flagsEq = flags == l.flags;
-            boolean destsEq = dests == l.dests;
-
-            if (!tilesEq || !oTilesEq || !flagsEq || !destsEq) {
-                if (!tilesEq) {
-                    for (int i = 0; i < tiles.length; i++) {
-                        if (tiles[i] != l.tiles[i]) {
-                            return false;
-                        }
-                    }
-                }
-                if (!oTilesEq) {
-                    for (int i = 0; i < oTiles.length; i++) {
-                        if (oTiles[i] != l.oTiles[i]) {
-                            return false;
-                        }
-                    }
-                }
-                if (!flagsEq) {
-                    for (int i = 0; i < flags.length; i++) {
-                        if (flags[i] != l.flags[i]) {
-                            return false;
-                        }
-                    }
-                }
-                if (!destsEq) {
-                    for (int i = 0; i < dests.length; i++) {
-                        if (dests[i] != l.dests[i]) {
-                            return false;
-                        }
-                    }
-                }
             }
         }
+
+        /*
+         * // metadata if (!author.equals(l.author)) { return false; } if
+         * (!title.equals(l.title)) { return false; }
+         */
+
+        if (width != l.width || playboard.length != l.playboard.length) {
+            return false;
+        }
+
+        // tiles
+        if (playboard == l.playboard) {
+            return true;
+        }
+
+        for (int i = 0; i < playboard.length; i++) {
+            if (playboard[i] != l.playboard[i]) {
+                return false;
+            }
+        }
+        
         return true;
     }
 
