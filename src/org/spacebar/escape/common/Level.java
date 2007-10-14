@@ -2188,11 +2188,6 @@ public class Level {
         return player.getDir();
     }
 
-    public boolean isBotDeleted(int botIndex) {
-        byte type = bots[botIndex].getBotType();
-        return type == Entity.B_DELETED || type == Entity.B_BOMB_X;
-    }
-
     public boolean isBotBomb(int botIndex) {
         return bots[botIndex].isBomb();
     }
@@ -2481,17 +2476,9 @@ public class Level {
         dd.writeInt(getPlayerY());
 
         // write bots
-        int extantBots = 0;
-        Bot theBots[] = new Bot[bots.length];
+        dd.writeInt(bots.length);
         for (int i = 0; i < bots.length; i++) {
-            if (!isBotDeleted(i)) {
-                theBots[extantBots++] = bots[i];
-            }
-        }
-
-        dd.writeInt(extantBots);
-        for (int i = 0; i < extantBots; i++) {
-            Bot b = theBots[i];
+            Bot b = bots[i];
             dd.writeInt(b.getX());
             dd.writeInt(b.getY());
 
