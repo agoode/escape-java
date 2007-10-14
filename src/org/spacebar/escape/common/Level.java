@@ -31,9 +31,6 @@ public class Level {
 
     public final static byte PANEL_RED = 3;
 
-    // panels under tiles
-    public final static byte TF_NONE = 0;
-
     /* panel under tile (ie, pushable block) */
     /*
      * if HASPANEL is set, then TF_RPANELH * 2 + TF_RPANELL says what kind (see
