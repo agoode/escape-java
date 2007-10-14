@@ -1819,6 +1819,8 @@ public class Level {
         width = m.width;
         int height = m.height;
 
+        checkMaxSize(width, height);
+
         author = m.author;
         title = m.title;
 
@@ -1908,6 +1910,8 @@ public class Level {
         width = m.w;
         int height = m.h;
 
+        checkMaxSize(width, height);
+
         author = m.author;
         title = m.title;
 
@@ -1941,11 +1945,22 @@ public class Level {
         }
     }
 
+    static private void checkMaxSize(int width, int height) {
+        int size = width * height;
+        int maxSize = (DESTS_MASK >> DESTS_SHIFT) + 1;
+        if (size > maxSize) {
+            throw new IllegalArgumentException("Level too large: " + width
+                    + " × " + height + " = " + size + " > " + maxSize);
+        }
+    }
+
     public Level(InputStream in, int width, int height) throws IOException {
         this.width = width;
         title = null;
         author = null;
 
+        checkMaxSize(width, height);
+        
         DataInputStream dd = new DataInputStream(in);
 
         // read player
