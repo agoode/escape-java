@@ -408,9 +408,11 @@ public class Level {
         int py = player.getY();
 
         // bots kill, without laser
-        if (isBotAt(px, py)) {
-            laser = null;
-            return true;
+        for (int i = 0; i < bots.length; i++) {
+            if (bots[i].isAt(px, py)) {
+                laser = null;
+                return true;
+            }
         }
 
         // is there an exploded bomb adjacent to us, or on us?
