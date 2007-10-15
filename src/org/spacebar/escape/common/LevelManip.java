@@ -53,11 +53,17 @@ public class LevelManip {
         }
 
         player = new Player(l.player.getX(), l.player.getY(), l.player.getDir());
-        bots = new Bot[l.bots.length];
-        for (int i = 0; i < bots.length; i++) {
-            Bot b = l.bots[i];
-            bots[i] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType());
-            bots[i].bombTimer = b.getBombTimer();
+        bots = new Bot[l.goodBots.length + l.brokenBots.length];
+        int j = 0;
+        for (int i = 0; i < l.goodBots.length; i++) {
+            Bot b = l.goodBots[i];
+            bots[j++] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType(),
+                    b.getBombTimer());
+        }
+        for (int i = 0; i < l.brokenBots.length; i++) {
+            Bot b = l.brokenBots[i];
+            bots[j++] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType(),
+                    b.getBombTimer());
         }
     }
 

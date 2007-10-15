@@ -42,18 +42,24 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
 
         for (int i = 0; i < playboard.length; i++) {
             hash.fnv32((byte) playboard[i]);
-            //            hash.fnv32(tileAt(i));
-//            hash.fnv32(oTileAt(i));
-//            // hash.fnv32(flags[i]);
-//            // hash.fnv32(dests[i]);
+            // hash.fnv32(tileAt(i));
+            // hash.fnv32(oTileAt(i));
+            // // hash.fnv32(flags[i]);
+            // // hash.fnv32(dests[i]);
         }
 
         // bots
         // hash.fnv32((byte) bots.length);
-        for (int i = 0; i < bots.length; i++) {
-            Bot b = bots[i];
+        for (int i = 0; i < goodBots.length; i++) {
+            Bot b = goodBots[i];
             hash.fnv32(b.getBotType());
             hash.fnv32(b.getBombTimer());
+            hash.fnv32((byte) b.getX());
+            hash.fnv32((byte) b.getY());
+        }
+
+        for (int i = 0; i < brokenBots.length; i++) {
+            Bot b = brokenBots[i];
             hash.fnv32((byte) b.getX());
             hash.fnv32((byte) b.getY());
         }
@@ -81,8 +87,21 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
             return false;
         }
 
-        for (int i = 0; i < bots.length; i++) {
-            if (!bots[i].equals(l.bots[i])) {
+        if (goodBots.length != l.goodBots.length
+                || brokenBots.length != l.brokenBots.length) {
+            return false;
+        }
+
+        // good bots
+        for (int i = 0; i < goodBots.length; i++) {
+            if (!goodBots[i].equals(l.goodBots[i])) {
+                return false;
+            }
+        }
+        
+        // broken bots
+        for (int i = 0; i < brokenBots.length; i++) {
+            if (!brokenBots[i].equals(l.brokenBots[i])) {
                 return false;
             }
         }

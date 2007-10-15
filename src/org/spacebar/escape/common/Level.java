@@ -204,18 +204,6 @@ public class Level {
         return title;
     }
 
-    public int getBotX(int index) {
-        return bots[index].getX();
-    }
-
-    public int getBotY(int index) {
-        return bots[index].getY();
-    }
-
-    public int getBotType(int index) {
-        return bots[index].getBotType();
-    }
-
     public int getPlayerX() {
         return player.getX();
     }
@@ -232,8 +220,14 @@ public class Level {
         return width;
     }
 
-    public int getBotCount() {
-        return bots.length;
+    public Bot[] getBots() {
+        // XXX doesn't allow for correct numbering
+        Bot bb[] = new Bot[goodBots.length + brokenBots.length];
+
+        System.arraycopy(goodBots, 0, bb, 0, goodBots.length);
+        System.arraycopy(brokenBots, 0, bb, goodBots.length, brokenBots.length);
+
+        return bb;
     }
 
     // metadata
@@ -249,7 +243,9 @@ public class Level {
     // the level
     protected int playboard[];
 
-    protected Bot bots[];
+    protected Bot goodBots[];
+
+    protected Bot brokenBots[];
 
     // dirty
     public DirtyList dirty;
@@ -408,8 +404,8 @@ public class Level {
         int py = player.getY();
 
         // bots kill, without laser
-        for (int i = 0; i < bots.length; i++) {
-            if (bots[i].isAt(px, py)) {
+        for (int i = 0; i < goodBots.length; i++) {
+            if (goodBots[i].isAt(px, py)) {
                 laser = null;
                 return true;
             }
@@ -417,8 +413,8 @@ public class Level {
 
         // is there an exploded bomb adjacent to us, or on us?
         // then die.
+        IntPair xy = new IntPair();
         for (byte db = Entity.FIRST_DIR; db <= Entity.LAST_DIR; db++) {
-            IntPair xy = new IntPair();
             if (travel(px, py, db, xy)) {
                 int xx = xy.x;
                 int yy = xy.y;
@@ -427,8 +423,8 @@ public class Level {
                  * nb, botat might not be correct, since it returns the lowest
                  * bot; so just loop manually:
                  */
-                for (int m = 0; m < bots.length; m++) {
-                    Bot b = bots[m];
+                for (int m = 0; m < goodBots.length; m++) {
+                    Bot b = goodBots[m];
                     if (b.isAt(xx, yy) && b.getBotType() == Entity.B_BOMB_X) {
                         return true;
                     }
@@ -582,8 +578,8 @@ public class Level {
             e.requestRedraw();
 
             // move bots
-            for (int i = 0; i < bots.length; i++) {
-                Bot b = bots[i];
+            for (int i = 0; i < goodBots.length; i++) {
+                Bot b = goodBots[i];
                 if (b.getBotType() == Entity.B_BOMB_X) {
                     b.delete();
                 }
@@ -607,7 +603,7 @@ public class Level {
                 }
                 if (b.getBombTimer() == 0) {
                     // time's up: explodes
-                    bombsplode(i, i);
+                    bombsplode(i, b);
                 } else {
                     b.burnLitFuse(); // for bombs only
                 }
@@ -621,26 +617,94 @@ public class Level {
         return result;
     }
 
-    private void cleanBotsArray() {
-        int extantBots = 0;
-        for (int i = 0; i < bots.length; i++) {
-            if (!bots[i].isDeleted()) {
-                extantBots++;
+    static private void sortBotsArray(Bot bots[]) {
+        for (int i = 1; i < bots.length; i++) {
+            Bot b = bots[i];
+            int x = b.getX();
+            int y = b.getY();
+
+            int j = i - 1;
+            while (j >= 0) {
+                Bot b2 = bots[j];
+                int x2 = b2.getX();
+                int y2 = b2.getY();
+                if (y2 < y || (y2 == y && x2 <= x)) {
+                    break;
+                }
+
+                bots[j + 1] = bots[j];
+                j--;
             }
+            bots[j + 1] = b;
         }
+    }
 
-        if (extantBots < bots.length) {
-            // copy collection
-            Bot newBots[] = new Bot[extantBots];
+    private void cleanBotsArray() {
+        int gBots = 0;
+        int bBots = 0;
+        boolean newBroken = false;
 
-            int j = 0;
-            for (int i = 0; i < bots.length; i++) {
-                if (!bots[i].isDeleted()) {
-                    newBots[j++] = bots[i];
+        // count both kinds and also see if something is newly broken
+        for (int i = 0; i < goodBots.length; i++) {
+            Bot b = goodBots[i];
+            if (!b.isDeleted()) {
+                byte type = b.getBotType();
+                if (type == Entity.B_BROKEN) {
+                    bBots++;
+                    newBroken = true;
+                } else {
+                    gBots++;
                 }
             }
-            bots = newBots;
         }
+        for (int i = 0; i < brokenBots.length; i++) {
+            Bot b = brokenBots[i];
+            if (!b.isDeleted()) {
+                bBots++;
+            }
+        }
+
+        // maybe do some copying
+        Bot newGBots[] = goodBots;
+        Bot newBBots[] = brokenBots;
+
+        // the goodBots array can only shrink
+        if (gBots < goodBots.length) {
+            newGBots = new Bot[gBots];
+
+            int j = 0;
+            for (int i = 0; i < goodBots.length; i++) {
+                Bot b = goodBots[i];
+                if (!b.isDeleted() && b.getBotType() != Entity.B_BROKEN) {
+                    newGBots[j++] = b;
+                }
+            }
+        }
+
+        // now check broken bots array
+        if (newBroken || bBots < brokenBots.length) {
+            newBBots = new Bot[bBots];
+
+            int j = 0;
+            for (int i = 0; i < goodBots.length; i++) {
+                Bot b = goodBots[i];
+                if (b.getBotType() == Entity.B_BROKEN) {
+                    newBBots[j++] = b;
+                }
+            }
+            for (int i = 0; i < brokenBots.length; i++) {
+                Bot b = brokenBots[i];
+                if (b.getBotType() == Entity.B_BROKEN) {
+                    newBBots[j++] = b;
+                }
+            }
+        }
+
+        // commit back
+        goodBots = newGBots;
+        brokenBots = newBBots;
+
+        sortBotsArray(brokenBots);
     }
 
     protected boolean realMove(Entity ent, byte d, Effects e) {
@@ -786,14 +850,15 @@ public class Level {
                 }
 
                 /* also bots */
-                for (int i = 0; i < getBotCount(); i++) {
-                    switch (getBotType(i)) {
+                for (int i = 0; i < goodBots.length; i++) {
+                    Bot b = goodBots[i];
+                    switch (b.getBotType()) {
                     case Entity.B_DALEK_ASLEEP:
-                        bots[i].setToType(Entity.B_DALEK);
+                        b.setToType(Entity.B_DALEK);
                         break;
 
                     case Entity.B_HUGBOT_ASLEEP:
-                        bots[i].setToType(Entity.B_HUGBOT);
+                        b.setToType(Entity.B_HUGBOT);
 
                         break;
                     }
@@ -821,8 +886,8 @@ public class Level {
     }
 
     private boolean hasBombs() {
-        for (int i = 0; i < bots.length; i++) {
-            if (bots[i].isBomb()) {
+        for (int i = 0; i < goodBots.length; i++) {
+            if (goodBots[i].isBomb()) {
                 return true;
             }
         }
@@ -1062,8 +1127,7 @@ public class Level {
             return false;
     }
 
-    private void bombsplode(int currentTimeslot, int bot) {
-        Bot b = bots[bot];
+    private void bombsplode(int currentTimeslot, Bot b) {
         b.explode();
 
         int x = b.getX();
@@ -1080,8 +1144,8 @@ public class Level {
                             | TF_RPANELL | TF_RPANELH)));
                 }
 
-                for (int bDie = 0; bDie < bots.length; bDie++) {
-                    Bot bd = bots[bDie];
+                for (int bDie = 0; bDie < goodBots.length; bDie++) {
+                    Bot bd = goodBots[bDie];
                     if (bd.isAt(bx, by)) {
                         byte type = bd.getBotType();
                         if (type == Entity.B_DELETED || type == Entity.B_BOMB_X) {
@@ -1091,7 +1155,7 @@ public class Level {
                         if (bd.isBomb()) {
                             // chain reaction
                             if (bDie < currentTimeslot) {
-                                bombsplode(currentTimeslot, bDie);
+                                bombsplode(currentTimeslot, bd);
                                 break;
                             } else {
                                 // will explode this turn (unless a bot pushes
@@ -1104,6 +1168,13 @@ public class Level {
                             bd.delete();
                             break;
                         }
+                    }
+                }
+                for (int bDie = 0; bDie < brokenBots.length; bDie++) {
+                    Bot bd = brokenBots[bDie];
+                    if (bd.isAt(bx, by)) {
+                        bd.delete();
+                        break;
                     }
                 }
             }
@@ -1775,13 +1846,19 @@ public class Level {
 
     private void checkBotDeath(int x, int y, Entity ent) {
         if (ent != player) {
-            for (int b = 0; b < bots.length; b++) {
-                Bot bb = bots[b];
-                byte type = bb.getBotType();
-                if (ent != bb && type != Entity.B_DELETED
-                        && type != Entity.B_BOMB_X && x == bb.getX()
+            for (int b = 0; b < goodBots.length; b++) {
+                Bot bb = goodBots[b];
+                if (ent != bb && !bb.isDeleted() && x == bb.getX()
                         && y == bb.getY()) {
-                    bots[b].delete();
+                    goodBots[b].delete();
+                    ((Bot) ent).setToType(Entity.B_BROKEN);
+                }
+            }
+            for (int b = 0; b < brokenBots.length; b++) {
+                Bot bb = brokenBots[b];
+                if (ent != bb && !bb.isDeleted() && x == bb.getX()
+                        && y == bb.getY()) {
+                    brokenBots[b].delete();
                     ((Bot) ent).setToType(Entity.B_BROKEN);
                 }
             }
@@ -1801,11 +1878,16 @@ public class Level {
     }
 
     private Bot getBotAt(int x, int y) {
-        for (int i = 0; i < bots.length; i++) {
-            byte type = bots[i].getBotType();
-            if (type != Entity.B_DELETED && type != Entity.B_BOMB_X
-                    && bots[i].isAt(x, y)) {
-                return bots[i];
+        for (int i = 0; i < goodBots.length; i++) {
+            Bot b = goodBots[i];
+            if (!b.isDeleted() && b.isAt(x, y)) {
+                return b;
+            }
+        }
+        for (int i = 0; i < brokenBots.length; i++) {
+            Bot b = brokenBots[i];
+            if (!b.isDeleted() && b.isAt(x, y)) {
+                return b;
             }
         }
         return null;
@@ -1826,11 +1908,16 @@ public class Level {
 
         playboardCOW = true;
 
-        bots = new Bot[l.bots.length];
-        for (int i = 0; i < l.bots.length; i++) {
-            Bot b = l.bots[i];
-            bots[i] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType());
-            bots[i].bombTimer = b.getBombTimer();
+        goodBots = new Bot[l.goodBots.length];
+        for (int i = 0; i < l.goodBots.length; i++) {
+            Bot b = l.goodBots[i];
+            goodBots[i] = new Bot(b);
+        }
+
+        brokenBots = new Bot[l.brokenBots.length];
+        for (int i = 0; i < l.brokenBots.length; i++) {
+            Bot b = l.brokenBots[i];
+            brokenBots[i] = new Bot(b);
         }
 
         // dirty = new DirtyList();
@@ -1887,10 +1974,11 @@ public class Level {
             bots = 0;
         }
 
-        this.bots = new Bot[bots];
+        goodBots = new Bot[bots];
+        brokenBots = new Bot[0];
 
         try {
-            for (byte i = 0; i < this.bots.length; i++) {
+            for (byte i = 0; i < this.goodBots.length; i++) {
                 int pos = botI[i];
                 if (pos < 0 || pos >= width * height) {
                     throw new IOException("Bot " + i + " outside of level: "
@@ -1899,7 +1987,7 @@ public class Level {
 
                 int x = pos % width;
                 int y = pos / width;
-                this.bots[i] = new Bot(x, y, Entity.DIR_DOWN, botT[i]);
+                this.goodBots[i] = new Bot(x, y, Entity.DIR_DOWN, botT[i]);
             }
         } catch (UnknownBotException e) {
             throw new IOException("Unknown bot type: " + e.getType());
@@ -1962,13 +2050,15 @@ public class Level {
         this.hasLasers = hasLasers;
 
         player = new Player(m.player.getX(), m.player.getY(), m.player.getDir());
-        bots = new Bot[m.bots.length];
+        goodBots = new Bot[m.bots.length];
         for (int b = 0; b < m.bots.length; b++) {
             Bot bb = m.bots[b];
-            bots[b] = new Bot(bb.getX(), bb.getY(), bb.getDir(), bb
+            goodBots[b] = new Bot(bb.getX(), bb.getY(), bb.getDir(), bb
                     .getBotType());
-            bots[b].bombTimer = bb.getBombTimer();
+            goodBots[b].bombTimer = bb.getBombTimer();
         }
+        brokenBots = new Bot[0];
+
         cleanBotsArray();
     }
 
@@ -1994,11 +2084,15 @@ public class Level {
         player = new Player(dd.readInt(), dd.readInt(), Entity.DIR_DOWN);
 
         // read bots
-        bots = new Bot[dd.readInt()];
-        for (int i = 0; i < bots.length; i++) {
-            bots[i] = new Bot(dd.readInt(), dd.readInt(), Entity.DIR_DOWN, dd
-                    .readByte(), dd.readByte());
+        goodBots = new Bot[dd.readInt()];
+        for (int i = 0; i < goodBots.length; i++) {
+            goodBots[i] = new Bot(dd.readInt(), dd.readInt(), Entity.DIR_DOWN,
+                    dd.readByte(), dd.readByte());
         }
+
+        brokenBots = new Bot[0];
+
+        cleanBotsArray();
 
         // read level
         hasLasers = dd.readBoolean();
@@ -2182,20 +2276,8 @@ public class Level {
         return false;
     }
 
-    public int getBotDir(int botIndex) {
-        return bots[botIndex].getDir();
-    }
-
     public int getPlayerDir() {
         return player.getDir();
-    }
-
-    public boolean isBotBomb(int botIndex) {
-        return bots[botIndex].isBomb();
-    }
-
-    public byte getBombTimer(int botIndex) {
-        return bots[botIndex].getBombTimer();
     }
 
     public IntTriple getLaser() {
@@ -2265,8 +2347,8 @@ public class Level {
 
         // get number of hugbots, they can push us closer
         int hugbots = 0;
-        for (int i = 0; i < l.getBotCount(); i++) {
-            int bot = l.getBotType(i);
+        for (int i = 0; i < l.goodBots.length; i++) {
+            int bot = l.goodBots[i].getBotType();
             if (bot == Entity.B_HUGBOT || bot == Entity.B_HUGBOT_ASLEEP) {
                 hugbots++;
             }
@@ -2478,9 +2560,17 @@ public class Level {
         dd.writeInt(getPlayerY());
 
         // write bots
-        dd.writeInt(bots.length);
-        for (int i = 0; i < bots.length; i++) {
-            Bot b = bots[i];
+        dd.writeInt(goodBots.length + brokenBots.length);
+        for (int i = 0; i < goodBots.length; i++) {
+            Bot b = goodBots[i];
+            dd.writeInt(b.getX());
+            dd.writeInt(b.getY());
+
+            dd.writeByte(b.getBotType());
+            dd.writeByte(b.getBombTimer());
+        }
+        for (int i = 0; i < brokenBots.length; i++) {
+            Bot b = brokenBots[i];
             dd.writeInt(b.getX());
             dd.writeInt(b.getY());
 
@@ -2500,10 +2590,6 @@ public class Level {
          * for (int i = 0; i < tiles.length; i++) { } for (int i = 0; i <
          * tiles.length; i++) { } for (int i = 0; i < tiles.length; i++) { }
          */
-    }
-
-    public Bot getBot(int i) {
-        return bots[i];
     }
 
     public Player getPlayer() {
