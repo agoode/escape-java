@@ -29,7 +29,7 @@ public class Bot extends Entity {
     public void explode() {
         setToType(B_BOMB_X);
     }
-
+    
     public void setToType(byte type) {
         this.type = type;
         clearCapabilities();
