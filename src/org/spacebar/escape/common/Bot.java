@@ -22,6 +22,15 @@ public class Bot extends Entity {
         this.bombTimer = bombTimer;
     }
 
+    public Bot(Bot b) {
+        super(b.x, b.y, b.d);
+
+        capabilities = b.capabilities;
+        type = b.type;
+        
+        bombTimer = b.bombTimer;
+    }
+
     public void delete() {
         setToType(B_DELETED);
     }

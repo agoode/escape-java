@@ -64,13 +64,13 @@ abstract public class Entity {
         capabilities = 0;
     }
 
-    private int capabilities;
+    protected int capabilities;
 
-    private byte d;
+    protected byte d;
 
-    private int x;
+    protected int x;
 
-    private int y;
+    protected int y;
 
     // directions
     public final static byte DIR_NONE = 0;
