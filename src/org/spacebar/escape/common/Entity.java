@@ -234,12 +234,16 @@ abstract public class Entity {
         if (this == obj) {
             return true;
         }
+        
+        if (obj == null) {
+            return false;
+        }
 
         if (obj instanceof Entity) {
             Entity e = (Entity) obj;
 
             return x == e.x && y == e.y && type == e.type
-                    && (!isBomb() || bombTimer == e.bombTimer);
+                    && bombTimer == e.bombTimer;
         }
         return false;
     }
