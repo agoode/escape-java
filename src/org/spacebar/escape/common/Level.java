@@ -1,7 +1,7 @@
 package org.spacebar.escape.common;
 
 import java.io.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class Level {
 
@@ -1482,7 +1482,7 @@ public class Level {
         int gSwaps = 0;
 
         // panel swaps (from T_REMOTE) delayed until after regular swaps
-        Vector panelSwaps = new Vector();
+        ArrayList<Integer> panelSwaps = new ArrayList<Integer>();
 
         for (int dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
             /* send a pulse in that direction. */
@@ -1492,8 +1492,7 @@ public class Level {
             while (pd != Entity.DIR_NONE && travel(pulse.x, pulse.y, pd, pulse)) {
                 switch (tileAt(pulse.x, pulse.y)) {
                 case T_REMOTE:
-                    panelSwaps
-                            .addElement(new Integer(destAt(pulse.x, pulse.y)));
+                    panelSwaps.add(Integer.valueOf(destAt(pulse.x, pulse.y)));
                     break;
                 case T_BLIGHT:
                     pd = Entity.DIR_NONE;
@@ -1607,7 +1606,7 @@ public class Level {
         }
 
         for (int i = 0; i < panelSwaps.size(); i++) {
-            swapO(((Integer) panelSwaps.elementAt(i)).intValue());
+            swapO(panelSwaps.get(i));
         }
 
         e.doPulse();
