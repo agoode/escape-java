@@ -1,6 +1,6 @@
 package org.spacebar.escape.common;
 
-import org.spacebar.escape.common.Level.HeuristicData;
+import org.spacebar.escape.common.EquateableLevel.HeuristicData;
 
 public class LevelManip {
     String title;
