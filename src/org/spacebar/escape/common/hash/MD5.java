@@ -29,6 +29,7 @@ public class MD5 {
         in.readFully(data);
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof MD5) {
             MD5 m = (MD5) obj;
@@ -43,11 +44,13 @@ public class MD5 {
         return false;
     }
 
+    @Override
     public int hashCode() {
         // as good as anything
         return data[0] + data[1] << 8 + data[2] << 16 + data[3] << 24;
     }
     
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < data.length; i++) {

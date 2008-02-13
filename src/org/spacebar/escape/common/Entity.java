@@ -230,6 +230,7 @@ abstract public class Entity {
         return (capabilities & CAP_HEARTFRAMERS) == CAP_HEARTFRAMERS;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -248,6 +249,7 @@ abstract public class Entity {
         return false;
     }
 
+    @Override
     public int hashCode() {
         // give 4 bits to type, 8 to timer, and 10 to x and y
         return type << 28 + bombTimer << 20 + x << 10 + y;

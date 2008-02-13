@@ -23,6 +23,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         super(in, width, height);
     }
 
+    @Override
     public int hashCode() {
         // Like Tom,
         /*
@@ -67,6 +68,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         return hash.hval;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -129,6 +131,7 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         return true;
     }
 
+    @Override
     public String toString() {
         int height = getHeight();
         return "[\"" + title + "\" by " + author + " (" + width + "x" + height

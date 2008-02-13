@@ -11,6 +11,7 @@ public class BitInputStream extends DataInputStream {
         super(in);
     }
 
+    @Override
     public int read() throws IOException {
         discardRestOfByte();
         return super.read();

@@ -87,6 +87,7 @@ public class Solution {
     public Solution() {
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer("solution: ");
 

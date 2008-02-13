@@ -86,10 +86,12 @@ public class FNV64 {
         hval = FNV1_64_INIT;
     }
     
+    @Override
     public int hashCode() {
         return (int) (hval & 0xFFFFFFFF);
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof FNV64) {
             FNV64 f = (FNV64) obj;

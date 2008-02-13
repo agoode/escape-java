@@ -74,10 +74,12 @@ public class FNV32 {
         hval ^= octet & 0xFF; // stupid sign extension
     }
 
+    @Override
     public int hashCode() {
         return hval;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
