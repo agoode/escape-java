@@ -247,9 +247,6 @@ public class Level {
 
     protected Bot brokenBots[];
 
-    // dirty
-    public DirtyList dirty;
-
     // cached laser
     private IntTriple laser;
 
@@ -269,16 +266,6 @@ public class Level {
             break;
         default:
             ;
-        }
-    }
-
-    public void trackDirty(boolean track) {
-        if (track) {
-            if (dirty == null) {
-                dirty = new DirtyList();
-            }
-        } else {
-            dirty = null;
         }
     }
 
@@ -317,9 +304,6 @@ public class Level {
 
     private void setTile(int i, byte t) {
         setPlayboardEntry(i, TILES_MASK, TILES_SHIFT, t);
-        if (dirty != null) {
-            dirty.setDirty(i);
-        }
     }
 
     private void checkPlayboardCOW() {
@@ -2091,102 +2075,6 @@ public class Level {
         String author = Misc.getStringFromData(in, size);
 
         return new MetaData(width, height, title, author);
-    }
-
-    public class DirtyList {
-        boolean allDirty;
-
-        private final boolean dirty[];
-
-        private final int dirtyList[];
-
-        private int numDirty;
-
-        /**
-         * @return Returns the allDirty.
-         */
-        public boolean isAllDirty() {
-            return allDirty;
-        }
-
-        /**
-         * @return Returns the numDirty.
-         */
-        public int getNumDirty() {
-            return numDirty;
-        }
-
-        public int getDirty(int i) {
-            return dirtyList[i];
-        }
-
-        DirtyList() {
-            int n = playboard.length;
-            dirty = new boolean[n];
-            dirtyList = new int[n];
-
-            setAllDirty();
-        }
-
-        public void clearDirty() {
-            for (int i = numDirty - 1; i >= 0; i--) {
-                dirty[dirtyList[i]] = false;
-            }
-            numDirty = 0;
-            allDirty = false;
-        }
-
-        public void setDirty(int x, int y) {
-            setDirty(index(x, y));
-        }
-
-        public void setDirty(int i) {
-            // System.out.println("setting (" + (i % width) + "," + (i / width)
-            // + ") dirty");
-            if (dirty[i]) {
-                // System.out.println(" already dirty!");
-                return;
-            }
-
-            dirty[i] = true;
-            dirtyList[numDirty] = i;
-            numDirty++;
-        }
-
-        public void setAllDirty() {
-            allDirty = true;
-        }
-
-        public boolean isDirty(int i) {
-            return allDirty || dirty[i];
-        }
-
-        public boolean isDirty(int x, int y) {
-            return allDirty || dirty[index(x, y)];
-        }
-
-        public boolean isAnyDirty() {
-            return allDirty || numDirty > 0;
-        }
-
-        public void print(PrintStream p) {
-            p.print("DirtyList: ");
-            if (allDirty) {
-                p.print("all dirty");
-            } else if (numDirty > 0) {
-                p.print("some dirty [");
-                for (int i = 0; i < numDirty; i++) {
-                    int idx = dirtyList[i];
-                    int x = idx % width;
-                    int y = idx / width;
-                    p.print(" (" + x + "," + y + ")");
-                }
-                p.print(" ]");
-            } else {
-                p.print("clean");
-            }
-            p.println();
-        }
     }
 
     public void print(PrintStream p) {
