@@ -52,17 +52,17 @@ public class LevelManip {
             dests[x] = destCol;
         }
 
-        player = new Player(l.player.getX(), l.player.getY(), l.player.getDir());
+        player = new Player(l.player.x, l.player.y, l.player.d);
         bots = new Bot[l.goodBots.length + l.brokenBots.length];
         int j = 0;
         for (int i = 0; i < l.goodBots.length; i++) {
             Bot b = l.goodBots[i];
-            bots[j++] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType(),
+            bots[j++] = new Bot(b.x, b.y, b.d, b.getBotType(),
                     b.getBombTimer());
         }
         for (int i = 0; i < l.brokenBots.length; i++) {
             Bot b = l.brokenBots[i];
-            bots[j++] = new Bot(b.getX(), b.getY(), b.getDir(), b.getBotType(),
+            bots[j++] = new Bot(b.x, b.y, b.d, b.getBotType(),
                     b.getBombTimer());
         }
     }
@@ -102,9 +102,9 @@ public class LevelManip {
     }
 
     private void slideEntUp(Entity e, final int row) {
-        int ey = e.getY();
+        int ey = e.y;
         if (ey > row) {
-            e.setY(ey - 1);
+            e.y = ey - 1;
         }
     }
 
@@ -205,9 +205,9 @@ public class LevelManip {
     }
 
     private void slideEntLeft(Entity e, int col) {
-        int ex = e.getX();
+        int ex = e.x;
         if (ex > col) {
-            e.setX(ex - 1);
+            e.x = ex - 1;
         }
     }
 

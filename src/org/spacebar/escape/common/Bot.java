@@ -106,24 +106,24 @@ public class Bot extends Entity {
         int bd = DIR_NONE;
         int bd2 = DIR_NONE;
 
-        if (getX() == e.getX()) {
+        if (x == e.x) {
             // same column
-            if (getY() < e.getY()) {
+            if (y < e.y) {
                 bd = DIR_DOWN;
-            } else if (getY() > e.getY()) {
+            } else if (y > e.y) {
                 bd = DIR_UP;
             }
         } else {
-            if (getX() > e.getX()) {
+            if (x > e.x) {
                 bd = DIR_LEFT;
             } else {
                 bd = DIR_RIGHT;
             }
 
             // second choice if first doesn't move
-            if (getY() < e.getY()) {
+            if (y < e.y) {
                 bd2 = DIR_DOWN;
-            } else if (getY() > e.getY()) {
+            } else if (y > e.y) {
                 bd2 = DIR_UP;
             }
         }

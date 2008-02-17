@@ -92,8 +92,8 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
         FNV32 hash = new FNV32();
 
         // player
-        hash.fnv32((byte) player.getX());
-        hash.fnv32((byte) player.getY());
+        hash.fnv32((byte) player.x);
+        hash.fnv32((byte) player.y);
 
         // tiles, oTiles
         // hash.fnv32(width);
@@ -113,14 +113,14 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
             Bot b = goodBots[i];
             hash.fnv32(b.getBotType());
             hash.fnv32(b.getBombTimer());
-            hash.fnv32((byte) b.getX());
-            hash.fnv32((byte) b.getY());
+            hash.fnv32((byte) b.x);
+            hash.fnv32((byte) b.y);
         }
 
         for (int i = 0; i < brokenBots.length; i++) {
             Bot b = brokenBots[i];
-            hash.fnv32((byte) b.getX());
-            hash.fnv32((byte) b.getY());
+            hash.fnv32((byte) b.x);
+            hash.fnv32((byte) b.y);
         }
 
         return hash.hval;
@@ -193,8 +193,8 @@ public class EquateableLevel extends org.spacebar.escape.common.Level {
     public String toString() {
         int height = getHeight();
         return "[\"" + title + "\" by " + author + " (" + width + "x" + height
-                + ")" + " player: (" + this.player.getX() + ","
-                + this.player.getY() + ")]";
+                + ")" + " player: (" + this.player.x + ","
+                + this.player.y + ")]";
     }
 
     public HeuristicData computeHeuristicMap() {

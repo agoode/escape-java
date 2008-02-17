@@ -66,11 +66,11 @@ abstract public class Entity {
 
     protected int capabilities;
 
-    protected byte d;
+    public byte d;
 
-    protected int x;
+    public int x;
 
-    protected int y;
+    public int y;
 
     // directions
     public final static byte DIR_NONE = 0;
@@ -135,27 +135,6 @@ abstract public class Entity {
         return (capabilities & CAP_CRUSH_PLAYER) == CAP_CRUSH_PLAYER;
     }
 
-    /**
-     * @return Returns the d.
-     */
-    final public byte getDir() {
-        return d;
-    }
-
-    /**
-     * @return Returns the x.
-     */
-    final public int getX() {
-        return x;
-    }
-
-    /**
-     * @return Returns the y.
-     */
-    final public int getY() {
-        return y;
-    }
-
     final public boolean isPlayer() {
         return (capabilities & CAP_IS_PLAYER) == CAP_IS_PLAYER;
     }
@@ -166,30 +145,6 @@ abstract public class Entity {
 
     final public boolean canPushPlayer() {
         return (capabilities & CAP_PUSH_PLAYER) == CAP_PUSH_PLAYER;
-    }
-
-    /**
-     * @param d
-     *            The d to set.
-     */
-    final public void setDir(byte d) {
-        this.d = d;
-    }
-
-    /**
-     * @param x
-     *            The x to set.
-     */
-    final public void setX(int x) {
-        this.x = x;
-    }
-
-    /**
-     * @param y
-     *            The y to set.
-     */
-    final public void setY(int y) {
-        this.y = y;
     }
 
     final public boolean isAt(int x, int y) {

@@ -205,11 +205,11 @@ public class Level {
     }
 
     public int getPlayerX() {
-        return player.getX();
+        return player.x;
     }
 
     public int getPlayerY() {
-        return player.getY();
+        return player.y;
     }
 
     public int getHeight() {
@@ -259,9 +259,9 @@ public class Level {
 
     // the meat
     private void warp(Entity ent, int targX, int targY) {
-        checkStepOff(ent.getX(), ent.getY());
-        ent.setX(targX);
-        ent.setY(targY);
+        checkStepOff(ent.x, ent.y);
+        ent.x = targX;
+        ent.y = targY;
 
         switch (tileAt(targX, targY)) {
         case T_PANEL:
@@ -354,7 +354,7 @@ public class Level {
     }
 
     public boolean isWon() {
-        return tileAt(player.getX(), player.getY()) == T_EXIT;
+        return tileAt(player.x, player.y) == T_EXIT;
     }
 
     private boolean travel(int x, int y, int d, IntPair result) {
@@ -400,8 +400,8 @@ public class Level {
     // Return true if a laser can 'see' the player, or other things kill him or
     // her.
     public boolean isDead() {
-        int px = player.getX();
-        int py = player.getY();
+        int px = player.x;
+        int py = player.y;
 
         // bots kill, without laser
         for (int i = 0; i < goodBots.length; i++) {
@@ -438,7 +438,7 @@ public class Level {
 
         // otherwise, look for lasers from the current dude
         for (byte dd = Entity.FIRST_DIR; dd <= Entity.LAST_DIR; dd++) {
-            int lx = player.getX(), ly = player.getY();
+            int lx = player.x, ly = player.y;
 
             IntPair r = new IntPair();
             while (travel(lx, ly, dd, r)) {
@@ -566,7 +566,7 @@ public class Level {
     }
 
     public boolean move(byte d) {
-        player.setDir(d); // always set dir
+        player.d = d; // always set dir
         boolean result = realMove(player, d);
 
         if (result) {
@@ -606,14 +606,14 @@ public class Level {
     static private void sortBotsArray(Bot bots[]) {
         for (int i = 1; i < bots.length; i++) {
             Bot b = bots[i];
-            int x = b.getX();
-            int y = b.getY();
+            int x = b.x;
+            int y = b.y;
 
             int j = i - 1;
             while (j >= 0) {
                 Bot b2 = bots[j];
-                int x2 = b2.getX();
-                int y2 = b2.getY();
+                int x2 = b2.x;
+                int y2 = b2.y;
                 if (y2 < y || (y2 == y && x2 <= x)) {
                     break;
                 }
@@ -695,7 +695,7 @@ public class Level {
 
     protected boolean realMove(Entity ent, byte d) {
         final IntPair newP = new IntPair();
-        if (travel(ent.getX(), ent.getY(), d, newP)) {
+        if (travel(ent.x, ent.y, d, newP)) {
             return maybeDoMove(ent, d, newP);
         } else
             return false; // no move for sure
@@ -844,9 +844,9 @@ public class Level {
             }
 
             /* panel actions are last */
-            checkStepOff(ent.getX(), ent.getY());
-            ent.setX(newP.x);
-            ent.setY(newP.y);
+            checkStepOff(ent.x, ent.y);
+            ent.x = newP.x;
+            ent.y = newP.y;
 
             return true;
         } else {
@@ -1076,12 +1076,12 @@ public class Level {
         }
 
         if (ent != player && ent.zapsSelf()) {
-            int oldX = ent.getX();
-            int oldY = ent.getY();
+            int oldX = ent.x;
+            int oldY = ent.y;
 
             // move
-            ent.setX(newP.x);
-            ent.setY(newP.y);
+            ent.x = newP.x;
+            ent.y = newP.y;
 
             // kill
             ((Bot) ent).delete();
@@ -1096,8 +1096,8 @@ public class Level {
     private void bombsplode(int currentTimeslot, Bot b) {
         b.explode();
 
-        int x = b.getX();
-        int y = b.getY();
+        int x = b.x;
+        int y = b.y;
 
         IntPair bxy = new IntPair();
         for (byte d = Entity.FIRST_DIR; d <= Entity.LAST_DIR; d++) {
@@ -1218,13 +1218,13 @@ public class Level {
             default:
                 return false;
             }
-            checkStepOff(ent.getX(), ent.getY());
+            checkStepOff(ent.x, ent.y);
 
             if (doSwap)
                 swapO(destAt(dest.x, dest.y));
 
-            ent.setX(newP.x);
-            ent.setY(newP.y);
+            ent.x = newP.x;
+            ent.y = newP.y;
             return true;
         } else
             return false;
@@ -1376,7 +1376,7 @@ public class Level {
         }
 
         /* now we can start swapping. */
-        checkStepOff(ent.getX(), ent.getY());
+        checkStepOff(ent.x, ent.y);
 
         /*
          * this part is now invariant to order, because there is only one
@@ -1406,8 +1406,8 @@ public class Level {
         }
 
         /* XXX also boundary conditions? (XXX what does that mean?) */
-        ent.setX(newP.x);
-        ent.setY(newP.y);
+        ent.x = newP.x;
+        ent.y = newP.y;
 
         return true;
     }
@@ -1424,10 +1424,10 @@ public class Level {
                 setTile(dest.x, dest.y, T_BLUE);
                 setTile(newP.x, newP.y, T_FLOOR);
 
-                checkStepOff(ent.getX(), ent.getY());
+                checkStepOff(ent.x, ent.y);
 
-                ent.setX(newP.x);
-                ent.setY(newP.y);
+                ent.x = newP.x;
+                ent.y = newP.y;
                 return true;
             } else
                 return false;
@@ -1645,9 +1645,9 @@ public class Level {
             return false;
         }
 
-        checkStepOff(ent.getX(), ent.getY());
-        ent.setX(newP.x);
-        ent.setY(newP.y);
+        checkStepOff(ent.x, ent.y);
+        ent.x = newP.x;
+        ent.y = newP.y;
         return true;
     }
 
@@ -1718,20 +1718,20 @@ public class Level {
                 pushee.armFuseIfBomb();
 
                 // push
-                pushee.setX(far.x);
-                pushee.setY(far.y);
+                pushee.x = far.x;
+                pushee.y = far.y;
 
                 // handle leaving current (pusher) position
-                checkTrap(ent.getX(), ent.getY());
+                checkTrap(ent.x, ent.y);
 
                 // still need to check panels later
-                int srcX = ent.getX();
-                int srcY = ent.getY();
-                boolean swapSrc = tileAt(ent.getX(), ent.getY()) == T_PANEL;
+                int srcX = ent.x;
+                int srcY = ent.y;
+                boolean swapSrc = tileAt(ent.x, ent.y) == T_PANEL;
 
                 // move pusher
-                ent.setX(newP.x);
-                ent.setY(newP.y);
+                ent.x = newP.x;
+                ent.y = newP.y;
 
                 // zapping
                 if (fTarget == T_ELECTRIC && pushee != player) {
@@ -1769,10 +1769,10 @@ public class Level {
             checkBotDeath(newP.x, newP.y, ent);
 
             // panels again
-            checkStepOff(ent.getX(), ent.getY());
+            checkStepOff(ent.x, ent.y);
 
-            ent.setX(newP.x);
-            ent.setY(newP.y);
+            ent.x = newP.x;
+            ent.y = newP.y;
 
             if (target == T_PANEL) {
                 swapO(destAt(newP.x, newP.y));
@@ -1806,16 +1806,16 @@ public class Level {
         if (ent != player) {
             for (int b = 0; b < goodBots.length; b++) {
                 Bot bb = goodBots[b];
-                if (ent != bb && !bb.isDeleted() && x == bb.getX()
-                        && y == bb.getY()) {
+                if (ent != bb && !bb.isDeleted() && x == bb.x
+                        && y == bb.y) {
                     goodBots[b].delete();
                     ((Bot) ent).setToType(Entity.B_BROKEN);
                 }
             }
             for (int b = 0; b < brokenBots.length; b++) {
                 Bot bb = brokenBots[b];
-                if (ent != bb && !bb.isDeleted() && x == bb.getX()
-                        && y == bb.getY()) {
+                if (ent != bb && !bb.isDeleted() && x == bb.x
+                        && y == bb.y) {
                     brokenBots[b].delete();
                     ((Bot) ent).setToType(Entity.B_BROKEN);
                 }
@@ -1859,7 +1859,7 @@ public class Level {
 
         hasLasers = l.hasLasers;
 
-        player = new Player(l.player.getX(), l.player.getY(), l.player.getDir());
+        player = new Player(l.player.x, l.player.y, l.player.d);
 
         // COW!
         playboard = l.playboard;
@@ -2007,11 +2007,11 @@ public class Level {
         }
         this.hasLasers = hasLasers;
 
-        player = new Player(m.player.getX(), m.player.getY(), m.player.getDir());
+        player = new Player(m.player.x, m.player.y, m.player.d);
         goodBots = new Bot[m.bots.length];
         for (int b = 0; b < m.bots.length; b++) {
             Bot bb = m.bots[b];
-            goodBots[b] = new Bot(bb.getX(), bb.getY(), bb.getDir(), bb
+            goodBots[b] = new Bot(bb.x, bb.y, bb.d, bb
                     .getBotType());
             goodBots[b].bombTimer = bb.getBombTimer();
         }
@@ -2193,8 +2193,8 @@ public class Level {
         int height = getHeight();
         p.println(toString());
         p.println("\"" + title + "\" by " + author + " (" + width + "x"
-                + height + ")" + " player: (" + this.player.getX() + ","
-                + this.player.getY() + ")");
+                + height + ")" + " player: (" + this.player.x + ","
+                + this.player.y + ")");
         p.println();
         p.println("tiles");
         printM(p, playboard, width, TILES_MASK, TILES_SHIFT);
@@ -2235,7 +2235,7 @@ public class Level {
     }
 
     public int getPlayerDir() {
-        return player.getDir();
+        return player.d;
     }
 
     public IntTriple getLaser() {
@@ -2253,16 +2253,16 @@ public class Level {
         dd.writeInt(goodBots.length + brokenBots.length);
         for (int i = 0; i < goodBots.length; i++) {
             Bot b = goodBots[i];
-            dd.writeInt(b.getX());
-            dd.writeInt(b.getY());
+            dd.writeInt(b.x);
+            dd.writeInt(b.y);
 
             dd.writeByte(b.getBotType());
             dd.writeByte(b.getBombTimer());
         }
         for (int i = 0; i < brokenBots.length; i++) {
             Bot b = brokenBots[i];
-            dd.writeInt(b.getX());
-            dd.writeInt(b.getY());
+            dd.writeInt(b.x);
+            dd.writeInt(b.y);
 
             dd.writeByte(b.getBotType());
             dd.writeByte(b.getBombTimer());
