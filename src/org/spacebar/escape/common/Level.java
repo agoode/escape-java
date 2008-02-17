@@ -566,17 +566,10 @@ public class Level {
     }
 
     public boolean move(byte d) {
-        return move(d, DefaultEffects.getDefaultEffects());
-    }
-
-    public boolean move(byte d, Effects e) {
         player.setDir(d); // always set dir
-        boolean result = realMove(player, d, e);
+        boolean result = realMove(player, d);
 
         if (result) {
-            e.doStep();
-            e.requestRedraw();
-
             // move bots
             for (int i = 0; i < goodBots.length; i++) {
                 Bot b = goodBots[i];
@@ -589,16 +582,11 @@ public class Level {
                 IntPair dirs = b.getDirChoices(player);
 
                 if (dirs.x != Entity.DIR_NONE) {
-                    boolean bm = realMove(b, (byte) dirs.x, e);
+                    boolean bm = realMove(b, (byte) dirs.x);
 
-                    boolean bm2 = false;
                     // no good? try 2nd move
                     if (!bm && dirs.y != Entity.DIR_NONE) {
-                        bm2 = realMove(b, (byte) dirs.y, e);
-                    }
-
-                    if (bm || bm2) {
-                        e.requestRedraw();
+                        realMove(b, (byte) dirs.y);
                     }
                 }
                 if (b.getBombTimer() == 0) {
@@ -608,8 +596,6 @@ public class Level {
                     b.burnLitFuse(); // for bombs only
                 }
             }
-        } else {
-            e.doNoStep();
         }
 
         cleanBotsArray();
@@ -707,23 +693,15 @@ public class Level {
         sortBotsArray(brokenBots);
     }
 
-    protected boolean realMove(Entity ent, byte d, Effects e) {
+    protected boolean realMove(Entity ent, byte d) {
         final IntPair newP = new IntPair();
         if (travel(ent.getX(), ent.getY(), d, newP)) {
-            return maybeDoMove(ent, d, e, newP);
+            return maybeDoMove(ent, d, newP);
         } else
             return false; // no move for sure
     }
 
-    /**
-     * @param ent
-     * @param d
-     * @param e
-     * @param newP
-     * @return true if move was made, false otherwise
-     */
-    private boolean maybeDoMove(Entity ent, byte d, Effects e,
-            final IntPair newP) {
+    private boolean maybeDoMove(Entity ent, byte d, final IntPair newP) {
         final byte target;
         switch (target = tileAt(newP.x, newP.y)) {
 
@@ -748,27 +726,27 @@ public class Level {
             return doExitMove(ent, newP);
 
         case T_ON:
-            return doElectricOffMove(e, newP);
+            return doElectricOffMove(newP);
 
         case T_0:
         case T_1:
-            return doToggleMove(e, target, newP);
+            return doToggleMove(target, newP);
 
         case T_BSPHERE:
         case T_RSPHERE:
         case T_GSPHERE:
         case T_SPHERE:
         case T_GOLD:
-            return doSphereGoldMove(d, e, target, newP);
+            return doSphereGoldMove(d, target, newP);
 
         case T_TRANSPORT:
-            return doTransportMove(ent, e, newP);
+            return doTransportMove(ent, newP);
 
         case T_BUTTON:
-            return doButtonMove(e, newP);
+            return doButtonMove(newP);
 
         case T_BROKEN:
-            return doBrokenMove(e, newP);
+            return doBrokenMove(newP);
 
         case T_GREEN:
             return doGreenBlockMove(ent, d, newP);
@@ -796,7 +774,7 @@ public class Level {
         case T_TRANSPONDER:
 
         case T_GREY:
-            return doSimpleBlockMove(ent, d, e, target, newP);
+            return doSimpleBlockMove(ent, d, target, newP);
 
         case T_HEARTFRAMER:
             return doHeartframer(ent, newP);
@@ -991,7 +969,7 @@ public class Level {
         return false;
     }
 
-    private boolean doSphereGoldMove(int d, Effects e, byte target, IntPair newP) {
+    private boolean doSphereGoldMove(int d, byte target, IntPair newP) {
         /*
          * spheres allow pushing in a line: ->OOOO becomes OOO ---->O
          * 
@@ -1069,7 +1047,6 @@ public class Level {
                  * panel that we just left, the electric has been swapped into
                  * the o world (along with the gold). So swap there.
                  */
-                e.doZap();
                 setTile(goldX, goldY, T_ELECTRIC);
 
                 // zapped = true;
@@ -1082,8 +1059,6 @@ public class Level {
             if (doSwap) {
                 swapO(destAt(newP.x, newP.y));
             }
-
-            e.doSlide();
 
             return true;
         } else {
@@ -1172,8 +1147,8 @@ public class Level {
         }
     }
 
-    private boolean doSimpleBlockMove(Entity ent, int d, Effects e,
-            byte target, IntPair newP) {
+    private boolean doSimpleBlockMove(Entity ent, int d, byte target,
+            IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
         }
@@ -1214,7 +1189,6 @@ public class Level {
             case T_ELECTRIC:
                 /* Zap! */
                 if (target != T_LR && target != T_UD) {
-                    e.doZap();
                     setTile(newP.x, newP.y, replacement);
                 } else
                     return false;
@@ -1223,7 +1197,6 @@ public class Level {
             case T_HOLE:
                 /* only grey blocks into holes */
                 if (target == T_GREY) {
-                    e.doHole();
                     setTile(dest.x, dest.y, T_FLOOR);
                     setTile(newP.x, newP.y, replacement);
                     // hole = true;
@@ -1462,16 +1435,15 @@ public class Level {
             return false;
     }
 
-    private boolean doBrokenMove(Effects e, IntPair newP) {
+    private boolean doBrokenMove(IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
         }
         setTile(newP.x, newP.y, T_FLOOR);
-        e.doBroken();
         return true;
     }
 
-    private boolean doButtonMove(Effects e, IntPair newP) {
+    private boolean doButtonMove(IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
         }
@@ -1609,7 +1581,6 @@ public class Level {
             swapO(panelSwaps.get(i));
         }
 
-        e.doPulse();
         return true;
     }
 
@@ -1621,7 +1592,7 @@ public class Level {
                 || tt == T_BLACK || tt == T_HOLE);
     }
 
-    private boolean doTransportMove(Entity ent, Effects e, IntPair newP) {
+    private boolean doTransportMove(Entity ent, IntPair newP) {
         // not if there's an entity there
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
@@ -1631,7 +1602,6 @@ public class Level {
             IntPair targ;
             targ = where(destAt(newP.x, newP.y));
 
-            e.doTransport();
             warp(ent, targ.x, targ.y);
 
             checkBotDeath(targ.x, targ.y, ent);
@@ -1642,7 +1612,7 @@ public class Level {
         }
     }
 
-    private boolean doToggleMove(Effects e, int target, IntPair newP) {
+    private boolean doToggleMove(int target, IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
         }
@@ -1651,18 +1621,16 @@ public class Level {
 
         swapTiles(T_UD, T_LR);
 
-        e.doSwap();
         setTile(newP.x, newP.y, opp);
 
         return true;
     }
 
-    private boolean doElectricOffMove(Effects e, IntPair newP) {
+    private boolean doElectricOffMove(IntPair newP) {
         if (player.isAt(newP.x, newP.y) || isBotAt(newP.x, newP.y)) {
             return false;
         }
 
-        e.doElectricOff();
         for (int i = (playboard.length) - 1; i >= 0; i--) {
             if (tileAt(i) == T_ELECTRIC)
                 setTile(i, T_FLOOR);
