@@ -3,6 +3,7 @@
  */
 package org.spacebar.escape.common;
 
+
 /**
  * @author adam
  */
@@ -166,11 +167,14 @@ public class Characters {
         return items[c];
     }
 
+    private Characters() {
+    }
+
     public static int width(String s) {
         if (s == null) {
             return 0;
         }
-        
+
         int result = 0;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
